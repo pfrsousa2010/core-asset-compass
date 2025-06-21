@@ -11,6 +11,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Plus, Search, Package, MapPin, Calendar, DollarSign, Eye } from 'lucide-react';
 import { formatCurrency, formatDate } from '@/lib/utils';
+import { Database } from '@/integrations/supabase/types';
+
+type AssetStatus = Database['public']['Enums']['asset_status'];
 
 export default function Assets() {
   const { profile } = useAuth();
@@ -28,7 +31,7 @@ export default function Assets() {
       }
 
       if (statusFilter !== 'all') {
-        query = query.eq('status', statusFilter);
+        query = query.eq('status', statusFilter as AssetStatus);
       }
 
       if (locationFilter !== 'all') {
@@ -54,7 +57,7 @@ export default function Assets() {
     },
   });
 
-  const getStatusBadge = (status: string) => {
+  const getStatusBadge = (status: AssetStatus) => {
     const variants = {
       ativo: 'bg-green-100 text-green-800',
       manutenção: 'bg-yellow-100 text-yellow-800',
@@ -62,7 +65,7 @@ export default function Assets() {
     };
 
     return (
-      <Badge className={variants[status as keyof typeof variants]}>
+      <Badge className={variants[status]}>
         {status}
       </Badge>
     );

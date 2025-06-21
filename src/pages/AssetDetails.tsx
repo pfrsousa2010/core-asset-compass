@@ -34,10 +34,7 @@ export default function AssetDetails() {
 
       const { data, error } = await supabase
         .from('assets')
-        .select(`
-          *,
-          profiles:updated_by_user_id(name, email)
-        `)
+        .select('*')
         .eq('id', id)
         .single();
 
@@ -45,6 +42,24 @@ export default function AssetDetails() {
       return data;
     },
     enabled: !!id,
+  });
+
+  // Buscar dados do usuário que fez a última atualização separadamente
+  const { data: updatedByUser } = useQuery({
+    queryKey: ['user-profile', asset?.updated_by_user_id],
+    queryFn: async () => {
+      if (!asset?.updated_by_user_id) return null;
+
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('name, email')
+        .eq('id', asset.updated_by_user_id)
+        .single();
+
+      if (error) return null;
+      return data;
+    },
+    enabled: !!asset?.updated_by_user_id,
   });
 
   const getStatusBadge = (status: string) => {
@@ -237,12 +252,12 @@ export default function AssetDetails() {
                 </div>
               </div>
 
-              {asset.profiles && (
+              {updatedByUser && (
                 <div className="flex items-center space-x-3">
                   <User className="h-5 w-5 text-gray-400" />
                   <div>
                     <p className="text-sm font-medium text-gray-500">Atualizado por</p>
-                    <p className="text-lg text-gray-900">{asset.profiles.name}</p>
+                    <p className="text-lg text-gray-900">{updatedByUser.name}</p>
                   </div>
                 </div>
               )}

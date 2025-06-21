@@ -12,6 +12,9 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { ArrowLeft, Save, Trash } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
+import { Database } from '@/integrations/supabase/types';
+
+type AssetStatus = Database['public']['Enums']['asset_status'];
 
 export default function EditAsset() {
   const { id } = useParams<{ id: string }>();
@@ -24,7 +27,7 @@ export default function EditAsset() {
     name: '',
     code: '',
     location: '',
-    status: 'ativo' as const,
+    status: 'ativo' as AssetStatus,
     acquisition_date: '',
     value: '',
   });

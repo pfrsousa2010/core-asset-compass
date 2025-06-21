@@ -89,7 +89,7 @@ export default function Profile() {
       return;
     }
 
-    if (newPassword !== confirmPasswor) {
+    if (newPassword !== confirmPassword) {
       setError('A nova senha e a confirmação devem ser iguais');
       return;
     }
