@@ -38,11 +38,13 @@ export default function Users() {
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
+        .eq('company_id', profile?.company_id)
         .order('created_at', { ascending: false });
 
       if (error) throw error;
       return data || [];
     },
+    enabled: !!profile?.company_id,
   });
 
   const createUserMutation = useMutation({
@@ -54,6 +56,7 @@ export default function Users() {
         options: {
           data: {
             name: userData.name,
+            company_id: profile?.company_id, // Usar company_id do usuário logado
           },
         },
       });
@@ -64,7 +67,10 @@ export default function Users() {
       if (data.user) {
         const { error: profileError } = await supabase
           .from('profiles')
-          .update({ role: userData.role })
+          .update({ 
+            role: userData.role,
+            company_id: profile?.company_id // Garantir que seja a company correta
+          })
           .eq('id', data.user.id);
 
         if (profileError) throw profileError;
