@@ -14,6 +14,9 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Plus, Users as UsersIcon, Mail, Calendar, Edit, Trash } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { formatDate } from '@/lib/utils';
+import { Database } from '@/integrations/supabase/types';
+
+type UserRole = Database['public']['Enums']['user_role'];
 
 export default function Users() {
   const { profile } = useAuth();
@@ -25,7 +28,7 @@ export default function Users() {
   const [formData, setFormData] = useState({
     email: '',
     name: '',
-    role: 'viewer' as const,
+    role: 'viewer' as UserRole,
   });
   const [error, setError] = useState('');
 
@@ -43,7 +46,7 @@ export default function Users() {
   });
 
   const createUserMutation = useMutation({
-    mutationFn: async (userData: { email: string; name: string; role: string }) => {
+    mutationFn: async (userData: { email: string; name: string; role: UserRole }) => {
       // Primeiro criar o usuário via Auth
       const { data, error: authError } = await supabase.auth.signUp({
         email: userData.email,
