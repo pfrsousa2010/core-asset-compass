@@ -9,16 +9,130 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      assets: {
+        Row: {
+          acquisition_date: string | null
+          code: string
+          company_id: string
+          created_at: string
+          id: string
+          location: string | null
+          name: string
+          status: Database["public"]["Enums"]["asset_status"]
+          updated_at: string
+          updated_by_user_id: string | null
+          value: number | null
+        }
+        Insert: {
+          acquisition_date?: string | null
+          code: string
+          company_id: string
+          created_at?: string
+          id?: string
+          location?: string | null
+          name: string
+          status?: Database["public"]["Enums"]["asset_status"]
+          updated_at?: string
+          updated_by_user_id?: string | null
+          value?: number | null
+        }
+        Update: {
+          acquisition_date?: string | null
+          code?: string
+          company_id?: string
+          created_at?: string
+          id?: string
+          location?: string | null
+          name?: string
+          status?: Database["public"]["Enums"]["asset_status"]
+          updated_at?: string
+          updated_by_user_id?: string | null
+          value?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "assets_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      companies: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          plan: Database["public"]["Enums"]["company_plan"]
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          plan?: Database["public"]["Enums"]["company_plan"]
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          plan?: Database["public"]["Enums"]["company_plan"]
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          company_id: string
+          created_at: string
+          email: string
+          id: string
+          name: string
+          role: Database["public"]["Enums"]["user_role"]
+        }
+        Insert: {
+          company_id: string
+          created_at?: string
+          email: string
+          id: string
+          name: string
+          role?: Database["public"]["Enums"]["user_role"]
+        }
+        Update: {
+          company_id?: string
+          created_at?: string
+          email?: string
+          id?: string
+          name?: string
+          role?: Database["public"]["Enums"]["user_role"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "profiles_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_user_company_id: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
+      user_has_role: {
+        Args: { _role: Database["public"]["Enums"]["user_role"] }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      asset_status: "ativo" | "manutenção" | "baixado"
+      company_plan: "free" | "basic" | "premium" | "enterprise"
+      user_role: "admin" | "editor" | "viewer"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -133,6 +247,10 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      asset_status: ["ativo", "manutenção", "baixado"],
+      company_plan: ["free", "basic", "premium", "enterprise"],
+      user_role: ["admin", "editor", "viewer"],
+    },
   },
 } as const
