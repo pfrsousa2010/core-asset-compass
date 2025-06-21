@@ -245,7 +245,7 @@ export default function AssetDetails() {
               <div className="flex items-center space-x-3">
                 <Clock className="h-5 w-5 text-gray-400" />
                 <div>
-                  <p className="text-sm font-medium text-gray-500">Atualizado em</p>
+                  <p className="text-sm font-medium text-gray-500">Última atualização</p>
                   <p className="text-lg text-gray-900">
                     {format(new Date(asset.updated_at), 'dd/MM/yyyy HH:mm', { locale: ptBR })}
                   </p>
@@ -256,8 +256,9 @@ export default function AssetDetails() {
                 <div className="flex items-center space-x-3">
                   <User className="h-5 w-5 text-gray-400" />
                   <div>
-                    <p className="text-sm font-medium text-gray-500">Atualizado por</p>
+                    <p className="text-sm font-medium text-gray-500">Modificado por</p>
                     <p className="text-lg text-gray-900">{updatedByUser.name}</p>
+                    <p className="text-sm text-gray-500">{updatedByUser.email}</p>
                   </div>
                 </div>
               )}
