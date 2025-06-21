@@ -42,6 +42,48 @@ export default function Users() {
     },
   });
 
+  const createUserMutation = useMutation({
+    mutationFn: async (userData: { email: string; name: string; role: string }) => {
+      // Primeiro criar o usuário via Auth
+      const { data, error: authError } = await supabase.auth.signUp({
+        email: userData.email,
+        password: Math.random().toString(36).slice(-12), // Password temporário
+        options: {
+          data: {
+            name: userData.name,
+          },
+        },
+      });
+
+      if (authError) throw authError;
+
+      // Se o usuário foi criado, atualizar o perfil com o role correto
+      if (data.user) {
+        const { error: profileError } = await supabase
+          .from('profiles')
+          .update({ role: userData.role })
+          .eq('id', data.user.id);
+
+        if (profileError) throw profileError;
+      }
+
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['company-users'] });
+      toast({
+        title: "Usuário criado com sucesso!",
+        description: "O usuário foi adicionado ao sistema. Ele receberá um email de confirmação.",
+      });
+      setIsCreateModalOpen(false);
+      resetForm();
+    },
+    onError: (error: any) => {
+      console.error('Error creating user:', error);
+      setError(error.message || 'Erro ao criar usuário');
+    },
+  });
+
   const updateUserMutation = useMutation({
     mutationFn: async ({ userId, updates }: { userId: string; updates: any }) => {
       const { error } = await supabase
@@ -58,6 +100,7 @@ export default function Users() {
         description: "As alterações foram salvas",
       });
       setEditingUser(null);
+      setIsCreateModalOpen(false);
       resetForm();
     },
     onError: (error: any) => {
@@ -117,6 +160,13 @@ export default function Users() {
       updateUserMutation.mutate({
         userId: editingUser.id,
         updates: { name: formData.name, role: formData.role }
+      });
+    } else {
+      // Criar novo usuário
+      createUserMutation.mutate({
+        email: formData.email,
+        name: formData.name,
+        role: formData.role
       });
     }
   };
@@ -232,10 +282,10 @@ export default function Users() {
               <div className="flex space-x-4">
                 <Button 
                   type="submit" 
-                  disabled={updateUserMutation.isPending}
+                  disabled={createUserMutation.isPending || updateUserMutation.isPending}
                   className="flex-1"
                 >
-                  {updateUserMutation.isPending 
+                  {(createUserMutation.isPending || updateUserMutation.isPending)
                     ? 'Salvando...' 
                     : editingUser ? 'Salvar Alterações' : 'Criar Usuário'
                   }
