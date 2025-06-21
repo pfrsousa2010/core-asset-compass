@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -44,7 +43,7 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 to-blue-50 px-4">
+    <div className="min-h-[85vh] flex items-center justify-center bg-gradient-to-br from-slate-50 to-blue-50 px-4">
       <div className="max-w-md w-full space-y-8">
         <div className="text-center">
           <div className="flex justify-center">
@@ -122,18 +121,6 @@ export default function Login() {
                 {loading ? 'Entrando...' : 'Entrar'}
               </Button>
             </form>
-
-            <div className="mt-6 text-center">
-              <p className="text-sm text-gray-600">
-                Não tem uma conta?{' '}
-                <Link
-                  to="/register"
-                  className="font-medium text-blue-600 hover:text-blue-500"
-                >
-                  Criar conta
-                </Link>
-              </p>
-            </div>
           </CardContent>
         </Card>
       </div>
