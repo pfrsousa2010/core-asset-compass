@@ -37,7 +37,7 @@ export default function CreateAsset() {
         model: data.model || null,
         capacity: data.capacity || null,
         voltage: data.voltage || null,
-        origin: data.origin || null,
+        origin: data.origin && data.origin !== 'nao_informado' ? data.origin : null,
         condition: data.condition || null,
         inalienable: data.inalienable,
         holder: data.holder || null,

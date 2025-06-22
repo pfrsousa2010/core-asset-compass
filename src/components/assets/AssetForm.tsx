@@ -222,7 +222,7 @@ export function AssetForm({ asset, onSubmit, isSubmitting, submitLabel }: AssetF
                 <SelectValue placeholder="Selecione a origem" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">Não informado</SelectItem>
+                <SelectItem value="nao_informado">Não informado</SelectItem>
                 <SelectItem value="compra">Compra</SelectItem>
                 <SelectItem value="doação">Doação</SelectItem>
               </SelectContent>
