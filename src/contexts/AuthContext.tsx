@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { User } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
@@ -145,18 +144,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       throw error;
     }
 
-    // Criar perfil após o signup
+    // Note: For new users, we'll create the profile without company_id initially
+    // They will need to be assigned to a company by an admin later
     if (data.user) {
       const { error: profileError } = await supabase
         .from('profiles')
-        .insert([
-          {
-            id: data.user.id,
-            name: name,
-            email: email,
-            role: 'viewer' as const,
-          }
-        ]);
+        .insert({
+          id: data.user.id,
+          name: name,
+          email: email,
+          role: 'viewer' as const,
+          company_id: '', // This will need to be set by an admin later
+        });
 
       if (profileError) {
         console.error('Erro ao criar perfil:', profileError);
