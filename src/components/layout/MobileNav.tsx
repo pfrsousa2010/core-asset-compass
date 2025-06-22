@@ -50,12 +50,12 @@ export function MobileNav() {
               <div className="flex items-center justify-center w-10 h-10 bg-blue-600 rounded-lg">
                 <Package className="h-6 w-6 text-white" />
               </div>
-              <div>
+              <div className="min-w-0 flex-1">
                 <h2 className="text-lg font-semibold text-gray-900">Patrimony</h2>
                 {company && (
-                  <div className="flex items-center text-sm text-gray-600 mt-1">
-                    <Building2 className="h-3 w-3 mr-1" />
-                    <span className="truncate">{company.name}</span>
+                  <div className="flex items-start text-sm text-gray-600 mt-1">
+                    <Building2 className="h-3 w-3 mr-1 mt-0.5 flex-shrink-0" />
+                    <span className="break-words leading-tight">{company.name}</span>
                   </div>
                 )}
               </div>
@@ -110,8 +110,8 @@ export function MobileNav() {
           {profile && (
             <div className="p-4 border-t bg-gray-50">
               <div className="text-xs text-gray-500">
-                <p className="font-medium">{profile.name}</p>
-                <p className="truncate">{profile.email}</p>
+                <p className="font-medium break-words">{profile.name}</p>
+                <p className="break-words">{profile.email}</p>
                 <p className="capitalize mt-1">
                   {profile.role === 'admin' ? 'Administrador' : 
                    profile.role === 'editor' ? 'Editor' : 'Visualizador'}

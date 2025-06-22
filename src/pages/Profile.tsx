@@ -15,7 +15,7 @@ import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 
 export default function Profile() {
-  const { profile, user, updatePassword } = useAuth();
+  const { profile, company, user, updatePassword } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -164,7 +164,7 @@ export default function Profile() {
   return (
     <div className="space-y-6 max-w-4xl">
       <div>
-        <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Perfil</h1>
+        <h1 className="text-2xl m d:text-3xl font-bold text-gray-900">Perfil</h1>
         <p className="mt-2 text-gray-600">
           Gerencie suas informações pessoais e configurações da conta
         </p>
@@ -302,13 +302,15 @@ export default function Profile() {
                 </div>
               </div>
 
-              <div className="flex items-center space-x-3">
-                <Building2 className="h-5 w-5 text-gray-400" />
-                <div>
-                  <p className="text-sm font-medium text-gray-500">Empresa</p>
-                  <p className="text-sm text-gray-900">ID: {profile.company_id}</p>
+              {company && (
+                <div className="flex items-center space-x-3">
+                  <Building2 className="h-5 w-5 text-gray-400" />
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm font-medium text-gray-500">Empresa</p>
+                    <p className="text-sm text-gray-900 break-words">{company.name}</p>
+                  </div>
                 </div>
-              </div>
+              )}
             </CardContent>
           </Card>
 

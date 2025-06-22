@@ -125,6 +125,8 @@ export type Database = {
           is_active: boolean | null
           name: string
           role: Database["public"]["Enums"]["user_role"]
+          updated_at: string | null
+          updated_by_user_id: string | null
           updated_by_user_name: string | null
         }
         Insert: {
@@ -135,6 +137,8 @@ export type Database = {
           is_active?: boolean | null
           name: string
           role?: Database["public"]["Enums"]["user_role"]
+          updated_at?: string | null
+          updated_by_user_id?: string | null
           updated_by_user_name?: string | null
         }
         Update: {
@@ -145,6 +149,8 @@ export type Database = {
           is_active?: boolean | null
           name?: string
           role?: Database["public"]["Enums"]["user_role"]
+          updated_at?: string | null
+          updated_by_user_id?: string | null
           updated_by_user_name?: string | null
         }
         Relationships: [

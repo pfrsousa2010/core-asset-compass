@@ -11,7 +11,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Plus, Users as UsersIcon, Mail, Calendar, Edit, Trash } from 'lucide-react';
+import { Switch } from '@/components/ui/switch';
+import { Plus, Users as UsersIcon, Mail, Calendar, Edit } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { formatDate } from '@/lib/utils';
 import { Database } from '@/integrations/supabase/types';
@@ -29,6 +30,7 @@ export default function Users() {
     email: '',
     name: '',
     role: 'viewer' as UserRole,
+    is_active: true,
   });
   const [error, setError] = useState('');
 
@@ -48,7 +50,7 @@ export default function Users() {
   });
 
   const createUserMutation = useMutation({
-    mutationFn: async (userData: { email: string; name: string; role: UserRole }) => {
+    mutationFn: async (userData: { email: string; name: string; role: UserRole; is_active: boolean }) => {
       // Primeiro criar o usuário via Auth
       const { data, error: authError } = await supabase.auth.signUp({
         email: userData.email,
@@ -56,7 +58,7 @@ export default function Users() {
         options: {
           data: {
             name: userData.name,
-            company_id: profile?.company_id, // Usar company_id do usuário logado
+            company_id: profile?.company_id,
           },
         },
       });
@@ -69,7 +71,8 @@ export default function Users() {
           .from('profiles')
           .update({ 
             role: userData.role,
-            company_id: profile?.company_id // Garantir que seja a company correta
+            company_id: profile?.company_id,
+            is_active: userData.is_active
           })
           .eq('id', data.user.id);
 
@@ -117,32 +120,12 @@ export default function Users() {
     },
   });
 
-  const deleteUserMutation = useMutation({
-    mutationFn: async (userId: string) => {
-      const { error } = await supabase
-        .from('profiles')
-        .delete()
-        .eq('id', userId);
-
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['company-users'] });
-      toast({
-        title: "Usuário removido com sucesso!",
-        description: "O usuário foi excluído do sistema",
-      });
-    },
-    onError: (error: any) => {
-      setError(error.message || 'Erro ao excluir usuário');
-    },
-  });
-
   const resetForm = () => {
     setFormData({
       email: '',
       name: '',
       role: 'viewer',
+      is_active: true,
     });
     setError('');
   };
@@ -153,6 +136,7 @@ export default function Users() {
       email: user.email,
       name: user.name,
       role: user.role,
+      is_active: user.is_active ?? true,
     });
   };
 
@@ -168,30 +152,19 @@ export default function Users() {
     if (editingUser) {
       updateUserMutation.mutate({
         userId: editingUser.id,
-        updates: { name: formData.name, role: formData.role }
+        updates: { 
+          name: formData.name, 
+          role: formData.role,
+          is_active: formData.is_active
+        }
       });
     } else {
-      // Criar novo usuário
       createUserMutation.mutate({
         email: formData.email,
         name: formData.name,
-        role: formData.role
+        role: formData.role,
+        is_active: formData.is_active
       });
-    }
-  };
-
-  const handleDelete = (userId: string, userName: string) => {
-    if (userId === profile?.id) {
-      toast({
-        title: "Ação não permitida",
-        description: "Você não pode excluir sua própria conta",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    if (window.confirm(`Tem certeza que deseja excluir o usuário ${userName}? Esta ação não pode ser desfeita.`)) {
-      deleteUserMutation.mutate(userId);
     }
   };
 
@@ -205,6 +178,14 @@ export default function Users() {
     return (
       <Badge className={styles[role as keyof typeof styles]}>
         {role.charAt(0).toUpperCase() + role.slice(1)}
+      </Badge>
+    );
+  };
+
+  const getStatusBadge = (isActive: boolean) => {
+    return (
+      <Badge className={isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}>
+        {isActive ? 'Ativo' : 'Inativo'}
       </Badge>
     );
   };
@@ -282,6 +263,15 @@ export default function Users() {
                 </Select>
               </div>
 
+              <div className="flex items-center space-x-2">
+                <Switch
+                  id="is_active"
+                  checked={formData.is_active}
+                  onCheckedChange={(checked) => setFormData(prev => ({ ...prev, is_active: checked }))}
+                />
+                <Label htmlFor="is_active">Usuário ativo</Label>
+              </div>
+
               {error && (
                 <Alert variant="destructive">
                   <AlertDescription>{error}</AlertDescription>
@@ -342,7 +332,10 @@ export default function Users() {
                       {user.email}
                     </div>
                   </div>
-                  {getRoleBadge(user.role)}
+                  <div className="flex flex-col space-y-2">
+                    {getRoleBadge(user.role)}
+                    {getStatusBadge(user.is_active ?? true)}
+                  </div>
                 </div>
 
                 <div className="flex items-center text-sm text-gray-600 mb-4">
@@ -362,17 +355,6 @@ export default function Users() {
                   >
                     <Edit className="h-3 w-3 mr-1" />
                     Editar
-                  </Button>
-                  
-                  <Button 
-                    variant="destructive" 
-                    size="sm" 
-                    onClick={() => handleDelete(user.id, user.name)}
-                    disabled={user.id === profile?.id}
-                    className="flex-1"
-                  >
-                    <Trash className="h-3 w-3 mr-1" />
-                    Excluir
                   </Button>
                 </div>
               </CardContent>

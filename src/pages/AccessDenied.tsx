@@ -20,7 +20,7 @@ export default function AccessDenied() {
         </CardHeader>
         <CardContent className="text-center space-y-4">
           <p className="text-gray-600">
-            Sua conta foi desativada ou seu acesso foi removido. Entre em contato com o administrador da sua empresa.
+            Sua conta foi desativada ou não está mais vinculada a uma empresa. Entre em contato com o administrador da sua empresa.
           </p>
           
           <Button onClick={signOut} className="w-full">

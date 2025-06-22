@@ -16,7 +16,7 @@ export function Header() {
           {company && (
             <div className="hidden sm:flex items-center text-gray-600 min-w-0">
               <Building2 className="h-4 w-4 mr-2 flex-shrink-0" />
-              <span className="text-sm font-medium truncate break-words max-w-48">
+              <span className="text-sm font-medium break-words">
                 {company.name}
               </span>
             </div>
@@ -26,7 +26,7 @@ export function Header() {
         <div className="flex items-center space-x-4 flex-shrink-0">
           {profile && (
             <div className="hidden md:block text-right">
-              <p className="text-sm font-medium text-gray-900 truncate max-w-32">
+              <p className="text-sm font-medium text-gray-900 break-words">
                 {profile.name}
               </p>
               <p className="text-xs text-gray-500 capitalize">
