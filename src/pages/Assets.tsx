@@ -236,12 +236,20 @@ export default function Assets() {
                 </p>
                 {canEdit && (
                   <div className="flex flex-col sm:flex-row gap-2 justify-center">
-                    <Button variant="outline" asChild>
-                      <DialogTrigger>
-                        <Upload className="h-4 w-4 mr-2" />
-                        Importar CSV
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <Button variant="outline">
+                          <Upload className="h-4 w-4 mr-2" />
+                          Importar CSV
+                        </Button>
                       </DialogTrigger>
-                    </Button>
+                      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+                        <DialogHeader>
+                          <DialogTitle>Importar Ativos</DialogTitle>
+                        </DialogHeader>
+                        <AssetImport />
+                      </DialogContent>
+                    </Dialog>
                     <Button asChild>
                       <Link to="/assets/new">
                         <Plus className="h-4 w-4 mr-2" />
