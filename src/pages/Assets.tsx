@@ -9,9 +9,11 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Plus, Search, Package, MapPin, Calendar, DollarSign, Eye } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Plus, Search, Package, MapPin, Calendar, DollarSign, Eye, Upload } from 'lucide-react';
 import { formatCurrency, formatDate } from '@/lib/utils';
 import { Database } from '@/integrations/supabase/types';
+import { AssetImport } from '@/components/assets/AssetImport';
 
 type AssetStatus = Database['public']['Enums']['asset_status'];
 
@@ -76,20 +78,36 @@ export default function Assets() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Ativos</h1>
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Ativos</h1>
           <p className="mt-2 text-gray-600">
             Gerencie todos os ativos patrimoniais da empresa
           </p>
         </div>
         {canEdit && (
-          <Button asChild>
-            <Link to="/assets/new">
-              <Plus className="h-4 w-4 mr-2" />
-              Novo Ativo
-            </Link>
-          </Button>
+          <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button variant="outline" className="w-full sm:w-auto">
+                  <Upload className="h-4 w-4 mr-2" />
+                  Importar CSV
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+                <DialogHeader>
+                  <DialogTitle>Importar Ativos</DialogTitle>
+                </DialogHeader>
+                <AssetImport />
+              </DialogContent>
+            </Dialog>
+            <Button asChild className="w-full sm:w-auto">
+              <Link to="/assets/new">
+                <Plus className="h-4 w-4 mr-2" />
+                Novo Ativo
+              </Link>
+            </Button>
+          </div>
         )}
       </div>
 
@@ -157,8 +175,8 @@ export default function Assets() {
             <Card key={asset.id} className="border-0 shadow-md hover:shadow-lg transition-shadow group">
               <CardContent className="p-6">
                 <div className="flex justify-between items-start mb-4">
-                  <div className="flex-1">
-                    <h3 className="font-semibold text-gray-900 group-hover:text-blue-600 transition-colors">
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-semibold text-gray-900 group-hover:text-blue-600 transition-colors truncate">
                       {asset.name}
                     </h3>
                     <p className="text-sm text-gray-500">#{asset.code}</p>
@@ -169,21 +187,26 @@ export default function Assets() {
                 <div className="space-y-2 mb-4">
                   {asset.location && (
                     <div className="flex items-center text-sm text-gray-600">
-                      <MapPin className="h-4 w-4 mr-2" />
-                      {asset.location}
+                      <MapPin className="h-4 w-4 mr-2 flex-shrink-0" />
+                      <span className="truncate">{asset.location}</span>
                     </div>
                   )}
                   
                   {asset.value && (
                     <div className="flex items-center text-sm text-gray-600">
-                      <DollarSign className="h-4 w-4 mr-2" />
-                      {formatCurrency(asset.value)}
+                      <DollarSign className="h-4 w-4 mr-2 flex-shrink-0" />
+                      <span>{formatCurrency(asset.value)}</span>
                     </div>
                   )}
                   
                   <div className="flex items-center text-sm text-gray-600">
-                    <Calendar className="h-4 w-4 mr-2" />
-                    {formatDate(asset.created_at)}
+                    <Calendar className="h-4 w-4 mr-2 flex-shrink-0" />
+                    <span>
+                      {asset.acquisition_date 
+                        ? formatDate(asset.acquisition_date)
+                        : formatDate(asset.created_at)
+                      }
+                    </span>
                   </div>
                 </div>
 
@@ -212,12 +235,20 @@ export default function Assets() {
                     : 'Comece adicionando seus primeiros ativos ao sistema'}
                 </p>
                 {canEdit && (
-                  <Button asChild>
-                    <Link to="/assets/new">
-                      <Plus className="h-4 w-4 mr-2" />
-                      Adicionar Primeiro Ativo
-                    </Link>
-                  </Button>
+                  <div className="flex flex-col sm:flex-row gap-2 justify-center">
+                    <Button variant="outline" asChild>
+                      <DialogTrigger>
+                        <Upload className="h-4 w-4 mr-2" />
+                        Importar CSV
+                      </DialogTrigger>
+                    </Button>
+                    <Button asChild>
+                      <Link to="/assets/new">
+                        <Plus className="h-4 w-4 mr-2" />
+                        Adicionar Primeiro Ativo
+                      </Link>
+                    </Button>
+                  </div>
                 )}
               </CardContent>
             </Card>

@@ -12,42 +12,78 @@ export type Database = {
       assets: {
         Row: {
           acquisition_date: string | null
+          capacity: string | null
           code: string
+          color: string | null
           company_id: string
+          condition: string | null
           created_at: string
+          holder: string | null
           id: string
+          inalienable: boolean | null
           location: string | null
+          manufacturer: string | null
+          model: string | null
           name: string
+          notes: string | null
+          origin: string | null
+          serial_number: string | null
           status: Database["public"]["Enums"]["asset_status"]
           updated_at: string
           updated_by_user_id: string | null
+          updated_by_user_name: string | null
           value: number | null
+          voltage: string | null
         }
         Insert: {
           acquisition_date?: string | null
+          capacity?: string | null
           code: string
+          color?: string | null
           company_id: string
+          condition?: string | null
           created_at?: string
+          holder?: string | null
           id?: string
+          inalienable?: boolean | null
           location?: string | null
+          manufacturer?: string | null
+          model?: string | null
           name: string
+          notes?: string | null
+          origin?: string | null
+          serial_number?: string | null
           status?: Database["public"]["Enums"]["asset_status"]
           updated_at?: string
           updated_by_user_id?: string | null
+          updated_by_user_name?: string | null
           value?: number | null
+          voltage?: string | null
         }
         Update: {
           acquisition_date?: string | null
+          capacity?: string | null
           code?: string
+          color?: string | null
           company_id?: string
+          condition?: string | null
           created_at?: string
+          holder?: string | null
           id?: string
+          inalienable?: boolean | null
           location?: string | null
+          manufacturer?: string | null
+          model?: string | null
           name?: string
+          notes?: string | null
+          origin?: string | null
+          serial_number?: string | null
           status?: Database["public"]["Enums"]["asset_status"]
           updated_at?: string
           updated_by_user_id?: string | null
+          updated_by_user_name?: string | null
           value?: number | null
+          voltage?: string | null
         }
         Relationships: [
           {
@@ -88,6 +124,7 @@ export type Database = {
           id: string
           name: string
           role: Database["public"]["Enums"]["user_role"]
+          updated_by_user_name: string | null
         }
         Insert: {
           company_id: string
@@ -96,6 +133,7 @@ export type Database = {
           id: string
           name: string
           role?: Database["public"]["Enums"]["user_role"]
+          updated_by_user_name?: string | null
         }
         Update: {
           company_id?: string
@@ -104,6 +142,7 @@ export type Database = {
           id?: string
           name?: string
           role?: Database["public"]["Enums"]["user_role"]
+          updated_by_user_name?: string | null
         }
         Relationships: [
           {

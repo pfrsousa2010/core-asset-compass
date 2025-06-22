@@ -1,20 +1,20 @@
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { User, Session } from '@supabase/supabase-js';
+import { User } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
 import { Tables } from '@/integrations/supabase/types';
+import { useNavigate } from 'react-router-dom';
 
 type Profile = Tables<'profiles'>;
+type Company = Tables<'companies'>;
 
 interface AuthContextType {
   user: User | null;
   profile: Profile | null;
-  session: Session | null;
+  company: Company | null;
   loading: boolean;
-  signIn: (email: string, password: string) => Promise<void>;
-  signUp: (email: string, password: string, name: string) => Promise<void>;
   signOut: () => Promise<void>;
-  refreshProfile: () => Promise<void>;
+  updatePassword: (newPassword: string) => Promise<{ success: boolean; error?: string }>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -22,107 +22,155 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
-  const [session, setSession] = useState<Session | null>(null);
+  const [company, setCompany] = useState<Company | null>(null);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
-  const fetchProfile = async (userId: string) => {
+  const clearAuthState = () => {
+    setUser(null);
+    setProfile(null);
+    setCompany(null);
+    localStorage.removeItem('supabase.auth.token');
+  };
+
+  const loadUserData = async (currentUser: User) => {
     try {
-      const { data, error } = await supabase
+      // Buscar perfil do usuário
+      const { data: profileData, error: profileError } = await supabase
         .from('profiles')
         .select('*')
-        .eq('id', userId)
+        .eq('id', currentUser.id)
         .single();
 
-      if (error && error.code !== 'PGRST116') {
-        console.error('Error fetching profile:', error);
+      if (profileError) {
+        console.error('Erro ao carregar perfil:', profileError);
+        if (profileError.code === 'PGRST116') {
+          // Perfil não encontrado, fazer logout
+          await signOut();
+          return;
+        }
+        throw profileError;
+      }
+
+      setProfile(profileData);
+
+      // Buscar dados da empresa
+      if (profileData?.company_id) {
+        const { data: companyData, error: companyError } = await supabase
+          .from('companies')
+          .select('*')
+          .eq('id', profileData.company_id)
+          .single();
+
+        if (companyError) {
+          console.error('Erro ao carregar empresa:', companyError);
+        } else {
+          setCompany(companyData);
+        }
+      }
+    } catch (error) {
+      console.error('Erro ao carregar dados do usuário:', error);
+      // Se houver erro ao carregar dados, fazer logout
+      await signOut();
+    }
+  };
+
+  const checkSession = async () => {
+    try {
+      const { data: { session }, error } = await supabase.auth.getSession();
+      
+      if (error) {
+        console.error('Erro ao verificar sessão:', error);
+        clearAuthState();
+        setLoading(false);
         return;
       }
 
-      setProfile(data);
-    } catch (error) {
-      console.error('Error fetching profile:', error);
-    }
-  };
-
-  const refreshProfile = async () => {
-    if (user) {
-      await fetchProfile(user.id);
-    }
-  };
-
-  useEffect(() => {
-    // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
       if (session?.user) {
-        fetchProfile(session.user.id);
-      }
-      setLoading(false);
-    });
-
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        setSession(session);
-        setUser(session?.user ?? null);
+        // Verificar se o token ainda é válido fazendo uma query simples
+        const { error: testError } = await supabase.from('profiles').select('id').limit(1);
         
-        if (session?.user) {
-          await fetchProfile(session.user.id);
-        } else {
-          setProfile(null);
+        if (testError && (testError.code === 'invalid_token' || testError.message?.includes('JWT'))) {
+          console.log('Token inválido, fazendo logout...');
+          await signOut();
+          return;
         }
-        
-        setLoading(false);
+
+        setUser(session.user);
+        await loadUserData(session.user);
+      } else {
+        clearAuthState();
       }
-    );
-
-    return () => subscription.unsubscribe();
-  }, []);
-
-  const signIn = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-
-    if (error) {
-      throw error;
-    }
-  };
-
-  const signUp = async (email: string, password: string, name: string) => {
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: {
-          name,
-        },
-      },
-    });
-
-    if (error) {
-      throw error;
+    } catch (error) {
+      console.error('Erro ao verificar sessão:', error);
+      clearAuthState();
+    } finally {
+      setLoading(false);
     }
   };
 
   const signOut = async () => {
-    const { error } = await supabase.auth.signOut();
-    if (error) {
-      throw error;
+    try {
+      setLoading(true);
+      await supabase.auth.signOut();
+      clearAuthState();
+      navigate('/login', { replace: true });
+    } catch (error) {
+      console.error('Erro ao fazer logout:', error);
+      // Mesmo com erro, limpar o estado local
+      clearAuthState();
+      navigate('/login', { replace: true });
+    } finally {
+      setLoading(false);
     }
   };
+
+  const updatePassword = async (newPassword: string): Promise<{ success: boolean; error?: string }> => {
+    try {
+      const { error } = await supabase.auth.updateUser({
+        password: newPassword
+      });
+
+      if (error) {
+        return { success: false, error: error.message };
+      }
+
+      return { success: true };
+    } catch (error) {
+      return { 
+        success: false, 
+        error: error instanceof Error ? error.message : 'Erro desconhecido'
+      };
+    }
+  };
+
+  useEffect(() => {
+    checkSession();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      console.log('Auth state changed:', event);
+      
+      if (event === 'SIGNED_IN' && session?.user) {
+        setUser(session.user);
+        await loadUserData(session.user);
+      } else if (event === 'SIGNED_OUT') {
+        clearAuthState();
+      } else if (event === 'TOKEN_REFRESHED' && session?.user) {
+        setUser(session.user);
+        await loadUserData(session.user);
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
 
   const value = {
     user,
     profile,
-    session,
+    company,
     loading,
-    signIn,
-    signUp,
     signOut,
-    refreshProfile,
+    updatePassword,
   };
 
   return (

@@ -1,264 +1,348 @@
 
 import { useState } from 'react';
-import { useMutation } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '@/contexts/AuthContext';
+import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Separator } from '@/components/ui/separator';
-import { User, Mail, Shield, Building, Save, Key } from 'lucide-react';
+import { User, Mail, Building2, Shield, Clock, UserCheck, Key } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { formatDate } from '@/lib/utils';
+import { format } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
 
 export default function Profile() {
-  const { profile, refreshProfile } = useAuth();
+  const { profile, user, updatePassword } = useAuth();
   const { toast } = useToast();
-  
-  const [name, setName] = useState(profile?.name || '');
-  const [currentPassword, setCurrentPassword] = useState('');
-  const [newPassword, setNewPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [error, setError] = useState('');
+  const queryClient = useQueryClient();
+
+  const [formData, setFormData] = useState({
+    name: profile?.name || '',
+    email: profile?.email || '',
+  });
+
+  const [passwordData, setPasswordData] = useState({
+    newPassword: '',
+    confirmPassword: '',
+  });
+
+  const [errors, setErrors] = useState({
+    profile: '',
+    password: '',
+  });
 
   const updateProfileMutation = useMutation({
-    mutationFn: async (newName: string) => {
-      if (!profile?.id) throw new Error('User not found');
+    mutationFn: async (data: { name: string; email: string }) => {
+      if (!profile?.id) throw new Error('Profile ID not found');
 
       const { error } = await supabase
         .from('profiles')
-        .update({ name: newName })
+        .update({
+          name: data.name,
+          email: data.email,
+        })
         .eq('id', profile.id);
 
       if (error) throw error;
     },
     onSuccess: () => {
-      refreshProfile();
+      queryClient.invalidateQueries({ queryKey: ['profile'] });
       toast({
-        title: "Perfil atualizado com sucesso!",
-        description: "Suas informações foram salvas",
+        title: "Perfil atualizado!",
+        description: "Suas informações foram salvas com sucesso",
       });
+      setErrors(prev => ({ ...prev, profile: '' }));
     },
     onError: (error: any) => {
-      setError(error.message || 'Erro ao atualizar perfil');
+      setErrors(prev => ({ ...prev, profile: error.message || 'Erro ao atualizar perfil' }));
     },
   });
 
   const updatePasswordMutation = useMutation({
-    mutationFn: async ({ current, newPass }: { current: string; newPass: string }) => {
-      const { error } = await supabase.auth.updateUser({
-        password: newPass,
-      });
-
-      if (error) throw error;
+    mutationFn: async (newPassword: string) => {
+      const result = await updatePassword(newPassword);
+      if (!result.success) {
+        throw new Error(result.error || 'Erro ao alterar senha');
+      }
+      return result;
     },
     onSuccess: () => {
-      setCurrentPassword('');
-      setNewPassword('');
-      setConfirmPassword('');
       toast({
-        title: "Senha atualizada com sucesso!",
-        description: "Sua nova senha foi salva",
+        title: "Senha alterada!",
+        description: "Sua senha foi alterada com sucesso",
       });
+      setPasswordData({ newPassword: '', confirmPassword: '' });
+      setErrors(prev => ({ ...prev, password: '' }));
     },
     onError: (error: any) => {
-      setError(error.message || 'Erro ao atualizar senha');
+      setErrors(prev => ({ ...prev, password: error.message || 'Erro ao alterar senha' }));
     },
   });
 
-  const handleUpdateProfile = (e: React.FormEvent) => {
+  const handleProfileSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
+    setErrors(prev => ({ ...prev, profile: '' }));
 
-    if (!name.trim()) {
-      setError('Nome é obrigatório');
+    if (!formData.name.trim()) {
+      setErrors(prev => ({ ...prev, profile: 'Nome é obrigatório' }));
       return;
     }
 
-    updateProfileMutation.mutate(name);
+    if (!formData.email.trim()) {
+      setErrors(prev => ({ ...prev, profile: 'Email é obrigatório' }));
+      return;
+    }
+
+    updateProfileMutation.mutate(formData);
   };
 
-  const handleUpdatePassword = (e: React.FormEvent) => {
+  const handlePasswordSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
+    setErrors(prev => ({ ...prev, password: '' }));
 
-    if (!currentPassword || !newPassword || !confirmPassword) {
-      setError('Todos os campos de senha são obrigatórios');
+    if (!passwordData.newPassword) {
+      setErrors(prev => ({ ...prev, password: 'Nova senha é obrigatória' }));
       return;
     }
 
-    if (newPassword !== confirmPassword) {
-      setError('A nova senha e a confirmação devem ser iguais');
+    if (passwordData.newPassword.length < 6) {
+      setErrors(prev => ({ ...prev, password: 'Nova senha deve ter pelo menos 6 caracteres' }));
       return;
     }
 
-    if (newPassword.length < 6) {
-      setError('A nova senha deve ter pelo menos 6 caracteres');
+    if (passwordData.newPassword !== passwordData.confirmPassword) {
+      setErrors(prev => ({ ...prev, password: 'Senhas não coincidem' }));
       return;
     }
 
-    updatePasswordMutation.mutate({
-      current: currentPassword,
-      newPass: newPassword,
-    });
+    updatePasswordMutation.mutate(passwordData.newPassword);
   };
 
-  const getRoleBadge = (role: string) => {
-    const styles = {
-      admin: 'bg-red-100 text-red-800',
-      editor: 'bg-yellow-100 text-yellow-800',
-      viewer: 'bg-green-100 text-green-800',
-    };
-    
+  const handleInputChange = (field: string, value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handlePasswordChange = (field: string, value: string) => {
+    setPasswordData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const getRoleLabel = (role: string) => {
+    switch (role) {
+      case 'admin':
+        return 'Administrador';
+      case 'editor':
+        return 'Editor';
+      case 'viewer':
+        return 'Visualizador';
+      default:
+        return role;
+    }
+  };
+
+  if (!profile) {
     return (
-      <span className={`px-3 py-1 text-sm font-medium rounded-full ${styles[role as keyof typeof styles]}`}>
-        {role.charAt(0).toUpperCase() + role.slice(1)}
-      </span>
+      <div className="space-y-6">
+        <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Perfil</h1>
+        <Card className="border-0 shadow-md">
+          <CardContent className="text-center py-12">
+            <User className="h-12 w-12 mx-auto text-gray-400 mb-4" />
+            <h3 className="text-lg font-medium text-gray-900 mb-2">
+              Perfil não encontrado
+            </h3>
+            <p className="text-gray-600">
+              Não foi possível carregar as informações do perfil
+            </p>
+          </CardContent>
+        </Card>
+      </div>
     );
-  };
+  }
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
+    <div className="space-y-6 max-w-4xl">
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">Meu Perfil</h1>
+        <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Perfil</h1>
         <p className="mt-2 text-gray-600">
-          Gerencie suas informações pessoais e configurações de conta
+          Gerencie suas informações pessoais e configurações da conta
         </p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Profile Information */}
-        <Card className="border-0 shadow-md">
-          <CardHeader>
-            <CardTitle className="flex items-center">
-              <User className="h-5 w-5 mr-2 text-blue-600" />
-              Informações Pessoais
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <form onSubmit={handleUpdateProfile} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="name">Nome Completo</Label>
-                <Input
-                  id="name"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  placeholder="Seu nome completo"
-                  required
-                />
-              </div>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Informações do Usuário */}
+        <div className="lg:col-span-2 space-y-6">
+          {/* Editar Perfil */}
+          <Card className="border-0 shadow-md">
+            <CardHeader>
+              <CardTitle className="flex items-center">
+                <User className="h-5 w-5 mr-3 text-blue-600" />
+                Informações Pessoais
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleProfileSubmit} className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="name">Nome</Label>
+                    <Input
+                      id="name"
+                      value={formData.name}
+                      onChange={(e) => handleInputChange('name', e.target.value)}
+                      placeholder="Seu nome completo"
+                    />
+                  </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  value={profile?.email || ''}
-                  disabled
-                  className="bg-gray-50"
-                />
-                <p className="text-xs text-gray-500">O email não pode ser alterado</p>
-              </div>
-
-              <Button 
-                type="submit" 
-                disabled={updateProfileMutation.isPending}
-                className="w-full"
-              >
-                <Save className="h-4 w-4 mr-2" />
-                {updateProfileMutation.isPending ? 'Salvando...' : 'Salvar Alterações'}
-              </Button>
-            </form>
-
-            <Separator />
-
-            {/* Account Info */}
-            <div className="space-y-4">
-              <h3 className="font-semibold text-gray-900">Informações da Conta</h3>
-              
-              <div className="flex items-center justify-between">
-                <div className="flex items-center">
-                  <Shield className="h-4 w-4 mr-2 text-gray-400" />
-                  <span className="text-sm text-gray-600">Papel na empresa</span>
+                  <div className="space-y-2">
+                    <Label htmlFor="email">Email</Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      value={formData.email}
+                      onChange={(e) => handleInputChange('email', e.target.value)}
+                      placeholder="seu@email.com"
+                    />
+                  </div>
                 </div>
-                {profile?.role && getRoleBadge(profile.role)}
-              </div>
 
-              <div className="flex items-center justify-between">
-                <div className="flex items-center">
-                  <Building className="h-4 w-4 mr-2 text-gray-400" />
-                  <span className="text-sm text-gray-600">Membro desde</span>
+                {errors.profile && (
+                  <Alert variant="destructive">
+                    <AlertDescription>{errors.profile}</AlertDescription>
+                  </Alert>
+                )}
+
+                <Button
+                  type="submit"
+                  disabled={updateProfileMutation.isPending}
+                  className="w-full sm:w-auto"
+                >
+                  {updateProfileMutation.isPending ? 'Salvando...' : 'Salvar Alterações'}
+                </Button>
+              </form>
+            </CardContent>
+          </Card>
+
+          {/* Alterar Senha */}
+          <Card className="border-0 shadow-md">
+            <CardHeader>
+              <CardTitle className="flex items-center">
+                <Key className="h-5 w-5 mr-3 text-blue-600" />
+                Alterar Senha
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handlePasswordSubmit} className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="newPassword">Nova Senha</Label>
+                    <Input
+                      id="newPassword"
+                      type="password"
+                      value={passwordData.newPassword}
+                      onChange={(e) => handlePasswordChange('newPassword', e.target.value)}
+                      placeholder="Digite a nova senha"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="confirmPassword">Confirmar Senha</Label>
+                    <Input
+                      id="confirmPassword"
+                      type="password"
+                      value={passwordData.confirmPassword}
+                      onChange={(e) => handlePasswordChange('confirmPassword', e.target.value)}
+                      placeholder="Confirme a nova senha"
+                    />
+                  </div>
                 </div>
-                <span className="text-sm text-gray-900">
-                  {profile?.created_at && formatDate(profile.created_at)}
-                </span>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
 
-        {/* Change Password */}
-        <Card className="border-0 shadow-md">
-          <CardHeader>
-            <CardTitle className="flex items-center">
-              <Key className="h-5 w-5 mr-2 text-blue-600" />
-              Alterar Senha
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleUpdatePassword} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="currentPassword">Senha Atual</Label>
-                <Input
-                  id="currentPassword"
-                  type="password"
-                  value={currentPassword}
-                  onChange={(e) => setCurrentPassword(e.target.value)}
-                  placeholder="Sua senha atual"
-                />
-              </div>
+                {errors.password && (
+                  <Alert variant="destructive">
+                    <AlertDescription>{errors.password}</AlertDescription>
+                  </Alert>
+                )}
 
-              <div className="space-y-2">
-                <Label htmlFor="newPassword">Nova Senha</Label>
-                <Input
-                  id="newPassword"
-                  type="password"
-                  value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
-                  placeholder="Mínimo 6 caracteres"
-                />
+                <Button
+                  type="submit"
+                  disabled={updatePasswordMutation.isPending}
+                  className="w-full sm:w-auto"
+                >
+                  {updatePasswordMutation.isPending ? 'Alterando...' : 'Alterar Senha'}
+                </Button>
+              </form>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Sidebar com informações */}
+        <div className="space-y-6">
+          {/* Informações da Conta */}
+          <Card className="border-0 shadow-md">
+            <CardHeader>
+              <CardTitle className="flex items-center">
+                <Shield className="h-5 w-5 mr-3 text-green-600" />
+                Informações da Conta
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex items-center space-x-3">
+                <Mail className="h-5 w-5 text-gray-400" />
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm font-medium text-gray-500">Email</p>
+                  <p className="text-sm text-gray-900 truncate">{profile.email}</p>
+                </div>
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="confirmPassword">Confirmar Nova Senha</Label>
-                <Input
-                  id="confirmPassword"
-                  type="password"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  placeholder="Confirme a nova senha"
-                />
+              <div className="flex items-center space-x-3">
+                <Shield className="h-5 w-5 text-gray-400" />
+                <div>
+                  <p className="text-sm font-medium text-gray-500">Função</p>
+                  <p className="text-sm text-gray-900">{getRoleLabel(profile.role)}</p>
+                </div>
               </div>
 
-              {error && (
-                <Alert variant="destructive">
-                  <AlertDescription>{error}</AlertDescription>
-                </Alert>
+              <div className="flex items-center space-x-3">
+                <Building2 className="h-5 w-5 text-gray-400" />
+                <div>
+                  <p className="text-sm font-medium text-gray-500">Empresa</p>
+                  <p className="text-sm text-gray-900">ID: {profile.company_id}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Histórico */}
+          <Card className="border-0 shadow-md">
+            <CardHeader>
+              <CardTitle className="flex items-center">
+                <Clock className="h-5 w-5 mr-3 text-blue-600" />
+                Histórico
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <p className="text-sm font-medium text-gray-500">Conta criada em</p>
+                <p className="text-sm text-gray-900">
+                  {format(new Date(profile.created_at), 'dd/MM/yyyy HH:mm', { locale: ptBR })}
+                </p>
+              </div>
+
+              {profile.updated_by_user_name && (
+                <>
+                  <Separator />
+                  <div className="flex items-center space-x-3">
+                    <UserCheck className="h-4 w-4 text-gray-400" />
+                    <div>
+                      <p className="text-sm font-medium text-gray-500">Última modificação por</p>
+                      <p className="text-sm text-gray-900">{profile.updated_by_user_name}</p>
+                    </div>
+                  </div>
+                </>
               )}
-
-              <Button 
-                type="submit" 
-                disabled={updatePasswordMutation.isPending}
-                className="w-full"
-              >
-                <Key className="h-4 w-4 mr-2" />
-                {updatePasswordMutation.isPending ? 'Atualizando...' : 'Atualizar Senha'}
-              </Button>
-            </form>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </div>
   );
