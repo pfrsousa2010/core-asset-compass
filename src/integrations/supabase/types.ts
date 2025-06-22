@@ -122,6 +122,7 @@ export type Database = {
           created_at: string
           email: string
           id: string
+          is_active: boolean | null
           name: string
           role: Database["public"]["Enums"]["user_role"]
           updated_by_user_name: string | null
@@ -131,6 +132,7 @@ export type Database = {
           created_at?: string
           email: string
           id: string
+          is_active?: boolean | null
           name: string
           role?: Database["public"]["Enums"]["user_role"]
           updated_by_user_name?: string | null
@@ -140,6 +142,7 @@ export type Database = {
           created_at?: string
           email?: string
           id?: string
+          is_active?: boolean | null
           name?: string
           role?: Database["public"]["Enums"]["user_role"]
           updated_by_user_name?: string | null
@@ -165,6 +168,10 @@ export type Database = {
       }
       user_has_role: {
         Args: { _role: Database["public"]["Enums"]["user_role"] }
+        Returns: boolean
+      }
+      user_is_active: {
+        Args: Record<PropertyKey, never>
         Returns: boolean
       }
     }

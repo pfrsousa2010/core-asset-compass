@@ -1,29 +1,32 @@
-
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { useDevice } from '@/hooks/useDevice';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Plus, Search, Package, MapPin, Calendar, DollarSign, Eye, Upload } from 'lucide-react';
+import { Plus, Search, Package, MapPin, Calendar, DollarSign, Eye, Upload, Camera } from 'lucide-react';
 import { formatCurrency, formatDate } from '@/lib/utils';
 import { Database } from '@/integrations/supabase/types';
 import { AssetImport } from '@/components/assets/AssetImport';
+import { BarcodeScanner } from '@/components/scanner/BarcodeScanner';
 
 type AssetStatus = Database['public']['Enums']['asset_status'];
 
 export default function Assets() {
   const { profile } = useAuth();
+  const { isMobileOrTablet, isDesktop } = useDevice();
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [locationFilter, setLocationFilter] = useState<string>('all');
+  const [showScanner, setShowScanner] = useState(false);
 
-  const { data: assets, isLoading } = useQuery({
+  const { data: assets, isLoading, refetch } = useQuery({
     queryKey: ['assets', search, statusFilter, locationFilter],
     queryFn: async () => {
       let query = supabase.from('assets').select('*').order('created_at', { ascending: false });
@@ -73,6 +76,11 @@ export default function Assets() {
     );
   };
 
+  const handleScanResult = (code: string) => {
+    setSearch(code);
+    refetch();
+  };
+
   const canEdit = profile?.role === 'admin' || profile?.role === 'editor';
 
   return (
@@ -87,20 +95,36 @@ export default function Assets() {
         </div>
         {canEdit && (
           <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button variant="outline" className="w-full sm:w-auto">
-                  <Upload className="h-4 w-4 mr-2" />
-                  Importar CSV
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-                <DialogHeader>
-                  <DialogTitle>Importar Ativos</DialogTitle>
-                </DialogHeader>
-                <AssetImport />
-              </DialogContent>
-            </Dialog>
+            {/* Scanner button - apenas em mobile/tablet */}
+            {isMobileOrTablet && (
+              <Button 
+                variant="outline" 
+                onClick={() => setShowScanner(true)}
+                className="w-full sm:w-auto"
+              >
+                <Camera className="h-4 w-4 mr-2" />
+                Buscar por Código
+              </Button>
+            )}
+            
+            {/* Import CSV button - apenas em desktop */}
+            {isDesktop && (
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button variant="outline" className="w-full sm:w-auto">
+                    <Upload className="h-4 w-4 mr-2" />
+                    Importar CSV
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+                  <DialogHeader>
+                    <DialogTitle>Importar Ativos</DialogTitle>
+                  </DialogHeader>
+                  <AssetImport />
+                </DialogContent>
+              </Dialog>
+            )}
+            
             <Button asChild className="w-full sm:w-auto">
               <Link to="/assets/new">
                 <Plus className="h-4 w-4 mr-2" />
@@ -126,6 +150,17 @@ export default function Assets() {
                 onChange={(e) => setSearch(e.target.value)}
                 className="pl-10"
               />
+              {/* Scanner button ao lado do campo de busca - apenas em mobile/tablet */}
+              {isMobileOrTablet && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowScanner(true)}
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2 p-1 h-6 w-6"
+                >
+                  <Camera className="h-4 w-4" />
+                </Button>
+              )}
             </div>
             
             <Select value={statusFilter} onValueChange={setStatusFilter}>
@@ -236,20 +271,23 @@ export default function Assets() {
                 </p>
                 {canEdit && (
                   <div className="flex flex-col sm:flex-row gap-2 justify-center">
-                    <Dialog>
-                      <DialogTrigger asChild>
-                        <Button variant="outline">
-                          <Upload className="h-4 w-4 mr-2" />
-                          Importar CSV
-                        </Button>
-                      </DialogTrigger>
-                      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-                        <DialogHeader>
-                          <DialogTitle>Importar Ativos</DialogTitle>
-                        </DialogHeader>
-                        <AssetImport />
-                      </DialogContent>
-                    </Dialog>
+                    {/* Import CSV apenas em desktop */}
+                    {isDesktop && (
+                      <Dialog>
+                        <DialogTrigger asChild>
+                          <Button variant="outline">
+                            <Upload className="h-4 w-4 mr-2" />
+                            Importar CSV
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+                          <DialogHeader>
+                            <DialogTitle>Importar Ativos</DialogTitle>
+                          </DialogHeader>
+                          <AssetImport />
+                        </DialogContent>
+                      </Dialog>
+                    )}
                     <Button asChild>
                       <Link to="/assets/new">
                         <Plus className="h-4 w-4 mr-2" />
@@ -263,6 +301,13 @@ export default function Assets() {
           </div>
         )}
       </div>
+
+      {/* Scanner Modal */}
+      <BarcodeScanner
+        isOpen={showScanner}
+        onClose={() => setShowScanner(false)}
+        onScan={handleScanResult}
+      />
     </div>
   );
 }

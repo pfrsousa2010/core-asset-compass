@@ -10,21 +10,25 @@ export function Header() {
   return (
     <header className="bg-white border-b border-gray-200 px-6 py-4">
       <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-4 min-w-0 flex-1">
           <MobileNav />
           
           {company && (
-            <div className="hidden sm:flex items-center text-gray-600">
-              <Building2 className="h-4 w-4 mr-2" />
-              <span className="text-sm font-medium">{company.name}</span>
+            <div className="hidden sm:flex items-center text-gray-600 min-w-0">
+              <Building2 className="h-4 w-4 mr-2 flex-shrink-0" />
+              <span className="text-sm font-medium truncate break-words max-w-48">
+                {company.name}
+              </span>
             </div>
           )}
         </div>
 
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-4 flex-shrink-0">
           {profile && (
             <div className="hidden md:block text-right">
-              <p className="text-sm font-medium text-gray-900">{profile.name}</p>
+              <p className="text-sm font-medium text-gray-900 truncate max-w-32">
+                {profile.name}
+              </p>
               <p className="text-xs text-gray-500 capitalize">
                 {profile.role === 'admin' ? 'Administrador' : 
                  profile.role === 'editor' ? 'Editor' : 'Visualizador'}

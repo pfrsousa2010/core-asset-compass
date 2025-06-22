@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { User } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
@@ -51,6 +52,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           return;
         }
         throw profileError;
+      }
+
+      // Verificar se o usuário está ativo
+      if (profileData?.is_active === false) {
+        console.log('Usuário inativo, redirecionando...');
+        navigate('/acesso-negado', { replace: true });
+        return;
       }
 
       setProfile(profileData);

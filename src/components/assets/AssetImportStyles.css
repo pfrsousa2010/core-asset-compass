@@ -1,0 +1,18 @@
+
+.file-upload-area {
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.file-upload-area:hover {
+  background-color: #f8fafc;
+  border-color: #3b82f6;
+}
+
+.file-upload-area:hover .upload-icon {
+  color: #3b82f6;
+}
+
+.file-upload-area:hover .upload-text {
+  color: #1e40af;
+}

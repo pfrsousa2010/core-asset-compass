@@ -1,3 +1,4 @@
+
 import { useAuth } from '@/contexts/AuthContext';
 import { Navigate, useLocation } from 'react-router-dom';
 import { Tables } from '@/integrations/supabase/types';
@@ -34,6 +35,11 @@ export function AuthGuard({ children, requiredRole }: AuthGuardProps) {
         </div>
       </div>
     );
+  }
+
+  // Verificar se o usuário está ativo
+  if (profile.is_active === false) {
+    return <Navigate to="/acesso-negado" replace />;
   }
 
   if (requiredRole && profile.role !== requiredRole && profile.role !== 'admin') {

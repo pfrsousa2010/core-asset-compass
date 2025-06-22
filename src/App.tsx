@@ -14,6 +14,7 @@ import CreateAsset from "@/pages/CreateAsset";
 import EditAsset from "@/pages/EditAsset";
 import Users from "@/pages/Users";
 import Profile from "@/pages/Profile";
+import AccessDenied from "@/pages/AccessDenied";
 import "./App.css";
 
 const queryClient = new QueryClient();
@@ -27,6 +28,7 @@ function App() {
             <Routes>
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
+              <Route path="/acesso-negado" element={<AccessDenied />} />
               <Route path="/" element={
                 <AuthGuard>
                   <Layout>
