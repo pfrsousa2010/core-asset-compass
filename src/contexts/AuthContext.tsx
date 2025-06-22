@@ -13,6 +13,8 @@ interface AuthContextType {
   profile: Profile | null;
   company: Company | null;
   loading: boolean;
+  signIn: (email: string, password: string) => Promise<void>;
+  signUp: (email: string, password: string, name: string) => Promise<void>;
   signOut: () => Promise<void>;
   updatePassword: (newPassword: string) => Promise<{ success: boolean; error?: string }>;
 }
@@ -109,6 +111,60 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const signIn = async (email: string, password: string): Promise<void> => {
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (error) {
+      throw error;
+    }
+
+    if (data.user) {
+      setUser(data.user);
+      await loadUserData(data.user);
+    }
+  };
+
+  const signUp = async (email: string, password: string, name: string): Promise<void> => {
+    const redirectUrl = `${window.location.origin}/`;
+    
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        emailRedirectTo: redirectUrl,
+        data: {
+          name: name,
+        }
+      }
+    });
+
+    if (error) {
+      throw error;
+    }
+
+    // Criar perfil após o signup
+    if (data.user) {
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .insert([
+          {
+            id: data.user.id,
+            name: name,
+            email: email,
+            role: 'viewer' as const,
+          }
+        ]);
+
+      if (profileError) {
+        console.error('Erro ao criar perfil:', profileError);
+        throw profileError;
+      }
+    }
+  };
+
   const signOut = async () => {
     try {
       setLoading(true);
@@ -152,12 +208,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       
       if (event === 'SIGNED_IN' && session?.user) {
         setUser(session.user);
-        await loadUserData(session.user);
+        setTimeout(() => {
+          loadUserData(session.user);
+        }, 0);
       } else if (event === 'SIGNED_OUT') {
         clearAuthState();
       } else if (event === 'TOKEN_REFRESHED' && session?.user) {
         setUser(session.user);
-        await loadUserData(session.user);
+        setTimeout(() => {
+          loadUserData(session.user);
+        }, 0);
       }
     });
 
@@ -169,6 +229,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     profile,
     company,
     loading,
+    signIn,
+    signUp,
     signOut,
     updatePassword,
   };
