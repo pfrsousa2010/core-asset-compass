@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -30,6 +29,7 @@ export default function Users() {
   const { data: users, isLoading } = useQuery({
     queryKey: ['company-users'],
     queryFn: async () => {
+      // Remover o filtro is_active = true para mostrar todos os usuários
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
