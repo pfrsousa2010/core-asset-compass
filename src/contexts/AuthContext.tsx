@@ -123,16 +123,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       email,
       password,
     });
-
+  
     if (error) {
-      throw error;
+      throw new Error('Email ou senha inválidos.');
     }
-
+  
     if (data.user) {
+      // Verificar se o usuário está ativo
+      const { data: profile, error: profileError } = await supabase
+        .from('profiles')
+        .select('is_active')
+        .eq('id', data.user.id)
+        .single();
+  
+      if (profileError || !profile?.is_active) {
+        await supabase.auth.signOut();
+        throw new Error('Sua conta está desativada. Entre em contato com o administrador.');
+      }
+  
       setUser(data.user);
       await loadUserData(data.user);
     }
-  };
+  };  
 
   const signUp = async (email: string, password: string, name: string): Promise<void> => {
     const redirectUrl = `${window.location.origin}/`;
