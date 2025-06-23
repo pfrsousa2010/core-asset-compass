@@ -279,6 +279,7 @@ Monitor Samsung,MON001,Sala 102,ativo,2023-02-10,800.00,MON789,Branco,Samsung,24
               accept=".csv"
               onChange={handleFileChange}
               disabled={importing}
+              className="cursor-pointer"
             />
           </div>
 
