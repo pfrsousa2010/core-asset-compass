@@ -62,7 +62,7 @@ export function UserCard({ user, onEdit }: UserCardProps) {
               {user.email}
             </div>
           </div>
-          <div className="flex flex-col space-y-2">
+          <div className="flex flex-col space-y-2 justify-center items-center">
             {getRoleBadge(user.role)}
             {getStatusBadge(user.is_active ?? true)}
           </div>

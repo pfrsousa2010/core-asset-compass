@@ -376,31 +376,9 @@ export default function AssetDetails() {
               {asset.updated_by_user_name && (
                 <div>
                   <p className="text-sm font-medium text-gray-500">Modificado por</p>
-                  <p className="text-lg text-gray-900">{asset.updated_by_user_name}</p>
+                  <p className="text-sm text-gray-900">{asset.updated_by_user_name}</p>
                 </div>
               )}
-            </CardContent>
-          </Card>
-
-          {/* Status do Ativo */}
-          <Card className="border-0 shadow-md">
-            <CardHeader>
-              <CardTitle>Status do Ativo</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="flex items-center space-x-4">
-                {getStatusIcon(asset.status)}
-                <div className="flex-1">
-                  <p className="font-medium text-gray-900 mb-1">
-                    {getStatusBadge(asset.status)}
-                  </p>
-                  <p className="text-sm text-gray-600">
-                    {asset.status === 'ativo' && 'Este ativo está em operação normal'}
-                    {asset.status === 'manutenção' && 'Este ativo está em manutenção'}
-                    {asset.status === 'baixado' && 'Este ativo foi baixado do patrimônio'}
-                  </p>
-                </div>
-              </div>
             </CardContent>
           </Card>
         </div>

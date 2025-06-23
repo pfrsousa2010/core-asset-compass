@@ -197,6 +197,7 @@ export default function Profile() {
                   <div className="space-y-2">
                     <Label htmlFor="email">Email</Label>
                     <Input
+                      disabled
                       id="email"
                       type="email"
                       value={formData.email}
@@ -296,7 +297,7 @@ export default function Profile() {
 
               <div className="flex items-center space-x-3">
                 <Shield className="h-5 w-5 text-gray-400" />
-                <div>
+                <div className="min-w-0 flex-1">
                   <p className="text-sm font-medium text-gray-500">Função</p>
                   <p className="text-sm text-gray-900">{getRoleLabel(profile.role)}</p>
                 </div>
@@ -333,12 +334,10 @@ export default function Profile() {
               {profile.updated_by_user_name && (
                 <>
                   <Separator />
-                  <div className="flex items-center space-x-3">
-                    <UserCheck className="h-4 w-4 text-gray-400" />
-                    <div>
-                      <p className="text-sm font-medium text-gray-500">Última modificação por</p>
-                      <p className="text-sm text-gray-900">{profile.updated_by_user_name}</p>
-                    </div>
+                  <div>
+                    <p className="text-sm font-medium text-gray-500">Última modificação</p>
+                    <p className="text-sm text-gray-900">{profile.updated_by_user_name}</p>
+                    <p className="text-sm text-gray-900">{format(new Date(profile.updated_at), 'dd/MM/yyyy HH:mm', { locale: ptBR })}</p>
                   </div>
                 </>
               )}
