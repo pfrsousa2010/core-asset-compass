@@ -29,14 +29,20 @@ export default function Users() {
   const { data: users, isLoading } = useQuery({
     queryKey: ['company-users'],
     queryFn: async () => {
-      // Remover o filtro is_active = true para mostrar todos os usuários
+      console.log('Fetching all users for company:', profile?.company_id);
+      
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
         .eq('company_id', profile?.company_id)
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching users:', error);
+        throw error;
+      }
+      
+      console.log('Fetched users:', data);
       return data || [];
     },
     enabled: !!profile?.company_id,
