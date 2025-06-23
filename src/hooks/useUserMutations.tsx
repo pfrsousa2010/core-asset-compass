@@ -71,11 +71,13 @@ export function useUserMutations() {
 
   const updateUserMutation = useMutation({
     mutationFn: async ({ userId, updates }: UpdateUserData) => {
-      // Usar update direto já que a função RPC não está disponível no tipo
-      const { error } = await supabase
-        .from('profiles')
-        .update(updates)
-        .eq('id', userId);
+      // Usar a função admin_update_user_profile para contornar as políticas RLS
+      const { error } = await supabase.rpc('admin_update_user_profile', {
+        user_id: userId,
+        new_name: updates.name,
+        new_role: updates.role,
+        new_is_active: updates.is_active
+      });
 
       if (error) throw error;
     },
