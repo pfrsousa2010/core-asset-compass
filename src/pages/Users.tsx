@@ -98,12 +98,23 @@ export default function Users() {
 
   const updateUserMutation = useMutation({
     mutationFn: async ({ userId, updates }: { userId: string; updates: any }) => {
-      const { error } = await supabase
-        .from('profiles')
-        .update(updates)
-        .eq('id', userId);
+      // Usar função de administrador para bypass das políticas RLS
+      const { data, error } = await supabase.rpc('admin_update_user_profile', {
+        user_id: userId,
+        new_name: updates.name,
+        new_role: updates.role,
+        new_is_active: updates.is_active
+      });
 
-      if (error) throw error;
+      if (error) {
+        // Fallback para update direto se a função não existir
+        const { error: fallbackError } = await supabase
+          .from('profiles')
+          .update(updates)
+          .eq('id', userId);
+        
+        if (fallbackError) throw fallbackError;
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['company-users'] });
@@ -116,6 +127,7 @@ export default function Users() {
       resetForm();
     },
     onError: (error: any) => {
+      console.error('Error updating user:', error);
       setError(error.message || 'Erro ao atualizar usuário');
     },
   });
@@ -175,9 +187,15 @@ export default function Users() {
       viewer: 'bg-green-100 text-green-800',
     };
     
+    const labels = {
+      admin: 'Administrador',
+      editor: 'Editor',
+      viewer: 'Visualizador',
+    };
+    
     return (
       <Badge className={styles[role as keyof typeof styles]}>
-        {role.charAt(0).toUpperCase() + role.slice(1)}
+        {labels[role as keyof typeof labels]}
       </Badge>
     );
   };
@@ -189,6 +207,9 @@ export default function Users() {
       </Badge>
     );
   };
+
+  // Verificar se o usuário está editando a si mesmo
+  const isEditingSelf = editingUser && editingUser.id === profile?.id;
 
   return (
     <div className="space-y-6">
@@ -263,14 +284,25 @@ export default function Users() {
                 </Select>
               </div>
 
-              <div className="flex items-center space-x-2">
-                <Switch
-                  id="is_active"
-                  checked={formData.is_active}
-                  onCheckedChange={(checked) => setFormData(prev => ({ ...prev, is_active: checked }))}
-                />
-                <Label htmlFor="is_active">Usuário ativo</Label>
-              </div>
+              {/* Mostrar campo is_active apenas se não estiver editando a si mesmo */}
+              {!isEditingSelf && (
+                <div className="flex items-center space-x-2">
+                  <Switch
+                    id="is_active"
+                    checked={formData.is_active}
+                    onCheckedChange={(checked) => setFormData(prev => ({ ...prev, is_active: checked }))}
+                  />
+                  <Label htmlFor="is_active">Usuário ativo</Label>
+                </div>
+              )}
+
+              {isEditingSelf && (
+                <div className="bg-blue-50 border border-blue-200 rounded-md p-3">
+                  <p className="text-sm text-blue-700">
+                    Você não pode alterar o status de ativação da sua própria conta.
+                  </p>
+                </div>
+              )}
 
               {error && (
                 <Alert variant="destructive">
