@@ -150,17 +150,6 @@ export default function Assets() {
                 onChange={(e) => setSearch(e.target.value)}
                 className="pl-10"
               />
-              {/* Scanner button ao lado do campo de busca - apenas em mobile/tablet */}
-              {isMobileOrTablet && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setShowScanner(true)}
-                  className="absolute right-2 top-1/2 transform -translate-y-1/2 p-1 h-6 w-6"
-                >
-                  <Camera className="h-4 w-4" />
-                </Button>
-              )}
             </div>
             
             <Select value={statusFilter} onValueChange={setStatusFilter}>
