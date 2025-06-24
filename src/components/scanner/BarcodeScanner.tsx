@@ -1,6 +1,5 @@
-
 import React, { useRef, useEffect, useState } from 'react';
-import { BrowserMultiFormatReader } from '@zxing/library';
+import { BrowserMultiFormatReader, BrowserCodeReader } from '@zxing/browser';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Camera, X } from 'lucide-react';
@@ -23,31 +22,40 @@ export function BarcodeScanner({ isOpen, onClose, onScan }: BarcodeScannerProps)
     try {
       setError(null);
       setIsScanning(true);
-      
+
+      const devices = await BrowserCodeReader.listVideoInputDevices();
+
+      if (devices.length === 0) {
+        setError("Nenhuma câmera foi encontrada.");
+        setIsScanning(false);
+        return;
+      }
+
+      const deviceId = devices[0].deviceId;
+
       readerRef.current = new BrowserMultiFormatReader();
-      
-      const result = await readerRef.current.decodeFromVideoDevice(
-        undefined,
+
+      await readerRef.current.decodeFromVideoDevice(
+        deviceId,
         videoRef.current,
         (result, error) => {
           if (result) {
-            const scannedText = result.getText();
-            onScan(scannedText);
+            const code = result.getText();
+            onScan(code);
             stopScanning();
             onClose();
           }
         }
       );
     } catch (err) {
-      console.error('Erro ao iniciar câmera:', err);
-      setError('Não foi possível acessar a câmera. Verifique as permissões.');
+      console.error("Erro ao iniciar leitura:", err);
+      setError("Não foi possível acessar a câmera.");
       setIsScanning(false);
     }
   };
 
   const stopScanning = () => {
     if (readerRef.current) {
-      readerRef.current.reset();
       readerRef.current = null;
     }
     setIsScanning(false);
@@ -74,7 +82,7 @@ export function BarcodeScanner({ isOpen, onClose, onScan }: BarcodeScannerProps)
             Escanear Código
           </DialogTitle>
         </DialogHeader>
-        
+
         <div className="space-y-4">
           <div className="relative aspect-square bg-black rounded-lg overflow-hidden">
             <video
@@ -83,7 +91,7 @@ export function BarcodeScanner({ isOpen, onClose, onScan }: BarcodeScannerProps)
               playsInline
               muted
             />
-            
+
           </div>
 
           {error && (
