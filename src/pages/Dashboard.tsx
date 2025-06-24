@@ -60,7 +60,7 @@ export default function Dashboard() {
 
     return (
       <Badge className={variants[status as keyof typeof variants]}>
-        {status}
+        {status.toUpperCase()}
       </Badge>
     );
   };

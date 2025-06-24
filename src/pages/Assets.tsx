@@ -71,7 +71,7 @@ export default function Assets() {
 
     return (
       <Badge className={variants[status]}>
-        {status}
+        {status.toUpperCase()}
       </Badge>
     );
   };
