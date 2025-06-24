@@ -15,7 +15,7 @@ export function Sidebar() {
   ];
 
   return (
-    <div className="hidden md:flex md:w-64 md:flex-col">
+    <div className="hidden lg:flex lg:w-64 lg:flex-col">
       <div className="flex flex-col flex-grow pt-5 bg-white border-r border-gray-200 overflow-y-auto">
         <div className="flex items-center flex-shrink-0 px-6 pb-4">
           <div className="flex items-center space-x-3">

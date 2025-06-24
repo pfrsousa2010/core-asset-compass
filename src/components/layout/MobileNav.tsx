@@ -5,11 +5,11 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Separator } from '@/components/ui/separator';
-import { 
-  Menu, 
-  LayoutDashboard, 
-  Package, 
-  Users, 
+import {
+  Menu,
+  LayoutDashboard,
+  Package,
+  Users,
   User,
   LogOut,
   Building2
@@ -38,7 +38,7 @@ export function MobileNav() {
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
       <SheetTrigger asChild>
-        <Button variant="ghost" size="icon" className="md:hidden">
+        <Button variant="ghost" size="icon" className="lg:hidden">
           <Menu className="h-5 w-5" />
         </Button>
       </SheetTrigger>
@@ -73,9 +73,9 @@ export function MobileNav() {
                   onClick={handleNavClick}
                   className={`flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
                     isActive
-                      ? 'bg-blue-50 text-blue-700 border-r-2 border-blue-700'
-                      : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-                  }`}
+                    ? 'bg-blue-50 text-blue-700 border-r-2 border-blue-700'
+                    : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                    }`}
                 >
                   <item.icon className="mr-3 h-5 w-5" />
                   {item.name}
@@ -96,7 +96,7 @@ export function MobileNav() {
               <User className="mr-3 h-5 w-5" />
               Perfil
             </Link>
-            
+
             <Button
               variant="ghost"
               onClick={handleSignOut}
@@ -113,8 +113,8 @@ export function MobileNav() {
                 <p className="font-medium break-words">{profile.name}</p>
                 <p className="break-words">{profile.email}</p>
                 <p className="capitalize mt-1">
-                  {profile.role === 'admin' ? 'Administrador' : 
-                   profile.role === 'editor' ? 'Editor' : 'Visualizador'}
+                  {profile.role === 'admin' ? 'Administrador' :
+                    profile.role === 'editor' ? 'Editor' : 'Visualizador'}
                 </p>
               </div>
             </div>
