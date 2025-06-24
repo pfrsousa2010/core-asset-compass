@@ -1,80 +1,83 @@
-import React, { useRef, useEffect, useState } from 'react';
-import { BrowserMultiFormatReader, BrowserCodeReader } from '@zxing/browser';
+import { useEffect, useRef, useState } from 'react';
+import { Html5Qrcode, Html5QrcodeScannerState } from 'html5-qrcode';
+import { Html5QrcodeSupportedFormats } from "html5-qrcode";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Camera, X } from 'lucide-react';
 
-interface BarcodeScannerProps {
+interface Props {
   isOpen: boolean;
   onClose: () => void;
   onScan: (code: string) => void;
 }
 
-export function BarcodeScanner({ isOpen, onClose, onScan }: BarcodeScannerProps) {
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const [isScanning, setIsScanning] = useState(false);
+export function BarcodeScanner({ isOpen, onClose, onScan }: Props) {
+  const scannerRef = useRef<Html5Qrcode | null>(null);
+  const containerId = 'html5qr-code-full-region';
   const [error, setError] = useState<string | null>(null);
-  const readerRef = useRef<BrowserMultiFormatReader | null>(null);
 
-  const startScanning = async () => {
-    if (!videoRef.current) return;
-
+  /* ---------- iniciar / parar ---------- */
+  const start = async () => {
+    if (scannerRef.current) return;        // já iniciado
     try {
-      setError(null);
-      setIsScanning(true);
-
-      const devices = await BrowserCodeReader.listVideoInputDevices();
-
-      if (devices.length === 0) {
-        setError("Nenhuma câmera foi encontrada.");
-        setIsScanning(false);
-        return;
-      }
-
-      const deviceId = devices[0].deviceId;
-
-      readerRef.current = new BrowserMultiFormatReader();
-
-      await readerRef.current.decodeFromVideoDevice(
-        undefined,
-        videoRef.current!,
-        (result, error) => {
-          if (result) {
-            const code = result.getText();
-            onScan(code);
-            stopScanning();
-            onClose();
-          }
-        }
+      scannerRef.current = new Html5Qrcode(containerId);
+      await scannerRef.current.start(
+        /* camera config */ { facingMode: 'environment' },
+        /* options    */  {
+          fps: 10,
+          qrbox: { width: 250, height: 250 }
+        },
+        (decodedText) => {
+          onScan(decodedText);
+          stop();   // encerra após 1ª leitura
+          onClose();
+        },
+        (err) => {
+          // erros de leitura acontecem a todo frame – ignore
+        },
       );
-    } catch (err) {
-      console.error("Erro ao iniciar leitura:", err);
-      setError("Não foi possível acessar a câmera.");
-      console.error("Erro ao iniciar leitura:", err);
-      setError("Não foi possível acessar a câmera.");
-      setIsScanning(false);
+    } catch (e) {
+      console.error(e);
+      setError('Não foi possível acessar a câmera.');
     }
   };
 
-  const stopScanning = () => {
-    if (readerRef.current) {
-      readerRef.current = null;
+  const stop = async () => {
+    if (scannerRef.current?.getState() === Html5QrcodeScannerState.SCANNING) {
+      await scannerRef.current?.stop();
     }
-    setIsScanning(false);
+    scannerRef.current?.clear();
+    scannerRef.current = null;
   };
 
+  /* ---------- ciclo de vida ---------- */
   useEffect(() => {
-    if (isOpen) {
-      startScanning();
-    } else {
-      stopScanning();
-    }
+    let raf: number;
+
+    const safeStart = () => {
+      // só inicia se o container já estiver no DOM
+      const el = document.getElementById(containerId);
+      if (el) start();
+      else raf = requestAnimationFrame(safeStart);
+    };
+
+    if (isOpen) safeStart();
+    else stop();
 
     return () => {
-      stopScanning();
+      cancelAnimationFrame(raf);
+      stop();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen]);
 
+  /* ---------- UI ---------- */
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-md">
@@ -83,48 +86,32 @@ export function BarcodeScanner({ isOpen, onClose, onScan }: BarcodeScannerProps)
             <Camera className="h-5 w-5" />
             Escanear Código
           </DialogTitle>
+          <DialogDescription>
+            Suporta QR code e códigos de barras comuns.
+          </DialogDescription>
         </DialogHeader>
 
-
         <div className="space-y-4">
-          <div className="relative aspect-square bg-black rounded-lg overflow-hidden">
-            <video
-              ref={videoRef}
-              className="w-full h-full object-cover"
-              playsInline
-              muted
-              autoPlay
-            />
-
-
-          </div>
-
+          <div
+            id={containerId}
+            className="relative aspect-square bg-black rounded-lg overflow-hidden"
+          />
           {error && (
-            <div className="text-sm text-red-600 bg-red-50 p-3 rounded-md">
+            <p className="text-sm text-red-600 bg-red-50 p-3 rounded">
               {error}
-            </div>
+            </p>
           )}
-
-          <div className="text-sm text-gray-600 text-center">
-            {isScanning ? (
-              'Posicione o código de barras ou QR code na frente da câmera'
-            ) : (
-              'Preparando câmera...'
-            )}
-          </div>
-
-          <div className="flex gap-2">
-            <Button variant="outline" onClick={onClose} className="flex-1">
-              <X className="h-4 w-4 mr-2" />
-              Cancelar
-            </Button>
-            {!isScanning && error && (
-              <Button onClick={startScanning} className="flex-1">
-                <Camera className="h-4 w-4 mr-2" />
-                Tentar Novamente
-              </Button>
-            )}
-          </div>
+          <Button
+            variant="outline"
+            onClick={() => {
+              stop();
+              onClose();
+            }}
+            className="w-full flex items-center justify-center gap-2"
+          >
+            <X className="h-4 w-4" />
+            Fechar
+          </Button>
         </div>
       </DialogContent>
     </Dialog>
