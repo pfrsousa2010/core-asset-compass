@@ -193,7 +193,7 @@ export default function Dashboard() {
               {recentAssets.map((asset) => (
                 <div
                   key={asset.id}
-                  className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                  className="flex flex-col md:flex-row items-center md:items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
                 >
                   <div className="flex items-center space-x-4">
                     {getStatusIcon(asset.status)}
@@ -211,7 +211,7 @@ export default function Dashboard() {
                       </div>
                     </div>
                   </div>
-                  <div className="flex items-center space-x-3">
+                  <div className="flex flex-row items-center space-x-3 mt-2 md:mt-0">
                     {asset.value && (
                       <span className="text-sm font-medium text-gray-900">
                         {formatCurrency(asset.value)}
