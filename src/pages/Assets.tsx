@@ -158,12 +158,11 @@ export default function Assets() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">Todos os status</SelectItem>
-                <SelectItem value="ativo">Ativo</SelectItem>
-                <SelectItem value="manutenção">Manutenção</SelectItem>
-                <SelectItem value="baixado">Baixado</SelectItem>
+                <SelectItem value="ativo"><Badge className='bg-green-100 text-green-800'>ATIVO</Badge></SelectItem>
+                <SelectItem value="manutenção"><Badge className='bg-yellow-100 text-yellow-800'>MANUTENÇÃO</Badge></SelectItem>
+                <SelectItem value="baixado"><Badge className='bg-red-100 text-red-800'>BAIXADO</Badge></SelectItem>
               </SelectContent>
             </Select>
-
             <Select value={locationFilter} onValueChange={setLocationFilter}>
               <SelectTrigger>
                 <SelectValue placeholder="Localização" />
@@ -182,7 +181,7 @@ export default function Assets() {
       </Card>
 
       {/* Assets List */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6">
         {isLoading ? (
           Array.from({ length: 6 }).map((_, i) => (
             <Card key={i} className="border-0 shadow-md animate-pulse">
