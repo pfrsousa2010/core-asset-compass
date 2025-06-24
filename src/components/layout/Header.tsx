@@ -14,7 +14,7 @@ export function Header() {
           <MobileNav />
           
           {company && (
-            <div className="hidden sm:flex items-center text-gray-600 min-w-0">
+            <div className="hidden lg:flex items-center text-gray-600 min-w-0">
               <Building2 className="h-4 w-4 mr-2 flex-shrink-0" />
               <span className="text-sm font-medium break-words">
                 {company.name}

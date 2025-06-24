@@ -24,12 +24,12 @@ export function Sidebar() {
             </div>
             <div>
               <h2 className="text-xl font-bold text-gray-900">Armazena</h2>
-              {company && (
+              {/* {company && (
                 <div className="flex items-center text-sm text-gray-600 mt-1">
                   <Building2 className="h-3 w-3 mr-1" />
                   <span className="break-words max-w-[140px]">{company.name}</span>
                 </div>
-              )}
+              )} */}
             </div>
           </div>
         </div>
