@@ -23,7 +23,7 @@ export function Sidebar() {
               <Package className="h-6 w-6 text-white" />
             </div>
             <div>
-              <h2 className="text-xl font-bold text-gray-900">Patrimony</h2>
+              <h2 className="text-xl font-bold text-gray-900">Armazena</h2>
               {company && (
                 <div className="flex items-center text-sm text-gray-600 mt-1">
                   <Building2 className="h-3 w-3 mr-1" />

@@ -27,7 +27,7 @@ function App() {
           <div className="min-h-[85vh] bg-gradient-to-br from-slate-50 to-blue-50">
             <Routes>
               <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
+              {/* <Route path="/register" element={<Register />} /> */}
               <Route path="/acesso-negado" element={<AccessDenied />} />
               <Route path="/" element={
                 <AuthGuard>

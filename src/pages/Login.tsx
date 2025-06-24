@@ -32,7 +32,7 @@ export default function Login() {
       await signIn(email, password);
       toast({
         title: "Login realizado com sucesso!",
-        description: "Bem-vindo ao Patrimony Manager",
+        description: "Bem-vindo ao Armazena",
       });
       navigate(from, { replace: true });
     } catch (err: any) {
@@ -52,10 +52,10 @@ export default function Login() {
             </div>
           </div>
           <h2 className="mt-6 text-3xl font-bold text-gray-900">
-            Patrimony Manager
+            Armazena App
           </h2>
-          <p className="mt-2 text-sm text-gray-600">
-            Faça login em sua conta
+          <p className="mt-6 text-2xl font-bold text-gray-900">
+            Seu gerenciador patrimonial
           </p>
         </div>
 
@@ -80,7 +80,7 @@ export default function Login() {
                   className="h-11"
                 />
               </div>
-              
+
               <div className="space-y-2">
                 <Label htmlFor="password">Senha</Label>
                 <div className="relative">
