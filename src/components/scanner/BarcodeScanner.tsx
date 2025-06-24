@@ -33,17 +33,6 @@ export function BarcodeScanner({ isOpen, onClose, onScan }: BarcodeScannerProps)
 
       const deviceId = devices[0].deviceId;
 
-
-      const devices = await BrowserCodeReader.listVideoInputDevices();
-
-      if (devices.length === 0) {
-        setError("Nenhuma câmera foi encontrada.");
-        setIsScanning(false);
-        return;
-      }
-
-      const deviceId = devices[0].deviceId;
-
       readerRef.current = new BrowserMultiFormatReader();
 
       await readerRef.current.decodeFromVideoDevice(
