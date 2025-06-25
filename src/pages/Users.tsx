@@ -9,12 +9,14 @@ import { UsersList } from '@/components/users/UsersList';
 import { UserForm } from '@/components/users/UserForm';
 import { useUserMutations } from '@/hooks/useUserMutations';
 import { Database } from '@/integrations/supabase/types';
+import { useDevice } from '@/hooks/useDevice';
 
 type UserRole = Database['public']['Enums']['user_role'];
 
 export default function Users() {
   const { profile } = useAuth();
   const { createUserMutation, updateUserMutation } = useUserMutations();
+  const { isMobile, isMobileOrTablet } = useDevice();
   
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [editingUser, setEditingUser] = useState<any>(null);
@@ -144,9 +146,11 @@ export default function Users() {
         
         <Dialog open={isCreateModalOpen} onOpenChange={setIsCreateModalOpen}>
           <DialogTrigger asChild>
-            <Button onClick={handleCreateUser}>
-              <Plus className="h-4 w-4 mr-2" />
-              Novo Usuário
+            <Button onClick={handleCreateUser} size={isMobile ? 'icon' : undefined}>
+              <Plus className="h-4 w-4" />
+              {!isMobile && (
+                <span className="ml-2">Novo Usuário</span>
+              )}
             </Button>
           </DialogTrigger>
           <DialogContent>

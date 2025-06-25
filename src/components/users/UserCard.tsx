@@ -1,4 +1,3 @@
-
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -61,10 +60,10 @@ export function UserCard({ user, onEdit }: UserCardProps) {
               <Mail className="h-3 w-3 mr-1" />
               {user.email}
             </div>
-          </div>
-          <div className="flex flex-col space-y-2 justify-center items-center">
-            {getRoleBadge(user.role)}
-            {getStatusBadge(user.is_active ?? true)}
+            <div className="flex flex-row gap-2 mt-2 justify-center">
+              {getRoleBadge(user.role)}
+              {getStatusBadge(user.is_active ?? true)}
+            </div>
           </div>
         </div>
 
