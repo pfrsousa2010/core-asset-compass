@@ -6,6 +6,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Tables } from '@/integrations/supabase/types';
+import { Badge } from '@/components/ui/badge';
 
 type Asset = Tables<'assets'>;
 type AssetStatus = Asset['status'];
@@ -72,7 +73,7 @@ export function AssetForm({ asset, onSubmit, isSubmitting, submitLabel }: AssetF
       {/* Informações Básicas */}
       <div className="bg-white rounded-lg border p-6">
         <h3 className="text-lg font-semibold text-gray-900 mb-4">Informações Básicas</h3>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2">
             <Label htmlFor="name">Nome do Ativo *</Label>
@@ -113,9 +114,9 @@ export function AssetForm({ asset, onSubmit, isSubmitting, submitLabel }: AssetF
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="ativo">Ativo</SelectItem>
-                <SelectItem value="manutenção">Manutenção</SelectItem>
-                <SelectItem value="baixado">Baixado</SelectItem>
+                <SelectItem value="ativo"><Badge className='bg-green-100 text-green-800'>ATIVO</Badge></SelectItem>
+                <SelectItem value="manutenção"><Badge className='bg-yellow-100 text-yellow-800'>MANUTENÇÃO</Badge></SelectItem>
+                <SelectItem value="baixado"><Badge className='bg-red-100 text-red-800'>BAIXADO</Badge></SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -125,7 +126,7 @@ export function AssetForm({ asset, onSubmit, isSubmitting, submitLabel }: AssetF
       {/* Especificações Técnicas */}
       <div className="bg-white rounded-lg border p-6">
         <h3 className="text-lg font-semibold text-gray-900 mb-4">Especificações Técnicas</h3>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2">
             <Label htmlFor="manufacturer">Fabricante</Label>
@@ -192,7 +193,7 @@ export function AssetForm({ asset, onSubmit, isSubmitting, submitLabel }: AssetF
       {/* Localização e Patrimônio */}
       <div className="bg-white rounded-lg border p-6">
         <h3 className="text-lg font-semibold text-gray-900 mb-4">Localização e Patrimônio</h3>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2">
             <Label htmlFor="location">Localização</Label>
@@ -262,7 +263,7 @@ export function AssetForm({ asset, onSubmit, isSubmitting, submitLabel }: AssetF
       {/* Observações */}
       <div className="bg-white rounded-lg border p-6">
         <h3 className="text-lg font-semibold text-gray-900 mb-4">Observações</h3>
-        
+
         <div className="space-y-2">
           <Label htmlFor="notes">Observações</Label>
           <Textarea
