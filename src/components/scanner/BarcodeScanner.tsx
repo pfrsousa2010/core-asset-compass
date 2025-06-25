@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
 import { Html5Qrcode, Html5QrcodeScannerState } from 'html5-qrcode';
-import { Html5QrcodeSupportedFormats } from "html5-qrcode";
 import {
   Dialog,
   DialogContent,
@@ -31,7 +30,6 @@ export function BarcodeScanner({ isOpen, onClose, onScan }: Props) {
         /* camera config */ { facingMode: 'environment' },
         /* options    */  {
           fps: 10,
-          qrbox: { width: 250, height: 250 }
         },
         (decodedText) => {
           onScan(decodedText);
@@ -74,7 +72,6 @@ export function BarcodeScanner({ isOpen, onClose, onScan }: Props) {
       cancelAnimationFrame(raf);
       stop();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen]);
 
   /* ---------- UI ---------- */
