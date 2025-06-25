@@ -59,7 +59,7 @@ export default function AssetDetails() {
 
     return (
       <Badge className={variants[status as keyof typeof variants]}>
-        {status}
+        {status.toLocaleUpperCase()}
       </Badge>
     );
   };
@@ -354,13 +354,13 @@ export default function AssetDetails() {
                 <div>
                   <p className="text-sm font-medium text-gray-500">Data de Aquisição</p>
                   <p className="text-lg text-gray-900">
-                    {format(new Date(asset.acquisition_date), 'dd/MM/yyyy', { locale: ptBR })}
+                    {format(new Date(asset.acquisition_date + 'T00:00:00'), 'dd/MM/yyyy', { locale: ptBR })}
                   </p>
                 </div>
               )}
 
               <div>
-                <p className="text-sm font-medium text-gray-500">Criado em</p>
+                <p className="text-sm font-medium text-gray-500">Adicionado em</p>
                 <p className="text-lg text-gray-900">
                   {format(new Date(asset.created_at), 'dd/MM/yyyy HH:mm', { locale: ptBR })}
                 </p>
