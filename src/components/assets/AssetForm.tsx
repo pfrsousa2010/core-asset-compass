@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -217,16 +216,12 @@ export function AssetForm({ asset, onSubmit, isSubmitting, submitLabel }: AssetF
 
           <div className="space-y-2">
             <Label htmlFor="origin">Origem</Label>
-            <Select value={formData.origin} onValueChange={(value) => handleInputChange('origin', value)}>
-              <SelectTrigger>
-                <SelectValue placeholder="Selecione a origem" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="nao_informado">Não informado</SelectItem>
-                <SelectItem value="compra">Compra</SelectItem>
-                <SelectItem value="doação">Doação</SelectItem>
-              </SelectContent>
-            </Select>
+            <Input
+              id="origin"
+              value={formData.origin}
+              onChange={(e) => handleInputChange('origin', e.target.value)}
+              placeholder="Ex: Compra, Doação, Transferência"
+            />
           </div>
 
           <div className="space-y-2">

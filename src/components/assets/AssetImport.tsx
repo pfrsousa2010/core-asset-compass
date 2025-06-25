@@ -86,7 +86,7 @@ export function AssetImport() {
             model: row.modelo || null,
             capacity: row.capacidade || null,
             voltage: row.voltagem || null,
-            origin: row.origem === 'doação' || row.origem === 'compra' ? row.origem : null,
+            origin: row.origem || null,
             condition: row.condicoes || null,
             inalienable: row.inalienavel?.toLowerCase() === 'sim' || row.inalienavel?.toLowerCase() ===  'true',
             holder: row.detentor || null,
