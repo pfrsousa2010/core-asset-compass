@@ -1,4 +1,3 @@
-
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { MobileNav } from './MobileNav';
@@ -8,7 +7,7 @@ export function Header() {
   const { profile, company, signOut } = useAuth();
 
   return (
-    <header className="bg-white border-b border-gray-200 px-6 py-4">
+    <header className="bg-white border-b border-gray-200 px-0 py-0 sm:px-2 sm:py-2 md:px-6 md:py-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-4 min-w-0 flex-1">
           <MobileNav />

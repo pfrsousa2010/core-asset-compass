@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -38,8 +37,8 @@ export function MobileNav() {
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
       <SheetTrigger asChild>
-        <Button variant="ghost" size="icon" className="lg:hidden">
-          <Menu className="h-5 w-5" />
+        <Button variant="ghost" size="icon" className="lg:hidden !w-14 !h-14 [&_svg]:!w-8 [&_svg]:!h-8">
+          <Menu />
         </Button>
       </SheetTrigger>
       <SheetContent side="left" className="w-72 p-0">
