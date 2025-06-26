@@ -37,6 +37,7 @@ export default function Assets() {
   const observerRef = useRef<IntersectionObserver | null>(null);
   const loadingRef = useRef<HTMLDivElement>(null);
   const [loading, setLoading] = useState(false);
+  const [loadingMore, setLoadingMore] = useState(false);
   const [exportLoading, setExportLoading] = useState(false);
 
   // Função para buscar ativos paginados
@@ -71,7 +72,11 @@ export default function Assets() {
   useEffect(() => {
     let ignore = false;
     const load = async () => {
-      setLoading(true);
+      if (currentPage === 1) {
+        setLoading(true);
+      } else {
+        setLoadingMore(true);
+      }
       try {
         const newAssets = await fetchAssets(currentPage);
         if (!ignore) {
@@ -79,7 +84,13 @@ export default function Assets() {
           setHasMore(newAssets.length === itemsPerPage);
         }
       } finally {
-        if (!ignore) setLoading(false);
+        if (!ignore) {
+          if (currentPage === 1) {
+            setLoading(false);
+          } else {
+            setLoadingMore(false);
+          }
+        }
       }
     };
     load();
@@ -98,15 +109,15 @@ export default function Assets() {
 
   // Intersection Observer para scroll infinito
   const lastElementRef = useCallback((node: HTMLDivElement) => {
-    if (!hasMore) return;
+    if (!hasMore || loadingMore) return;
     if (observerRef.current) observerRef.current.disconnect();
     observerRef.current = new IntersectionObserver(entries => {
-      if (entries[0].isIntersecting && hasMore) {
+      if (entries[0].isIntersecting && hasMore && !loadingMore) {
         setCurrentPage(prev => prev + 1);
       }
     });
     if (node) observerRef.current.observe(node);
-  }, [hasMore]);
+  }, [hasMore, loadingMore]);
 
   // Scroll to top function
   const scrollToTop = () => {
@@ -362,16 +373,15 @@ export default function Assets() {
       {/* Assets List */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6">
         {loading && !exportLoading ? (
-          Array.from({ length: 6 }).map((_, i) => (
-            <Card key={i} className="border-0 shadow-md animate-pulse">
-              <CardContent className="p-6">
-                <div className="h-4 bg-gray-200 rounded w-3/4 mb-4"></div>
-                <div className="h-3 bg-gray-200 rounded w-1/2 mb-2"></div>
-                <div className="h-3 bg-gray-200 rounded w-full mb-4"></div>
-                <div className="h-8 bg-gray-200 rounded w-20"></div>
-              </CardContent>
-            </Card>
-          ))
+          <div className="col-span-full flex justify-center py-12">
+            <div className="flex flex-col items-center space-y-4">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+              <div className="flex items-center space-x-2 text-gray-500">
+                <Package className="h-5 w-5 animate-pulse" />
+                <span className="text-base">Carregando ativos...</span>
+              </div>
+            </div>
+          </div>
         ) : displayedAssets.length === 0 ? (
           <div className="col-span-full">
             <Card className="border-0 shadow-md">
@@ -472,9 +482,15 @@ export default function Assets() {
               </Card>
             ))}
             {/* Loading indicator for infinite scroll */}
-            {hasMore && (
+            {hasMore && loadingMore && (
               <div ref={loadingRef} className="col-span-full flex justify-center py-8">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                <div className="flex flex-col items-center space-y-3">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                  <div className="flex items-center space-x-2 text-gray-500">
+                    <Package className="h-4 w-4 animate-pulse" />
+                    <span className="text-sm">Carregando mais ativos...</span>
+                  </div>
+                </div>
               </div>
             )}
           </>

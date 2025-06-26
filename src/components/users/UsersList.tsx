@@ -1,4 +1,3 @@
-
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Plus, Users as UsersIcon } from 'lucide-react';
@@ -26,17 +25,14 @@ interface UsersListProps {
 export function UsersList({ users, isLoading, onEdit, onCreateUser }: UsersListProps) {
   if (isLoading) {
     return (
-      <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-        {Array.from({ length: 6 }).map((_, i) => (
-          <Card key={i} className="border-0 shadow-md animate-pulse">
-            <CardContent className="p-6">
-              <div className="h-4 bg-gray-200 rounded w-3/4 mb-4"></div>
-              <div className="h-3 bg-gray-200 rounded w-1/2 mb-2"></div>
-              <div className="h-3 bg-gray-200 rounded w-full mb-4"></div>
-              <div className="h-8 bg-gray-200 rounded w-20"></div>
-            </CardContent>
-          </Card>
-        ))}
+      <div className="col-span-full flex justify-center py-12">
+        <div className="flex flex-col items-center space-y-4">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+          <div className="flex items-center space-x-2 text-gray-500">
+            <UsersIcon className="h-5 w-5 animate-pulse" />
+            <span className="text-base">Carregando usuários...</span>
+          </div>
+        </div>
       </div>
     );
   }
