@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
@@ -11,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Plus, Search, Package, MapPin, Calendar, DollarSign, Eye, Upload, Camera, FileExport } from 'lucide-react';
+import { Plus, Search, Package, MapPin, Calendar, DollarSign, Eye, Upload, Camera, FileText } from 'lucide-react';
 import { formatCurrency, formatDate } from '@/lib/utils';
 import { Database } from '@/integrations/supabase/types';
 import { AssetImport } from '@/components/assets/AssetImport';
@@ -20,7 +19,7 @@ import { BarcodeScanner } from '@/components/scanner/BarcodeScanner';
 type AssetStatus = Database['public']['Enums']['asset_status'];
 
 export default function Assets() {
-  const { profile } = useAuth();
+  const { profile, company } = useAuth();
   const { isMobileOrTablet, isDesktop } = useDevice();
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
@@ -144,7 +143,11 @@ export default function Assets() {
     const link = document.createElement('a');
     const url = URL.createObjectURL(blob);
     link.setAttribute('href', url);
-    link.setAttribute('download', `ativos_${new Date().toISOString().split('T')[0]}.csv`);
+    // Gerar data e hora em UTC-3
+    const now = new Date();
+    const utc3 = new Date(now.getTime() - 3 * 60 * 60 * 1000);
+    const dateStr = utc3.toISOString().replace('T', '_').slice(0, 16).replace(':', '') + "h";
+    link.setAttribute('download', `ativos_${company.name}_${dateStr}.csv`);
     link.style.visibility = 'hidden';
     document.body.appendChild(link);
     link.click();
@@ -186,7 +189,7 @@ export default function Assets() {
                   className="w-full sm:w-auto"
                   disabled={!assets || assets.length === 0}
                 >
-                  <FileExport className="h-4 w-4 mr-2" />
+                  <FileText className="h-4 w-4 mr-2" />
                   Exportar CSV
                 </Button>
                 
