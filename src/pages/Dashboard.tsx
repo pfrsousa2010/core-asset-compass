@@ -211,7 +211,7 @@ export default function Dashboard() {
                       </div>
                     </div>
                   </div>
-                  <div className="flex flex-col items-center space-x-3 space-y-2 mt-2 md:mt-0">
+                  <div className="flex flex-col md:flex-row items-center md:space-x-3 space-y-2 md:space-y-0 mt-2 md:mt-0">
                     {asset.value && (
                       <span className="text-sm font-medium text-gray-900">
                         {formatCurrency(asset.value)}
