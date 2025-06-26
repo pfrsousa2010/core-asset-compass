@@ -265,7 +265,6 @@ export function AssetForm({ asset, onSubmit, isSubmitting, submitLabel }: AssetF
         <h3 className="text-lg font-semibold text-gray-900 mb-4">Observações</h3>
 
         <div className="space-y-2">
-          <Label htmlFor="notes">Observações</Label>
           <Textarea
             id="notes"
             value={formData.notes}

@@ -6,7 +6,6 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { AuthGuard } from "@/components/auth/AuthGuard";
 import { Layout } from "@/components/layout/Layout";
 import Login from "@/pages/Login";
-import Register from "@/pages/Register";
 import Dashboard from "@/pages/Dashboard";
 import Assets from "@/pages/Assets";
 import AssetDetails from "@/pages/AssetDetails";
@@ -28,7 +27,7 @@ function App() {
       <BrowserRouter>
         <AuthRedirectHandler />
         <AuthProvider>
-          <div className="min-h-[85vh] bg-gradient-to-br from-slate-50 to-blue-50">
+          <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 overflow-hidden">
             <Routes>
               <Route path="/reset-password" element={<ResetPassword />} />
               <Route path="/login" element={<Login />} />

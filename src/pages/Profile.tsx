@@ -144,7 +144,7 @@ export default function Profile() {
 
   if (!profile) {
     return (
-      <div className="space-y-6">
+      <div className="space-y-6 pb-10">
         <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Perfil</h1>
         <Card className="border-0 shadow-md">
           <CardContent className="text-center py-12">
@@ -162,7 +162,7 @@ export default function Profile() {
   }
 
   return (
-    <div className="space-y-6 max-w-4xl">
+    <div className="space-y-6 max-w-4xl pb-10">
       <div>
         <h1 className="text-2xl m d:text-3xl font-bold text-gray-900">Perfil</h1>
         <p className="mt-2 text-gray-600">

@@ -134,7 +134,7 @@ export default function Users() {
   const isEditingSelf = editingUser && editingUser.id === profile?.id;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 pb-10">
       {/* Header */}
       <div className="flex justify-between items-center">
         <div>

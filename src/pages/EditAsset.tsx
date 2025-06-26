@@ -94,7 +94,7 @@ export default function EditAsset() {
 
   if (isLoading) {
     return (
-      <div className="space-y-6">
+      <div className="space-y-6 pb-10">
         <div className="flex items-center space-x-4">
           <Button variant="ghost" onClick={() => navigate('/assets')}>
             <ArrowLeft className="h-4 w-4 mr-2" />
@@ -116,7 +116,7 @@ export default function EditAsset() {
 
   if (!asset) {
     return (
-      <div className="space-y-6">
+      <div className="space-y-6 pb-10">
         <div className="flex items-center space-x-4">
           <Button variant="ghost" onClick={() => navigate('/assets')}>
             <ArrowLeft className="h-4 w-4 mr-2" />
@@ -131,7 +131,7 @@ export default function EditAsset() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 pb-10">
       {/* Header */}
       <div className="flex items-center space-x-4">
         <Button variant="ghost" onClick={() => navigate(`/assets/${id}`)}>

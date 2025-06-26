@@ -157,7 +157,7 @@ export default function Assets() {
   const canEdit = profile?.role === 'admin' || profile?.role === 'editor';
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 pb-10">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
@@ -201,9 +201,6 @@ export default function Assets() {
                     </Button>
                   </DialogTrigger>
                   <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-                    {/* <DialogHeader>
-                      <DialogTitle>Importar Ativos</DialogTitle>
-                    </DialogHeader> */}
                     <AssetImport />
                   </DialogContent>
                 </Dialog>

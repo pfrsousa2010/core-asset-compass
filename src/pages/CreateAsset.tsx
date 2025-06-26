@@ -74,7 +74,7 @@ export default function CreateAsset() {
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 pb-10">
       {/* Header */}
       <div className="flex items-center space-x-4">
         <Button variant="ghost" onClick={() => navigate('/assets')}>
