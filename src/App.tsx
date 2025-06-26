@@ -16,6 +16,9 @@ import Users from "@/pages/Users";
 import Profile from "@/pages/Profile";
 import AccessDenied from "@/pages/AccessDenied";
 import "./App.css";
+import AuthRedirectHandler from "@/components/auth/AuthRedirectHandler";
+import ResetPassword from "@/pages/ResetPassword";
+
 
 const queryClient = new QueryClient();
 
@@ -23,9 +26,11 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
+        <AuthRedirectHandler />
         <AuthProvider>
           <div className="min-h-[85vh] bg-gradient-to-br from-slate-50 to-blue-50">
             <Routes>
+              <Route path="/reset-password" element={<ResetPassword />} />
               <Route path="/login" element={<Login />} />
               {/* <Route path="/register" element={<Register />} /> */}
               <Route path="/acesso-negado" element={<AccessDenied />} />
