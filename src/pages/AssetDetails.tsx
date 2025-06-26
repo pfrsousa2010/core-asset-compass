@@ -1,22 +1,30 @@
-
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
-import { 
-  ArrowLeft, 
-  Edit, 
-  Package, 
-  MapPin, 
-  Calendar, 
-  DollarSign, 
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
+import {
+  ArrowLeft,
+  Edit,
+  Trash2,
+  Package,
+  MapPin,
+  Calendar,
+  DollarSign,
   Hash,
-  Clock,
-  User,
   Cpu,
   Palette,
   Zap,
@@ -24,14 +32,17 @@ import {
   UserCheck,
   AlertTriangle
 } from 'lucide-react';
-import { formatCurrency, formatDate } from '@/lib/utils';
+import { formatCurrency } from '@/lib/utils';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import { useToast } from '@/hooks/use-toast';
 
 export default function AssetDetails() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { profile } = useAuth();
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
 
   const { data: asset, isLoading } = useQuery({
     queryKey: ['asset', id],
@@ -49,6 +60,40 @@ export default function AssetDetails() {
     },
     enabled: !!id,
   });
+
+  const deleteAssetMutation = useMutation({
+    mutationFn: async () => {
+      if (!id) throw new Error('Asset ID is required');
+
+      const { error } = await supabase
+        .from('assets')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['assets'] });
+      queryClient.invalidateQueries({ queryKey: ['dashboard-stats'] });
+      queryClient.invalidateQueries({ queryKey: ['recent-assets'] });
+      toast({
+        title: "Ativo deletado com sucesso!",
+        description: "O ativo foi removido do sistema",
+      });
+      navigate('/assets');
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Erro ao deletar ativo",
+        description: error.message || 'Erro ao deletar o ativo',
+        variant: "destructive",
+      });
+    },
+  });
+
+  const handleDeleteAsset = () => {
+    deleteAssetMutation.mutate();
+  };
 
   const getStatusBadge = (status: string) => {
     const variants = {
@@ -78,6 +123,7 @@ export default function AssetDetails() {
   };
 
   const canEdit = profile?.role === 'admin' || profile?.role === 'editor';
+  const canDelete = profile?.role === 'admin';
 
   if (isLoading) {
     return (
@@ -150,14 +196,46 @@ export default function AssetDetails() {
             <p className="mt-2 text-gray-600">Detalhes do ativo</p>
           </div>
         </div>
-        
+
         {canEdit && (
-          <Button asChild>
-            <Link to={`/assets/${asset.id}/edit`}>
-              <Edit className="h-4 w-4 mr-2" />
-              Editar
-            </Link>
-          </Button>
+          <div className="flex gap-2">
+            <Button asChild>
+              <Link to={`/assets/${asset.id}/edit`}>
+                <Edit className="h-4 w-4 mr-2" />
+                Editar
+              </Link>
+            </Button>
+            
+            {canDelete && (
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button variant="destructive">
+                    <Trash2 className="h-4 w-4 mr-2" />
+                    Apagar
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Confirmar exclusão</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Tem certeza que deseja deletar o ativo "{asset.name}"? 
+                      Esta ação não pode ser desfeita e todos os dados do ativo serão perdidos permanentemente.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                    <AlertDialogAction
+                      onClick={handleDeleteAsset}
+                      className="bg-red-600 hover:bg-red-700"
+                      disabled={deleteAssetMutation.isPending}
+                    >
+                      {deleteAssetMutation.isPending ? 'Deletando...' : 'Deletar Ativo'}
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            )}
+          </div>
         )}
       </div>
 
