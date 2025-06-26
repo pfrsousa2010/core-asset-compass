@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
@@ -10,13 +10,16 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Plus, Search, Package, MapPin, Calendar, DollarSign, Eye, Upload, Camera, FileText } from 'lucide-react';
+import { Plus, Search, Package, MapPin, Calendar, DollarSign, Eye, Upload, Camera, FileText, ArrowUp } from 'lucide-react';
 import { formatCurrency, formatDate } from '@/lib/utils';
 import { Database } from '@/integrations/supabase/types';
 import { AssetImport } from '@/components/assets/AssetImport';
 import { BarcodeScanner } from '@/components/scanner/BarcodeScanner';
+import { useContext } from "react";
+import { ScrollContext } from "@/components/layout/Layout";
 
 type AssetStatus = Database['public']['Enums']['asset_status'];
+type Asset = Database['public']['Tables']['assets']['Row'];
 
 export default function Assets() {
   const { profile, company } = useAuth();
@@ -25,6 +28,14 @@ export default function Assets() {
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [locationFilter, setLocationFilter] = useState<string>('all');
   const [showScanner, setShowScanner] = useState(false);
+  const [displayedAssets, setDisplayedAssets] = useState<Asset[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [showScrollToTop, setShowScrollToTop] = useState(false);
+  const itemsPerPage = 20;
+  const scrollRef = useContext(ScrollContext);
+  const observerRef = useRef<IntersectionObserver | null>(null);
+  const loadingRef = useRef<HTMLDivElement>(null);
 
   const { data: assets, isLoading, refetch } = useQuery({
     queryKey: ['assets', search, statusFilter, locationFilter],
@@ -48,6 +59,75 @@ export default function Assets() {
       return data || [];
     },
   });
+
+  // Função para buscar ativos paginados
+  const fetchAssets = useCallback(async (page: number) => {
+    let query = supabase.from('assets').select('*').order('created_at', { ascending: false });
+
+    if (search) {
+      query = query.or(`name.ilike.%${search}%,code.ilike.%${search}%`);
+    }
+    if (statusFilter !== 'all') {
+      query = query.eq('status', statusFilter as AssetStatus);
+    }
+    if (locationFilter !== 'all') {
+      query = query.eq('location', locationFilter);
+    }
+
+    const from = (page - 1) * itemsPerPage;
+    const to = from + itemsPerPage - 1;
+    const { data, error } = await query.range(from, to);
+    if (error) throw error;
+    return data || [];
+  }, [search, statusFilter, locationFilter]);
+
+  // Resetar quando filtros mudam
+  useEffect(() => {
+    setDisplayedAssets([]);
+    setCurrentPage(1);
+    setHasMore(true);
+  }, [search, statusFilter, locationFilter]);
+
+  // Buscar ativos ao carregar ou mudar página
+  useEffect(() => {
+    let ignore = false;
+    const load = async () => {
+      const newAssets = await fetchAssets(currentPage);
+      if (!ignore) {
+        setDisplayedAssets(prev => currentPage === 1 ? newAssets : [...prev, ...newAssets]);
+        setHasMore(newAssets.length === itemsPerPage);
+      }
+    };
+    load();
+    return () => { ignore = true; };
+  }, [fetchAssets, currentPage]);
+
+  // Mostrar botão de voltar ao topo só se displayedAssets.length > itemsPerPage
+  useEffect(() => {
+    const el = scrollRef?.current;
+    if (!el) return;
+
+    const onScroll = () => setShowScrollToTop(el.scrollTop > 300);
+    el.addEventListener("scroll", onScroll);
+    return () => el.removeEventListener("scroll", onScroll);
+  }, [scrollRef]);
+
+  // Intersection Observer para scroll infinito
+  const lastElementRef = useCallback((node: HTMLDivElement) => {
+    if (!hasMore) return;
+    if (observerRef.current) observerRef.current.disconnect();
+    observerRef.current = new IntersectionObserver(entries => {
+      if (entries[0].isIntersecting && hasMore) {
+        setCurrentPage(prev => prev + 1);
+      }
+    });
+    if (node) observerRef.current.observe(node);
+  }, [hasMore]);
+
+  // Scroll to top function
+  const scrollToTop = () => {
+    scrollRef?.current?.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   const { data: locations } = useQuery({
     queryKey: ['asset-locations'],
@@ -157,7 +237,10 @@ export default function Assets() {
   const canEdit = profile?.role === 'admin' || profile?.role === 'editor';
 
   return (
-    <div className="space-y-6 pb-10">
+    <div
+      id="assets-scroll-container"
+      className="space-y-6 pb-10 overflow-y-auto"
+    >
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
@@ -285,57 +368,70 @@ export default function Assets() {
               </CardContent>
             </Card>
           ))
-        ) : assets && assets.length > 0 ? (
-          assets.map((asset) => (
-            <Card key={asset.id} className="border-0 shadow-md hover:shadow-lg transition-shadow group">
-              <CardContent className="p-6">
-                <div className="flex justify-between items-start mb-4">
-                  <div className="flex-1 min-w-0">
-                    <h3 className="font-semibold text-gray-900 group-hover:text-blue-600 transition-colors truncate">
-                      {asset.name}
-                    </h3>
-                    <p className="text-sm text-gray-500">#{asset.code}</p>
-                  </div>
-                  {getStatusBadge(asset.status)}
-                </div>
-
-                <div className="space-y-2 mb-4">
-                  {asset.location && (
-                    <div className="flex items-center text-sm text-gray-600">
-                      <MapPin className="h-4 w-4 mr-2 flex-shrink-0" />
-                      <span className="truncate">{asset.location}</span>
+        ) : displayedAssets && displayedAssets.length > 0 ? (
+          <>
+            {displayedAssets.map((asset, index) => (
+              <Card 
+                key={asset.id} 
+                className="border-0 shadow-md hover:shadow-lg transition-shadow group"
+                ref={index === displayedAssets.length - 1 ? lastElementRef : null}
+              >
+                <CardContent className="p-6">
+                  <div className="flex justify-between items-start mb-4">
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-semibold text-gray-900 group-hover:text-blue-600 transition-colors truncate">
+                        {asset.name}
+                      </h3>
+                      <p className="text-sm text-gray-500">#{asset.code}</p>
                     </div>
-                  )}
-                  
-                  {asset.value && (
-                    <div className="flex items-center text-sm text-gray-600">
-                      <DollarSign className="h-4 w-4 mr-2 flex-shrink-0" />
-                      <span>{formatCurrency(asset.value)}</span>
-                    </div>
-                  )}
-                  
-                  <div className="flex items-center text-sm text-gray-600">
-                    <Calendar className="h-4 w-4 mr-2 flex-shrink-0" />
-                    <span>
-                      {asset.acquisition_date 
-                        ? formatDate(asset.acquisition_date)
-                        : formatDate(asset.created_at)
-                      }
-                    </span>
+                    {getStatusBadge(asset.status)}
                   </div>
-                </div>
 
-                <div className="flex justify-between items-center">
-                  <Button variant="outline" size="sm" asChild>
-                    <Link to={`/assets/${asset.id}`}>
-                      <Eye className="h-4 w-4 mr-2" />
-                      Ver Detalhes
-                    </Link>
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          ))
+                  <div className="space-y-2 mb-4">
+                    {asset.location && (
+                      <div className="flex items-center text-sm text-gray-600">
+                        <MapPin className="h-4 w-4 mr-2 flex-shrink-0" />
+                        <span className="truncate">{asset.location}</span>
+                      </div>
+                    )}
+                    
+                    {asset.value && (
+                      <div className="flex items-center text-sm text-gray-600">
+                        <DollarSign className="h-4 w-4 mr-2 flex-shrink-0" />
+                        <span>{formatCurrency(asset.value)}</span>
+                      </div>
+                    )}
+                    
+                    <div className="flex items-center text-sm text-gray-600">
+                      <Calendar className="h-4 w-4 mr-2 flex-shrink-0" />
+                      <span>
+                        {asset.acquisition_date 
+                          ? formatDate(asset.acquisition_date)
+                          : formatDate(asset.created_at)
+                        }
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="flex justify-between items-center">
+                    <Button variant="outline" size="sm" asChild>
+                      <Link to={`/assets/${asset.id}`}>
+                        <Eye className="h-4 w-4 mr-2" />
+                        Ver Detalhes
+                      </Link>
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+            
+            {/* Loading indicator for infinite scroll */}
+            {displayedAssets.length < (assets?.length || 0) && (
+              <div ref={loadingRef} className="col-span-full flex justify-center py-8">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+              </div>
+            )}
+          </>
         ) : (
           <div className="col-span-full">
             <Card className="border-0 shadow-md">
@@ -381,6 +477,17 @@ export default function Assets() {
           </div>
         )}
       </div>
+
+      {/* Floating Scroll to Top Button */}
+      {showScrollToTop && (
+        <Button
+          onClick={scrollToTop}
+          className="fixed bottom-6 right-6 z-50 rounded-full w-12 h-12 shadow-lg hover:shadow-xl transition-all duration-200"
+          size="icon"
+        >
+          <ArrowUp className="h-5 w-5" />
+        </Button>
+      )}
 
       {/* Scanner Modal */}
       <BarcodeScanner
