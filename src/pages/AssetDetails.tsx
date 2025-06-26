@@ -218,7 +218,7 @@ export default function AssetDetails() {
                   <AlertDialogHeader>
                     <AlertDialogTitle>Confirmar exclusão</AlertDialogTitle>
                     <AlertDialogDescription>
-                      Tem certeza que deseja deletar o ativo "{asset.name}"? 
+                      Tem certeza que deseja apagar o ativo "{asset.name}"? 
                       Esta ação não pode ser desfeita e todos os dados do ativo serão perdidos permanentemente.
                     </AlertDialogDescription>
                   </AlertDialogHeader>
