@@ -1,5 +1,3 @@
-
-
 import { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -38,7 +36,11 @@ export default function Login() {
     setLoading(true);
 
     try {
-      await signIn(email, password);
+      const result = await signIn(email, password);
+      if (result === 'inactive') {
+        navigate('/acesso-negado', { replace: true });
+        return;
+      }
       toast({
         title: "Login realizado com sucesso!",
         description: "Bem-vindo ao Armazena",

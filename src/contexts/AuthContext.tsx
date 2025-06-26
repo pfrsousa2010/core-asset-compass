@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { User } from '@supabase/supabase-js';
 import { supabase } from '@/integrations/supabase/client';
@@ -13,7 +12,7 @@ interface AuthContextType {
   profile: Profile | null;
   company: Company | null;
   loading: boolean;
-  signIn: (email: string, password: string) => Promise<void>;
+  signIn: (email: string, password: string) => Promise<'inactive' | 'success'>;
   signUp: (email: string, password: string, name: string) => Promise<void>;
   signOut: () => Promise<void>;
   updatePassword: (newPassword: string) => Promise<{ success: boolean; error?: string }>;
@@ -118,7 +117,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const signIn = async (email: string, password: string): Promise<void> => {
+  const signIn = async (email: string, password: string): Promise<'inactive' | 'success'> => {
     const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
@@ -129,7 +128,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   
     if (data.user) {
-      // Verificar se o usuário está ativo
       const { data: profile, error: profileError } = await supabase
         .from('profiles')
         .select('is_active')
@@ -138,12 +136,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   
       if (profileError || !profile?.is_active) {
         await supabase.auth.signOut();
-        throw new Error('Sua conta está desativada. Entre em contato com o administrador.');
+        return 'inactive';
       }
   
       setUser(data.user);
       await loadUserData(data.user);
+      return 'success';
     }
+    throw new Error('Erro inesperado.');
   };  
 
   const signUp = async (email: string, password: string, name: string): Promise<void> => {
