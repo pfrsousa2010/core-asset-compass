@@ -2,16 +2,36 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { MobileNav } from './MobileNav';
 import { LogOut, Building2 } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
 
 export function Header() {
   const { profile, company, signOut } = useAuth();
+  const getRoleBadge = (role: string) => {
+    const styles = {
+      admin: 'bg-red-100 text-red-800',
+      editor: 'bg-yellow-100 text-yellow-800',
+      viewer: 'bg-green-100 text-green-800',
+    };
+
+    const labels = {
+      admin: 'Administrador',
+      editor: 'Editor',
+      viewer: 'Visualizador',
+    };
+
+    return (
+      <Badge className={styles[role as keyof typeof styles]}>
+        {labels[role as keyof typeof labels]}
+      </Badge>
+    );
+  };
 
   return (
     <header className="bg-white border-b border-gray-200 px-0 py-0 sm:px-2 sm:py-2 md:px-6 md:py-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-4 min-w-0 flex-1">
           <MobileNav />
-          
+
           {company && (
             <div className="hidden lg:flex items-center text-gray-600 min-w-0">
               <Building2 className="h-4 w-4 mr-2 flex-shrink-0" />
@@ -28,10 +48,7 @@ export function Header() {
               <p className="text-sm font-medium text-gray-900 break-words">
                 {profile.name}
               </p>
-              <p className="text-xs text-gray-500 capitalize">
-                {profile.role === 'admin' ? 'Administrador' : 
-                 profile.role === 'editor' ? 'Editor' : 'Visualizador'}
-              </p>
+              {getRoleBadge(profile.role)}
             </div>
           )}
 
