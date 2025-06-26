@@ -219,7 +219,7 @@ export default function Dashboard() {
                     )}
                     {getStatusBadge(asset.status)}
                     <span className="text-xs text-gray-500">
-                      {format(new Date(asset.created_at), 'dd/MM/yyyy', { locale: ptBR })}
+                      {format(new Date(asset.acquisition_date), 'dd/MM/yyyy', { locale: ptBR })}
                     </span>
                   </div>
                 </div>
