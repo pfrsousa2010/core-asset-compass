@@ -37,29 +37,6 @@ export default function Assets() {
   const observerRef = useRef<IntersectionObserver | null>(null);
   const loadingRef = useRef<HTMLDivElement>(null);
 
-  const { data: assets, isLoading, refetch } = useQuery({
-    queryKey: ['assets', search, statusFilter, locationFilter],
-    queryFn: async () => {
-      let query = supabase.from('assets').select('*').order('created_at', { ascending: false });
-
-      if (search) {
-        query = query.or(`name.ilike.%${search}%,code.ilike.%${search}%`);
-      }
-
-      if (statusFilter !== 'all') {
-        query = query.eq('status', statusFilter as AssetStatus);
-      }
-
-      if (locationFilter !== 'all') {
-        query = query.eq('location', locationFilter);
-      }
-
-      const { data, error } = await query;
-      if (error) throw error;
-      return data || [];
-    },
-  });
-
   // Função para buscar ativos paginados
   const fetchAssets = useCallback(async (page: number) => {
     let query = supabase.from('assets').select('*').order('created_at', { ascending: false });
@@ -158,11 +135,22 @@ export default function Assets() {
 
   const handleScanResult = (code: string) => {
     setSearch(code);
-    refetch();
   };
 
-  const handleExportCSV = () => {
-    if (!assets || assets.length === 0) return;
+  const handleExportCSV = async () => {
+    // Buscar todos os ativos do Supabase, ignorando paginação
+    let query = supabase.from('assets').select('*').order('created_at', { ascending: false });
+    if (search) {
+      query = query.or(`name.ilike.%${search}%,code.ilike.%${search}%`);
+    }
+    if (statusFilter !== 'all') {
+      query = query.eq('status', statusFilter as AssetStatus);
+    }
+    if (locationFilter !== 'all') {
+      query = query.eq('location', locationFilter);
+    }
+    const { data: allAssets, error } = await query;
+    if (error || !allAssets || allAssets.length === 0) return;
 
     // Definir cabeçalhos das colunas
     const headers = [
@@ -186,7 +174,7 @@ export default function Assets() {
     ];
 
     // Mapear dados dos ativos
-    const csvData = assets.map(asset => [
+    const csvData = allAssets.map(asset => [
       asset.name,
       asset.code,
       asset.status,
@@ -270,7 +258,7 @@ export default function Assets() {
                   variant="outline" 
                   onClick={handleExportCSV}
                   className="w-full sm:w-auto"
-                  disabled={!assets || assets.length === 0}
+                  disabled={false}
                 >
                   <FileText className="h-4 w-4 mr-2" />
                   Exportar CSV
@@ -357,18 +345,50 @@ export default function Assets() {
 
       {/* Assets List */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-        {isLoading ? (
-          Array.from({ length: 6 }).map((_, i) => (
-            <Card key={i} className="border-0 shadow-md animate-pulse">
-              <CardContent className="p-6">
-                <div className="h-4 bg-gray-200 rounded w-3/4 mb-4"></div>
-                <div className="h-3 bg-gray-200 rounded w-1/2 mb-2"></div>
-                <div className="h-3 bg-gray-200 rounded w-full mb-4"></div>
-                <div className="h-8 bg-gray-200 rounded w-20"></div>
+        {displayedAssets.length === 0 ? (
+          <div className="col-span-full">
+            <Card className="border-0 shadow-md">
+              <CardContent className="text-center py-12">
+                <Package className="h-12 w-12 mx-auto text-gray-400 mb-4" />
+                <h3 className="text-lg font-medium text-gray-900 mb-2">
+                  Nenhum ativo encontrado
+                </h3>
+                <p className="text-gray-600 mb-6">
+                  {search || statusFilter !== 'all' || locationFilter !== 'all'
+                    ? 'Tente ajustar os filtros para encontrar ativos'
+                    : 'Comece adicionando seus primeiros ativos ao sistema'}
+                </p>
+                {canEdit && (
+                  <div className="flex flex-col sm:flex-row gap-2 justify-center">
+                    {/* Import CSV apenas em desktop */}
+                    {isDesktop && (
+                      <Dialog>
+                        <DialogTrigger asChild>
+                          <Button variant="outline">
+                            <Upload className="h-4 w-4 mr-2" />
+                            Importar CSV
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+                          <DialogHeader>
+                            <DialogTitle>Importar Ativos</DialogTitle>
+                          </DialogHeader>
+                          <AssetImport />
+                        </DialogContent>
+                      </Dialog>
+                    )}
+                    <Button asChild>
+                      <Link to="/assets/new">
+                        <Plus className="h-4 w-4 mr-2" />
+                        Adicionar Primeiro Ativo
+                      </Link>
+                    </Button>
+                  </div>
+                )}
               </CardContent>
             </Card>
-          ))
-        ) : displayedAssets && displayedAssets.length > 0 ? (
+          </div>
+        ) : (
           <>
             {displayedAssets.map((asset, index) => (
               <Card 
@@ -424,57 +444,13 @@ export default function Assets() {
                 </CardContent>
               </Card>
             ))}
-            
             {/* Loading indicator for infinite scroll */}
-            {displayedAssets.length < (assets?.length || 0) && (
+            {hasMore && (
               <div ref={loadingRef} className="col-span-full flex justify-center py-8">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
               </div>
             )}
           </>
-        ) : (
-          <div className="col-span-full">
-            <Card className="border-0 shadow-md">
-              <CardContent className="text-center py-12">
-                <Package className="h-12 w-12 mx-auto text-gray-400 mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">
-                  Nenhum ativo encontrado
-                </h3>
-                <p className="text-gray-600 mb-6">
-                  {search || statusFilter !== 'all' || locationFilter !== 'all'
-                    ? 'Tente ajustar os filtros para encontrar ativos'
-                    : 'Comece adicionando seus primeiros ativos ao sistema'}
-                </p>
-                {canEdit && (
-                  <div className="flex flex-col sm:flex-row gap-2 justify-center">
-                    {/* Import CSV apenas em desktop */}
-                    {isDesktop && (
-                      <Dialog>
-                        <DialogTrigger asChild>
-                          <Button variant="outline">
-                            <Upload className="h-4 w-4 mr-2" />
-                            Importar CSV
-                          </Button>
-                        </DialogTrigger>
-                        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-                          <DialogHeader>
-                            <DialogTitle>Importar Ativos</DialogTitle>
-                          </DialogHeader>
-                          <AssetImport />
-                        </DialogContent>
-                      </Dialog>
-                    )}
-                    <Button asChild>
-                      <Link to="/assets/new">
-                        <Plus className="h-4 w-4 mr-2" />
-                        Adicionar Primeiro Ativo
-                      </Link>
-                    </Button>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          </div>
         )}
       </div>
 
