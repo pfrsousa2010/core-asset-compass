@@ -36,6 +36,8 @@ export default function Assets() {
   const scrollRef = useContext(ScrollContext);
   const observerRef = useRef<IntersectionObserver | null>(null);
   const loadingRef = useRef<HTMLDivElement>(null);
+  const [loading, setLoading] = useState(false);
+  const [exportLoading, setExportLoading] = useState(false);
 
   // Função para buscar ativos paginados
   const fetchAssets = useCallback(async (page: number) => {
@@ -69,10 +71,15 @@ export default function Assets() {
   useEffect(() => {
     let ignore = false;
     const load = async () => {
-      const newAssets = await fetchAssets(currentPage);
-      if (!ignore) {
-        setDisplayedAssets(prev => currentPage === 1 ? newAssets : [...prev, ...newAssets]);
-        setHasMore(newAssets.length === itemsPerPage);
+      setLoading(true);
+      try {
+        const newAssets = await fetchAssets(currentPage);
+        if (!ignore) {
+          setDisplayedAssets(prev => currentPage === 1 ? newAssets : [...prev, ...newAssets]);
+          setHasMore(newAssets.length === itemsPerPage);
+        }
+      } finally {
+        if (!ignore) setLoading(false);
       }
     };
     load();
@@ -138,88 +145,92 @@ export default function Assets() {
   };
 
   const handleExportCSV = async () => {
-    // Buscar todos os ativos do Supabase, ignorando paginação
-    let query = supabase.from('assets').select('*').order('created_at', { ascending: false });
-    if (search) {
-      query = query.or(`name.ilike.%${search}%,code.ilike.%${search}%`);
+    setExportLoading(true);
+    try {
+      let query = supabase.from('assets').select('*').order('created_at', { ascending: false });
+      if (search) {
+        query = query.or(`name.ilike.%${search}%,code.ilike.%${search}%`);
+      }
+      if (statusFilter !== 'all') {
+        query = query.eq('status', statusFilter as AssetStatus);
+      }
+      if (locationFilter !== 'all') {
+        query = query.eq('location', locationFilter);
+      }
+      const { data: allAssets, error } = await query;
+      if (error || !allAssets || allAssets.length === 0) return;
+
+      // Definir cabeçalhos das colunas
+      const headers = [
+        'Nome',
+        'Código',
+        'Status',
+        'Localização',
+        'Valor',
+        'Data de Aquisição',
+        'Fabricante',
+        'Modelo',
+        'Cor',
+        'Número de Série',
+        'Capacidade',
+        'Voltagem',
+        'Condições',
+        'Detentor',
+        'Origem',
+        'Inalienável',
+        'Observações'
+      ];
+
+      // Mapear dados dos ativos
+      const csvData = allAssets.map(asset => [
+        asset.name,
+        asset.code,
+        asset.status,
+        asset.location || '',
+        asset.value || '',
+        asset.acquisition_date || '',
+        asset.manufacturer || '',
+        asset.model || '',
+        asset.color || '',
+        asset.serial_number || '',
+        asset.capacity || '',
+        asset.voltage || '',
+        asset.condition || '',
+        asset.holder || '',
+        asset.origin || '',
+        asset.inalienable ? 'Sim' : 'Não',
+        asset.notes || ''
+      ]);
+
+      // Criar conteúdo CSV
+      const csvContent = [
+        headers.join(','),
+        ...csvData.map(row => 
+          row.map(field => 
+            typeof field === 'string' && field.includes(',') 
+              ? `"${field.replace(/"/g, '""')}"` 
+              : field
+          ).join(',')
+        )
+      ].join('\n');
+
+      // Criar e baixar arquivo
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      const url = URL.createObjectURL(blob);
+      link.setAttribute('href', url);
+      // Gerar data e hora em UTC-3
+      const now = new Date();
+      const utc3 = new Date(now.getTime() - 3 * 60 * 60 * 1000);
+      const dateStr = utc3.toISOString().replace('T', '_').slice(0, 16).replace(':', '') + "h";
+      link.setAttribute('download', `ativos_${company.name}_${dateStr}.csv`);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    } finally {
+      setExportLoading(false);
     }
-    if (statusFilter !== 'all') {
-      query = query.eq('status', statusFilter as AssetStatus);
-    }
-    if (locationFilter !== 'all') {
-      query = query.eq('location', locationFilter);
-    }
-    const { data: allAssets, error } = await query;
-    if (error || !allAssets || allAssets.length === 0) return;
-
-    // Definir cabeçalhos das colunas
-    const headers = [
-      'Nome',
-      'Código',
-      'Status',
-      'Localização',
-      'Valor',
-      'Data de Aquisição',
-      'Fabricante',
-      'Modelo',
-      'Cor',
-      'Número de Série',
-      'Capacidade',
-      'Voltagem',
-      'Condições',
-      'Detentor',
-      'Origem',
-      'Inalienável',
-      'Observações'
-    ];
-
-    // Mapear dados dos ativos
-    const csvData = allAssets.map(asset => [
-      asset.name,
-      asset.code,
-      asset.status,
-      asset.location || '',
-      asset.value || '',
-      asset.acquisition_date || '',
-      asset.manufacturer || '',
-      asset.model || '',
-      asset.color || '',
-      asset.serial_number || '',
-      asset.capacity || '',
-      asset.voltage || '',
-      asset.condition || '',
-      asset.holder || '',
-      asset.origin || '',
-      asset.inalienable ? 'Sim' : 'Não',
-      asset.notes || ''
-    ]);
-
-    // Criar conteúdo CSV
-    const csvContent = [
-      headers.join(','),
-      ...csvData.map(row => 
-        row.map(field => 
-          typeof field === 'string' && field.includes(',') 
-            ? `"${field.replace(/"/g, '""')}"` 
-            : field
-        ).join(',')
-      )
-    ].join('\n');
-
-    // Criar e baixar arquivo
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement('a');
-    const url = URL.createObjectURL(blob);
-    link.setAttribute('href', url);
-    // Gerar data e hora em UTC-3
-    const now = new Date();
-    const utc3 = new Date(now.getTime() - 3 * 60 * 60 * 1000);
-    const dateStr = utc3.toISOString().replace('T', '_').slice(0, 16).replace(':', '') + "h";
-    link.setAttribute('download', `ativos_${company.name}_${dateStr}.csv`);
-    link.style.visibility = 'hidden';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
   };
 
   const canEdit = profile?.role === 'admin' || profile?.role === 'editor';
@@ -229,6 +240,11 @@ export default function Assets() {
       id="assets-scroll-container"
       className="space-y-6 pb-10 overflow-y-auto"
     >
+      {exportLoading && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-30">
+          <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-blue-600"></div>
+        </div>
+      )}
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
@@ -258,7 +274,7 @@ export default function Assets() {
                   variant="outline" 
                   onClick={handleExportCSV}
                   className="w-full sm:w-auto"
-                  disabled={false}
+                  disabled={loading || exportLoading}
                 >
                   <FileText className="h-4 w-4 mr-2" />
                   Exportar CSV
@@ -345,7 +361,18 @@ export default function Assets() {
 
       {/* Assets List */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-        {displayedAssets.length === 0 ? (
+        {loading && !exportLoading ? (
+          Array.from({ length: 6 }).map((_, i) => (
+            <Card key={i} className="border-0 shadow-md animate-pulse">
+              <CardContent className="p-6">
+                <div className="h-4 bg-gray-200 rounded w-3/4 mb-4"></div>
+                <div className="h-3 bg-gray-200 rounded w-1/2 mb-2"></div>
+                <div className="h-3 bg-gray-200 rounded w-full mb-4"></div>
+                <div className="h-8 bg-gray-200 rounded w-20"></div>
+              </CardContent>
+            </Card>
+          ))
+        ) : displayedAssets.length === 0 ? (
           <div className="col-span-full">
             <Card className="border-0 shadow-md">
               <CardContent className="text-center py-12">
