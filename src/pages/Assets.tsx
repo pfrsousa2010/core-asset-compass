@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
@@ -10,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Plus, Search, Package, MapPin, Calendar, DollarSign, Eye, Upload, Camera } from 'lucide-react';
+import { Plus, Search, Package, MapPin, Calendar, DollarSign, Eye, Upload, Camera, FileExport } from 'lucide-react';
 import { formatCurrency, formatDate } from '@/lib/utils';
 import { Database } from '@/integrations/supabase/types';
 import { AssetImport } from '@/components/assets/AssetImport';
@@ -81,6 +82,75 @@ export default function Assets() {
     refetch();
   };
 
+  const handleExportCSV = () => {
+    if (!assets || assets.length === 0) return;
+
+    // Definir cabeçalhos das colunas
+    const headers = [
+      'Nome',
+      'Código',
+      'Status',
+      'Localização',
+      'Valor',
+      'Data de Aquisição',
+      'Fabricante',
+      'Modelo',
+      'Cor',
+      'Número de Série',
+      'Capacidade',
+      'Voltagem',
+      'Condições',
+      'Detentor',
+      'Origem',
+      'Inalienável',
+      'Observações'
+    ];
+
+    // Mapear dados dos ativos
+    const csvData = assets.map(asset => [
+      asset.name,
+      asset.code,
+      asset.status,
+      asset.location || '',
+      asset.value || '',
+      asset.acquisition_date || '',
+      asset.manufacturer || '',
+      asset.model || '',
+      asset.color || '',
+      asset.serial_number || '',
+      asset.capacity || '',
+      asset.voltage || '',
+      asset.condition || '',
+      asset.holder || '',
+      asset.origin || '',
+      asset.inalienable ? 'Sim' : 'Não',
+      asset.notes || ''
+    ]);
+
+    // Criar conteúdo CSV
+    const csvContent = [
+      headers.join(','),
+      ...csvData.map(row => 
+        row.map(field => 
+          typeof field === 'string' && field.includes(',') 
+            ? `"${field.replace(/"/g, '""')}"` 
+            : field
+        ).join(',')
+      )
+    ].join('\n');
+
+    // Criar e baixar arquivo
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', `ativos_${new Date().toISOString().split('T')[0]}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   const canEdit = profile?.role === 'admin' || profile?.role === 'editor';
 
   return (
@@ -107,22 +177,34 @@ export default function Assets() {
               </Button>
             )}
             
-            {/* Import CSV button - apenas em desktop */}
+            {/* Export and Import buttons - apenas em desktop */}
             {isDesktop && (
-              <Dialog>
-                <DialogTrigger asChild>
-                  <Button variant="outline" className="w-full sm:w-auto">
-                    <Upload className="h-4 w-4 mr-2" />
-                    Importar CSV
-                  </Button>
-                </DialogTrigger>
-                <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-                  <DialogHeader>
-                    <DialogTitle>Importar Ativos</DialogTitle>
-                  </DialogHeader>
-                  <AssetImport />
-                </DialogContent>
-              </Dialog>
+              <>
+                <Button 
+                  variant="outline" 
+                  onClick={handleExportCSV}
+                  className="w-full sm:w-auto"
+                  disabled={!assets || assets.length === 0}
+                >
+                  <FileExport className="h-4 w-4 mr-2" />
+                  Exportar CSV
+                </Button>
+                
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button variant="outline" className="w-full sm:w-auto">
+                      <Upload className="h-4 w-4 mr-2" />
+                      Importar CSV
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+                    <DialogHeader>
+                      <DialogTitle>Importar Ativos</DialogTitle>
+                    </DialogHeader>
+                    <AssetImport />
+                  </DialogContent>
+                </Dialog>
+              </>
             )}
             
             <Button asChild className="w-full sm:w-auto">
