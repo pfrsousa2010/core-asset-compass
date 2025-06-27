@@ -10,6 +10,56 @@ const parseValue = (value: string): number | null => {
   return parseFloat(value.replace(',', '.'));
 };
 
+const parseDate = (dateString?: string): string | null => {
+  if (!dateString || dateString.trim() === '') return null;
+  
+  const trimmedDate = dateString.trim();
+  
+  // Try to parse as ISO date first (YYYY-MM-DD)
+  if (/^\d{4}-\d{2}-\d{2}$/.test(trimmedDate)) {
+    return trimmedDate;
+  }
+  
+  // Try to parse DD/MM/YYYY or DD-MM-YYYY
+  const slashMatch = trimmedDate.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})/);
+  if (slashMatch) {
+    const [, day, month, year] = slashMatch;
+    return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+  }
+  
+  // Try to parse MM/DD/YYYY or MM-DD-YYYY
+  const americanMatch = trimmedDate.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})/);
+  if (americanMatch) {
+    const [, month, day, year] = americanMatch;
+    // Assume it's MM/DD/YYYY if month > 12, otherwise DD/MM/YYYY
+    if (parseInt(month) > 12) {
+      return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+    } else {
+      return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+    }
+  }
+  
+  // Try to parse with Date constructor (handles various formats including with time)
+  try {
+    const date = new Date(trimmedDate);
+    if (!isNaN(date.getTime())) {
+      return date.toISOString().split('T')[0]; // Extract YYYY-MM-DD part
+    }
+  } catch (error) {
+    // Continue to next parsing attempt
+  }
+  
+  // Try to parse DD.MM.YYYY
+  const dotMatch = trimmedDate.match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})/);
+  if (dotMatch) {
+    const [, day, month, year] = dotMatch;
+    return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+  }
+  
+  // If all parsing attempts fail, return null
+  return null;
+};
+
 const parseStatus = (status?: string): 'ativo' | 'manutenção' | 'baixado' => {
   const normalizedStatus = status?.toLowerCase();
   if (normalizedStatus === 'manutenção') return 'manutenção';
@@ -35,7 +85,7 @@ const transformCSVRowToAssetData = (row: CSVRow, companyId: string): AssetData =
     code: row.codigo,
     location: row.localizacao || null,
     status: parseStatus(row.status),
-    acquisition_date: row.data_aquisicao || null,
+    acquisition_date: parseDate(row.data_aquisicao),
     value: parseValue(row.valor),
     serial_number: row.numero_serie || null,
     color: row.cor || null,
