@@ -54,19 +54,22 @@ export function AssetCard({ asset, isLast = false, onIntersect }: AssetCardProps
             </div>
           )}
 
-          {asset.value && (
-            <div className="flex items-center text-sm text-gray-600">
-              <DollarSign className="h-4 w-4 mr-2 flex-shrink-0" />
-              <span>{formatCurrency(asset.value)}</span>
-            </div>
-          )}
+          <div className="flex items-center text-sm text-gray-600">
+            <DollarSign className="h-4 w-4 mr-2 flex-shrink-0" />
+            <span>
+              {asset.value
+                ? formatCurrency(asset.value)
+                : "-"
+              }
+            </span>
+          </div>
 
           <div className="flex items-center text-sm text-gray-600">
             <Calendar className="h-4 w-4 mr-2 flex-shrink-0" />
             <span>
               {asset.acquisition_date
-                ? formatDate(asset.acquisition_date)
-                : formatDate(asset.created_at)
+                ? "Adiquirido em: " + formatDate(asset.acquisition_date)
+                : " Adicionado em: " + formatDate(asset.created_at)
               }
             </span>
           </div>
