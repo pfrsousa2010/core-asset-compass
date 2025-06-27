@@ -21,7 +21,7 @@ export default function Dashboard() {
       const activeAssets = assets.filter(a => a.status === 'ativo').length;
       const maintenanceAssets = assets.filter(a => a.status === 'manutenção').length;
       const deactivatedAssets = assets.filter(a => a.status === 'baixado').length;
-      
+
       const totalValue = assets.reduce((sum, asset) => sum + (asset.value || 0), 0);
       const activeValue = assets
         .filter(a => a.status === 'ativo')
@@ -219,7 +219,10 @@ export default function Dashboard() {
                     )}
                     {getStatusBadge(asset.status)}
                     <span className="text-xs text-gray-500">
-                      {format(new Date(asset.acquisition_date), 'dd/MM/yyyy', { locale: ptBR })}
+                      {asset.acquisition_date
+                        ? format(new Date(asset.acquisition_date), 'dd/MM/yyyy', { locale: ptBR })
+                        : "-"
+                      }
                     </span>
                   </div>
                 </div>
