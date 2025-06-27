@@ -17,7 +17,7 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  
+
   // Reset password states
   const [resetEmail, setResetEmail] = useState('');
   const [resetLoading, setResetLoading] = useState(false);
@@ -70,7 +70,7 @@ export default function Login() {
         title: "Email enviado!",
         description: "Verifique sua caixa de entrada para redefinir sua senha.",
       });
-      
+
       setResetDialogOpen(false);
       setResetEmail('');
     } catch (err: any) {
@@ -97,7 +97,7 @@ export default function Login() {
             Armazena App
           </h2>
           <p className="mt-6 text-2xl font-bold text-gray-900">
-            Seu gerenciador patrimonial
+            Sistema de Gestão de Ativos
           </p>
         </div>
 
