@@ -62,6 +62,34 @@ This project is built with:
 
 ## How can I deploy this project?
 
+### GitHub Pages Deployment
+
+This project is configured for automatic deployment to GitHub Pages. Here's how to set it up:
+
+1. **Enable GitHub Pages in your repository:**
+   - Go to your repository on GitHub
+   - Navigate to Settings > Pages
+   - Under "Source", select "GitHub Actions"
+
+2. **Automatic Deployment:**
+   - The project includes a GitHub Actions workflow (`.github/workflows/deploy.yml`)
+   - Every push to the `main` branch will automatically trigger a deployment
+   - Your app will be available at: `https://[your-username].github.io/core-asset-compass/`
+
+3. **Manual Deployment (if needed):**
+   ```sh
+   # Install dependencies
+   npm install
+   
+   # Build for GitHub Pages
+   npm run build:gh-pages
+   
+   # Deploy to GitHub Pages
+   npm run deploy
+   ```
+
+### Lovable Deployment
+
 Simply open [Lovable](https://lovable.dev/projects/afdb7bea-aafa-4105-ae42-ce7180625b6c) and click on Share -> Publish.
 
 ## Can I connect a custom domain to my Lovable project?
