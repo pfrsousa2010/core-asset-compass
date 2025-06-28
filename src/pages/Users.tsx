@@ -31,8 +31,6 @@ export default function Users() {
   const { data: users, isLoading } = useQuery({
     queryKey: ['company-users'],
     queryFn: async () => {
-      console.log('Fetching all users for company:', profile?.company_id);
-      
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
@@ -44,7 +42,6 @@ export default function Users() {
         throw error;
       }
       
-      console.log('Fetched users:', data);
       return data || [];
     },
     enabled: !!profile?.company_id,

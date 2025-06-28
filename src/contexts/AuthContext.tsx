@@ -55,7 +55,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       // Verificar se o usuário está ativo
       if (profileData?.is_active === false) {
-        console.log('Usuário inativo, redirecionando...');
         navigate('/acesso-negado', { replace: true });
         return;
       }
@@ -99,7 +98,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const { error: testError } = await supabase.from('profiles').select('id').limit(1);
         
         if (testError && (testError.code === 'invalid_token' || testError.message?.includes('JWT'))) {
-          console.log('Token inválido, fazendo logout...');
           await signOut();
           return;
         }
@@ -223,8 +221,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     checkSession();
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      console.log('Auth state changed:', event);
-      
       if (event === 'SIGNED_IN' && session?.user) {
         setUser(session.user);
         setTimeout(() => {
