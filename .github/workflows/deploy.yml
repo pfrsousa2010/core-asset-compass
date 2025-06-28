@@ -28,6 +28,9 @@ jobs:
         run: |
           echo "armazena.app.br" > dist/CNAME
 
+      - name: Configurar 404.html para SPA routing
+        run: cp dist/index.html dist/404.html
+
       - name: Deploy para gh-pages
         uses: peaceiris/actions-gh-pages@v4
         with:
