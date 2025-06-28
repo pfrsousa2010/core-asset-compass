@@ -10,6 +10,7 @@
     "build:dev": "vite build --mode development",
     "build:pwa": "npm run build && npm run generate-icons",
     "generate-icons": "node scripts/generate-pwa-icons.js",
+    "generate-vapid-keys": "node scripts/generate-vapid-keys.js",
     "test:pwa": "node scripts/test-pwa.js",
     "lint": "eslint .",
     "preview": "vite preview",
@@ -90,6 +91,7 @@
     "typescript": "^5.5.3",
     "typescript-eslint": "^8.0.1",
     "vite": "^5.4.1",
-    "vite-plugin-pwa": "^0.19.8"
+    "vite-plugin-pwa": "^0.19.8",
+    "web-push": "^3.6.7"
   }
 }
