@@ -1,13 +1,16 @@
 {
-  "name": "vite_react_shadcn_ts",
+  "name": "armazena-pwa",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
   "homepage": "https://armazena.app.br",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "build:dev": "vite build --mode development",
+    "build:pwa": "npm run build && npm run generate-icons",
+    "generate-icons": "node scripts/generate-pwa-icons.js",
+    "test:pwa": "node scripts/test-pwa.js",
     "lint": "eslint .",
     "preview": "vite preview",
     "deploy": "gh-pages -d dist"
@@ -82,9 +85,11 @@
     "gh-pages": "^6.3.0",
     "globals": "^15.9.0",
     "postcss": "^8.4.47",
+    "sharp": "^0.34.2",
     "tailwindcss": "^3.4.11",
     "typescript": "^5.5.3",
     "typescript-eslint": "^8.0.1",
-    "vite": "^5.4.1"
+    "vite": "^5.4.1",
+    "vite-plugin-pwa": "^0.19.8"
   }
 }

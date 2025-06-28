@@ -1,19 +1,56 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Armazena - Sistema de Gestão de Ativos</title>
     <meta name="description" content="Sistema completo de gestão e rastreamento de ativos empresariais com controle de acesso e monitoramento em tempo real" />
     <meta name="author" content="Armazena" />
+    
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#2563eb" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="Armazena" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="msapplication-TileColor" content="#2563eb" />
+    <meta name="msapplication-tap-highlight" content="no" />
+    
+    <!-- Icons -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-
+    <link rel="icon" type="image/png" sizes="32x32" href="/icons/icon-72x72.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/icons/icon-72x72.png" />
+    <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
+    <link rel="apple-touch-icon" sizes="152x152" href="/icons/icon-152x152.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/icons/icon-192x192.png" />
+    <link rel="apple-touch-icon" sizes="167x167" href="/icons/icon-152x152.png" />
+    
+    <!-- Manifest -->
+    <link rel="manifest" href="/manifest.json" />
+    
+    <!-- Open Graph -->
     <meta property="og:title" content="Armazena - Sistema de Gestão de Ativos" />
     <meta property="og:description" content="Sistema completo de gestão e rastreamento de ativos empresariais com controle de acesso e monitoramento em tempo real" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://armazena.app.br" />
+    <meta property="og:image" content="/icons/icon-512x512.png" />
+    
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Armazena - Sistema de Gestão de Ativos" />
+    <meta name="twitter:description" content="Sistema completo de gestão e rastreamento de ativos empresariais" />
+    <meta name="twitter:image" content="/icons/icon-512x512.png" />
 
     <style>
       #lovable-tagger-root, .lovable-tagger-root {
         display: none !important;
+      }
+      
+      /* PWA Splash Screen */
+      @media (display-mode: standalone) {
+        body {
+          background-color: #2563eb;
+        }
       }
     </style>
   </head>
