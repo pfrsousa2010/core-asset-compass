@@ -4,12 +4,14 @@ import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Separator } from '@/components/ui/separator';
+import { PlanBadge } from '@/components/PlanBadge';
 import {
   Menu,
   LayoutDashboard,
   Package,
   Users,
   User,
+  CreditCard,
   LogOut,
   Building2
 } from 'lucide-react';
@@ -57,6 +59,11 @@ export function MobileNav() {
                     <span className="break-words leading-tight">{company.name}</span>
                   </div>
                 )}
+                {profile?.role === 'admin' && company && company.plan !== 'enterprise' && (
+                  <div className="mt-2">
+                    <PlanBadge plan={company.plan as 'free' | 'basic' | 'premium'} />
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -87,6 +94,17 @@ export function MobileNav() {
 
           {/* User Section */}
           <div className="p-4 space-y-2">
+            {profile?.role === 'admin' && (
+              <Link
+                to="/my-plan"
+                onClick={handleNavClick}
+                className="flex items-center px-3 py-2 text-sm font-medium text-gray-600 rounded-lg hover:bg-gray-50 hover:text-gray-900 transition-colors"
+              >
+                <CreditCard className="mr-3 h-5 w-5" />
+                Meu Plano
+              </Link>
+            )}
+
             <Link
               to="/profile"
               onClick={handleNavClick}

@@ -15,7 +15,7 @@ import CreateAsset from "@/pages/CreateAsset";
 import EditAsset from "@/pages/EditAsset";
 import Users from "@/pages/Users";
 import Profile from "@/pages/Profile";
-import MeuPlano from "@/pages/MeuPlano";
+import MyPlan from "@/pages/MyPlan";
 import AccessDenied from "@/pages/AccessDenied";
 import "./App.css";
 import AuthRedirectHandler from "@/components/auth/AuthRedirectHandler";
@@ -92,10 +92,10 @@ function App() {
                   </Layout>
                 </AuthGuard>
               } />
-              <Route path="/meu-plano" element={
-                <AuthGuard>
+              <Route path="/my-plan" element={
+                <AuthGuard requiredRole="admin">
                   <Layout>
-                    <MeuPlano />
+                    <MyPlan />
                   </Layout>
                 </AuthGuard>
               } />
