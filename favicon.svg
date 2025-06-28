@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <defs>
+    <style>
+      .package-icon { fill: #ffffff; }
+      .background { fill: #2563eb; }
+    </style>
+  </defs>
+  
+  <!-- Background circle -->
+  <circle cx="16" cy="16" r="16" class="background"/>
+  
+  <!-- Package icon from Lucide -->
+  <g transform="translate(6, 6) scale(0.625)">
+    <path class="package-icon" d="m12 3-8 4.5v9L12 21l8-4.5v-9L12 3"/>
+    <path class="package-icon" d="m12 12 8-4.5"/>
+    <path class="package-icon" d="M12 12v9"/>
+    <path class="package-icon" d="m12 12-8-4.5"/>
+  </g>
+</svg> 
