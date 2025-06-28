@@ -1,7 +1,6 @@
-
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import { LayoutDashboard, Package, Users, Building2, User } from 'lucide-react';
+import { LayoutDashboard, Package, Users, Building2, User, CreditCard } from 'lucide-react';
 
 export function Sidebar() {
   const { profile } = useAuth();
@@ -11,6 +10,7 @@ export function Sidebar() {
     { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
     { name: 'Ativos', href: '/assets', icon: Package },
     ...(profile?.role === 'admin' ? [{ name: 'Usuários', href: '/users', icon: Users }] : []),
+    { name: 'Meu Plano', href: '/meu-plano', icon: CreditCard },
     { name: 'Meu Perfil', href: '/profile', icon: User },
   ];
 

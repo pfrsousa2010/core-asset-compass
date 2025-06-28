@@ -16,6 +16,7 @@ interface AssetFormProps {
   onSubmit: (data: AssetFormData) => void;
   isSubmitting: boolean;
   submitLabel: string;
+  disabled?: boolean;
 }
 
 export interface AssetFormData {
@@ -38,7 +39,7 @@ export interface AssetFormData {
   notes: string;
 }
 
-export function AssetForm({ asset, onSubmit, isSubmitting, submitLabel }: AssetFormProps) {
+export function AssetForm({ asset, onSubmit, isSubmitting, submitLabel, disabled = false }: AssetFormProps) {
   const [formData, setFormData] = useState<AssetFormData>({
     name: asset?.name || '',
     code: asset?.code || '',
@@ -278,7 +279,7 @@ export function AssetForm({ asset, onSubmit, isSubmitting, submitLabel }: AssetF
       <div className="flex space-x-4">
         <Button
           type="submit"
-          disabled={isSubmitting}
+          disabled={isSubmitting || disabled}
           className="flex-1"
         >
           {isSubmitting ? 'Salvando...' : submitLabel}

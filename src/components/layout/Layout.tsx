@@ -1,6 +1,6 @@
-
 import { Sidebar } from './Sidebar';
 import { Header } from './Header';
+import { useLimitNotifications } from '@/hooks/useLimitNotifications';
 import { createContext, useRef } from "react";
 
 interface LayoutProps {
@@ -11,6 +11,9 @@ export const ScrollContext = createContext<React.RefObject<HTMLDivElement> | nul
 
 export function Layout({ children }: LayoutProps) {
   const mainRef = useRef<HTMLDivElement>(null);
+  
+  // Inicializar notificações de limite
+  useLimitNotifications();
 
   return (
     <ScrollContext.Provider value={mainRef}>
