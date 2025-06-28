@@ -6,7 +6,7 @@ import { usePlanLimits, planRules } from '@/hooks/usePlanLimits';
 import { ArrowUpRight, Users, Package, HeadphonesIcon, Mail, MessageCircle } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 
-export default function MeuPlano() {
+export default function MyPlan() {
   const { data: planLimits, isLoading, error } = usePlanLimits();
   const { profile, company } = useAuth();
 
@@ -51,12 +51,6 @@ export default function MeuPlano() {
       </div>
     );
   }
-
-  const getProgressColor = (usage: number) => {
-    if (usage >= 100) return 'bg-red-500';
-    if (usage >= 80) return 'bg-yellow-500';
-    return 'bg-green-500';
-  };
 
   const getProgressBgColor = (usage: number) => {
     if (usage >= 100) return 'bg-red-100';
@@ -117,58 +111,6 @@ export default function MeuPlano() {
                 Usuários: Até {planLimits.planInfo.maxUsers}
               </span>
             </div>
-          </CardContent>
-        </Card>
-
-        {/* Suporte */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 justify-center text-center">
-              <HeadphonesIcon className="h-5 w-5 text-blue-600" />
-              Fale com o Suporte
-            </CardTitle>
-            <CardDescription className="text-center">
-              Entre em contato conforme o seu plano
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4 flex flex-col items-center justify-center">
-            <div className="flex flex-col items-center gap-1 w-full">
-              <div className="flex items-center gap-2 justify-center">
-                <Mail className="h-4 w-4 text-blue-600" />
-                <span className="text-sm text-gray-700 font-medium">E-mail</span>
-              </div>
-              <a
-                href="mailto:suporte.microfocuspro@gmail.com?subject=Suporte%20Armazena%20App"
-                className="text-blue-700 font-medium hover:underline break-all text-center"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                suporte.microfocuspro@gmail.com
-              </a>
-            </div>
-            {planLimits.currentPlan === 'premium' && (
-              <div className="flex flex-col items-center gap-2 w-full mt-2">
-                <div className="flex items-center gap-2 justify-center">
-                  <MessageCircle className="h-4 w-4 text-green-600" />
-                  <span className="text-sm text-gray-700 font-medium">WhatsApp</span>
-                </div>
-                <Button
-                  asChild
-                  className="w-full bg-green-500 hover:bg-green-600 text-white"
-                  size="lg"
-                >
-                  <a
-                    href={`https://wa.me/5543988448558?text=${encodeURIComponent(
-                      `Preciso de suporte no Armazena App. Meu nome é ${profile?.name || ''} da empresa ${company?.name || ''}`
-                    )}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Falar no WhatsApp
-                  </a>
-                </Button>
-              </div>
-            )}
           </CardContent>
         </Card>
 
@@ -234,6 +176,58 @@ export default function MeuPlano() {
                 </div>
               </div>
             </div>
+          </CardContent>
+        </Card>
+
+        {/* Suporte */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 justify-center text-center">
+              <HeadphonesIcon className="h-5 w-5 text-blue-600" />
+              Fale com o Suporte
+            </CardTitle>
+            <CardDescription className="text-center">
+              Entre em contato conforme o seu plano
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4 flex flex-col items-center justify-center">
+            <div className="flex flex-col items-center gap-1 w-full">
+              <div className="flex items-center gap-2 justify-center">
+                <Mail className="h-4 w-4 text-blue-600" />
+                <span className="text-sm text-gray-700 font-medium">E-mail</span>
+              </div>
+              <a
+                href="mailto:suporte.microfocuspro@gmail.com?subject=Suporte%20Armazena%20App"
+                className="text-blue-700 font-medium hover:underline break-all text-center"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                suporte.microfocuspro@gmail.com
+              </a>
+            </div>
+            {planLimits.currentPlan === 'premium' && (
+              <div className="flex flex-col items-center gap-2 w-full mt-2">
+                <div className="flex items-center gap-2 justify-center">
+                  <MessageCircle className="h-4 w-4 text-green-600" />
+                  <span className="text-sm text-gray-700 font-medium">WhatsApp</span>
+                </div>
+                <Button
+                  asChild
+                  className="w-full bg-green-500 hover:bg-green-600 text-white"
+                  size="lg"
+                >
+                  <a
+                    href={`https://wa.me/5543988448558?text=${encodeURIComponent(
+                      `Preciso de suporte no Armazena App. Meu nome é ${profile?.name || ''} da empresa ${company?.name || ''}`
+                    )}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Falar no WhatsApp
+                  </a>
+                </Button>
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>
