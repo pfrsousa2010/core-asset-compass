@@ -67,12 +67,34 @@ async function doBackgroundSync() {
 
 // Push notification handling
 self.addEventListener('push', (event) => {
-  const options = {
-    body: event.data ? event.data.text() : 'Nova notificação do Armazena',
+  let notificationData = {
+    title: 'Armazena',
+    body: 'Nova notificação do Armazena',
     icon: '/icons/icon-192x192.png',
     badge: '/icons/icon-72x72.png',
+    data: {}
+  };
+
+  if (event.data) {
+    try {
+      const data = event.data.json();
+      notificationData = {
+        ...notificationData,
+        ...data
+      };
+    } catch (error) {
+      // Se não conseguir fazer parse do JSON, usar o texto
+      notificationData.body = event.data.text();
+    }
+  }
+
+  const options = {
+    body: notificationData.body,
+    icon: notificationData.icon,
+    badge: notificationData.badge,
     vibrate: [100, 50, 100],
     data: {
+      ...notificationData.data,
       dateOfArrival: Date.now(),
       primaryKey: 1
     },
@@ -87,11 +109,15 @@ self.addEventListener('push', (event) => {
         title: 'Fechar',
         icon: '/icons/icon-96x96.png'
       }
-    ]
+    ],
+    requireInteraction: false,
+    silent: false,
+    tag: 'armazena-notification',
+    renotify: true
   };
 
   event.waitUntil(
-    self.registration.showNotification('Armazena', options)
+    self.registration.showNotification(notificationData.title, options)
   );
 });
 
@@ -99,9 +125,27 @@ self.addEventListener('push', (event) => {
 self.addEventListener('notificationclick', (event) => {
   event.notification.close();
 
-  if (event.action === 'explore') {
+  if (event.action === 'explore' || event.action === '') {
+    // Abrir a aplicação
     event.waitUntil(
-      clients.openWindow('/')
+      clients.matchAll({ type: 'window', includeUncontrolled: true })
+        .then((clientList) => {
+          // Se já existe uma janela aberta, focar nela
+          for (const client of clientList) {
+            if (client.url.includes(self.location.origin) && 'focus' in client) {
+              return client.focus();
+            }
+          }
+          // Se não existe, abrir nova janela
+          if (clients.openWindow) {
+            return clients.openWindow('/');
+          }
+        })
     );
   }
+});
+
+// Notification close handling
+self.addEventListener('notificationclose', (event) => {
+  console.log('Notification closed:', event.notification.tag);
 }); 

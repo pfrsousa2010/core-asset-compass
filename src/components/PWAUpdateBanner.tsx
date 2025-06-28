@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { RefreshCw, X } from 'lucide-react';
+import { sendAppUpdateNotification } from '@/lib/notification-service';
 
 export function PWAUpdateBanner() {
   const [showUpdateBanner, setShowUpdateBanner] = useState(false);
@@ -11,6 +12,8 @@ export function PWAUpdateBanner() {
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.addEventListener('controllerchange', () => {
         setShowUpdateBanner(true);
+        // Enviar notificação de atualização para todos os usuários
+        sendAppUpdateNotification();
       });
     }
   }, []);
