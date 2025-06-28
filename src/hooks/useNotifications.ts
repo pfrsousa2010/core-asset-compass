@@ -6,7 +6,6 @@ import { useToast } from '@/hooks/use-toast';
 import { Tables } from '@/integrations/supabase/types';
 
 type Notification = Tables<'notifications'>;
-type PushSubscription = Tables<'push_subscriptions'>;
 
 interface UseNotificationsReturn {
   notifications: Notification[];
@@ -50,9 +49,9 @@ export function useNotifications(): UseNotificationsReturn {
         .from('push_subscriptions')
         .select('*')
         .eq('user_id', user?.id)
-        .single();
+        .maybeSingle();
 
-      if (error && error.code !== 'PGRST116') throw error;
+      if (error) throw error;
       return data;
     },
     enabled: !!user,
