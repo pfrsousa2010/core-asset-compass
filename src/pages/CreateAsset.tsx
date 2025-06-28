@@ -125,7 +125,7 @@ export default function CreateAsset() {
                 className="p-0 h-auto font-semibold ml-1"
                 onClick={() => navigate('/meu-plano')}
               >
-                Faça upgrade do seu plano
+                Faça upgrade do seu plano 
               </Button>
               para adicionar mais ativos.
             </AlertDescription>
