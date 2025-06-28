@@ -4,6 +4,7 @@ import { useNotifications } from '@/hooks/useNotifications';
 import { Button } from '@/components/ui/button';
 import { MobileNav } from './MobileNav';
 import { NotificationCenter } from '@/components/NotificationCenter';
+import { PlanBadge } from '@/components/PlanBadge';
 import { LogOut, Building2, Bell } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 
@@ -40,11 +41,14 @@ export function Header() {
             <MobileNav />
 
             {company && (
-              <div className="hidden lg:flex items-center text-gray-600 min-w-0">
+              <div className="hidden lg:flex items-center text-gray-600 min-w-0 space-x-3">
                 <Building2 className="h-4 w-4 mr-2 flex-shrink-0" />
                 <span className="text-sm font-medium break-words">
                   {company.name}
                 </span>
+                {company.plan !== 'enterprise' && (
+                  <PlanBadge plan={company.plan as 'free' | 'basic' | 'premium'} />
+                )}
               </div>
             )}
           </div>

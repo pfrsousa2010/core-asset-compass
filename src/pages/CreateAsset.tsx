@@ -1,4 +1,3 @@
-
 import { useNavigate } from 'react-router-dom';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -9,6 +8,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { ArrowLeft } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { AssetForm, AssetFormData } from '@/components/assets/AssetForm';
+import { usePlanLimits } from '@/hooks/usePlanLimits';
 import { useState } from 'react';
 
 export default function CreateAsset() {
@@ -17,11 +17,17 @@ export default function CreateAsset() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [error, setError] = useState('');
+  const { data: planLimits } = usePlanLimits();
 
   const createAssetMutation = useMutation({
     mutationFn: async (data: AssetFormData) => {
       if (!profile?.company_id) {
         throw new Error('Company ID not found');
+      }
+
+      // Verificar limites do plano
+      if (planLimits?.isAssetsLimitReached) {
+        throw new Error('Limite de ativos do seu plano foi atingido. Faça upgrade para adicionar mais ativos.');
       }
 
       const { error } = await supabase.from('assets').insert({
@@ -51,10 +57,23 @@ export default function CreateAsset() {
       queryClient.invalidateQueries({ queryKey: ['assets'] });
       queryClient.invalidateQueries({ queryKey: ['dashboard-stats'] });
       queryClient.invalidateQueries({ queryKey: ['recent-assets'] });
+      queryClient.invalidateQueries({ queryKey: ['plan-limits'] });
+      
+      // Mostrar toast de sucesso
       toast({
         title: "Ativo criado com sucesso!",
         description: "O ativo foi adicionado ao sistema",
       });
+
+      // Verificar se está próximo do limite e mostrar aviso
+      if (planLimits?.isAssetsLimitWarning && !planLimits?.isAssetsLimitReached) {
+        toast({
+          title: "Aproximando do limite",
+          description: "Você está próximo do limite de ativos do seu plano. Considere fazer upgrade.",
+          variant: "destructive",
+        });
+      }
+
       navigate('/assets');
     },
     onError: (error: any) => {
@@ -97,10 +116,27 @@ export default function CreateAsset() {
           </Alert>
         )}
 
+        {planLimits?.isAssetsLimitReached && (
+          <Alert className="mb-6">
+            <AlertDescription>
+              Você atingiu o limite de ativos do seu plano atual ({planLimits.assetsCount}/{planLimits.assetsLimit}). 
+              <Button 
+                variant="link" 
+                className="p-0 h-auto font-semibold ml-1"
+                onClick={() => navigate('/meu-plano')}
+              >
+                Faça upgrade do seu plano
+              </Button>
+              para adicionar mais ativos.
+            </AlertDescription>
+          </Alert>
+        )}
+
         <AssetForm
           onSubmit={handleSubmit}
           isSubmitting={createAssetMutation.isPending}
           submitLabel="Salvar Ativo"
+          disabled={planLimits?.isAssetsLimitReached}
         />
       </div>
     </div>

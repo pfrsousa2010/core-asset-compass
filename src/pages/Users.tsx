@@ -4,10 +4,13 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Plus } from 'lucide-react';
 import { UsersList } from '@/components/users/UsersList';
 import { UserForm } from '@/components/users/UserForm';
 import { useUserMutations } from '@/hooks/useUserMutations';
+import { usePlanLimits } from '@/hooks/usePlanLimits';
+import { useToast } from '@/hooks/use-toast';
 import { Database } from '@/integrations/supabase/types';
 import { useDevice } from '@/hooks/useDevice';
 
@@ -16,6 +19,8 @@ type UserRole = Database['public']['Enums']['user_role'];
 export default function Users() {
   const { profile } = useAuth();
   const { createUserMutation, updateUserMutation } = useUserMutations();
+  const { data: planLimits } = usePlanLimits();
+  const { toast } = useToast();
   const { isMobile, isMobileOrTablet } = useDevice();
   
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -77,6 +82,12 @@ export default function Users() {
       return;
     }
 
+    // Verificar limites do plano para criação de usuários
+    if (!editingUser && planLimits?.isUsersLimitReached) {
+      setError('Limite de usuários do seu plano foi atingido. Faça upgrade para adicionar mais usuários.');
+      return;
+    }
+
     if (editingUser) {
       updateUserMutation.mutate({
         userId: editingUser.id,
@@ -106,6 +117,15 @@ export default function Users() {
         onSuccess: () => {
           setIsCreateModalOpen(false);
           resetForm();
+          
+          // Verificar se está próximo do limite e mostrar aviso
+          if (planLimits?.isUsersLimitWarning && !planLimits?.isUsersLimitReached) {
+            toast({
+              title: "Aproximando do limite",
+              description: "Você está próximo do limite de usuários do seu plano. Considere fazer upgrade.",
+              variant: "destructive",
+            });
+          }
         },
         onError: (error: any) => {
           console.error('Error creating user:', error);
@@ -143,7 +163,11 @@ export default function Users() {
         
         <Dialog open={isCreateModalOpen} onOpenChange={setIsCreateModalOpen}>
           <DialogTrigger asChild>
-            <Button onClick={handleCreateUser} size={isMobile ? 'icon' : undefined}>
+            <Button 
+              onClick={handleCreateUser} 
+              size={isMobile ? 'icon' : undefined}
+              disabled={planLimits?.isUsersLimitReached}
+            >
               <Plus className="h-4 w-4" />
               {!isMobile && (
                 <span className="ml-2">Novo Usuário</span>
@@ -163,6 +187,22 @@ export default function Users() {
               </DialogDescription>
             </DialogHeader>
 
+            {planLimits?.isUsersLimitReached && !editingUser && (
+              <Alert>
+                <AlertDescription>
+                  Você atingiu o limite de usuários do seu plano atual ({planLimits.usersCount}/{planLimits.usersLimit}). 
+                  <Button 
+                    variant="link" 
+                    className="p-0 h-auto font-semibold ml-1"
+                    onClick={() => window.location.href = '/meu-plano'}
+                  >
+                    Faça upgrade do seu plano
+                  </Button>
+                  para adicionar mais usuários.
+                </AlertDescription>
+              </Alert>
+            )}
+
             <UserForm
               formData={formData}
               setFormData={setFormData}
@@ -172,6 +212,7 @@ export default function Users() {
               isLoading={createUserMutation.isPending || updateUserMutation.isPending}
               isEditing={!!editingUser}
               isEditingSelf={isEditingSelf}
+              disabled={planLimits?.isUsersLimitReached && !editingUser}
             />
           </DialogContent>
         </Dialog>

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -26,6 +25,7 @@ interface UserFormProps {
   isLoading: boolean;
   isEditing: boolean;
   isEditingSelf: boolean;
+  disabled?: boolean;
 }
 
 export function UserForm({
@@ -36,7 +36,8 @@ export function UserForm({
   error,
   isLoading,
   isEditing,
-  isEditingSelf
+  isEditingSelf,
+  disabled = false
 }: UserFormProps) {
   return (
     <form onSubmit={onSubmit} className="space-y-4">
@@ -109,7 +110,7 @@ export function UserForm({
       <div className="flex space-x-4">
         <Button 
           type="submit" 
-          disabled={isLoading}
+          disabled={isLoading || disabled}
           className="flex-1"
         >
           {isLoading
