@@ -1,10 +1,12 @@
-
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { AuthGuard } from "@/components/auth/AuthGuard";
 import { Layout } from "@/components/layout/Layout";
+import { PWAInstallBanner } from "@/components/PWAInstallBanner";
+import { PWAUpdateBanner } from "@/components/PWAUpdateBanner";
+import { OfflineIndicator } from "@/components/OfflineIndicator";
 import Login from "@/pages/Login";
 import Dashboard from "@/pages/Dashboard";
 import Assets from "@/pages/Assets";
@@ -91,6 +93,9 @@ function App() {
               } />
             </Routes>
           </div>
+          <OfflineIndicator />
+          <PWAUpdateBanner />
+          <PWAInstallBanner />
           <Toaster />
         </AuthProvider>
       </BrowserRouter>
