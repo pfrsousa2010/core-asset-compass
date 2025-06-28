@@ -47,12 +47,14 @@ export function AssetCard({ asset, isLast = false, onIntersect }: AssetCardProps
         </div>
 
         <div className="space-y-2 mb-4">
-          {asset.location && (
-            <div className="flex items-center text-sm text-gray-600">
-              <MapPin className="h-4 w-4 mr-2 flex-shrink-0" />
-              <span className="truncate">{asset.location}</span>
-            </div>
-          )}
+          <div className="flex items-center text-sm text-gray-600">
+            <MapPin className="h-4 w-4 mr-2 flex-shrink-0" />
+            <span className="truncate">
+              {asset.location
+                ? asset.location
+                : "-"
+              }</span>
+          </div>
 
           <div className="flex items-center text-sm text-gray-600">
             <DollarSign className="h-4 w-4 mr-2 flex-shrink-0" />
@@ -68,8 +70,8 @@ export function AssetCard({ asset, isLast = false, onIntersect }: AssetCardProps
             <Calendar className="h-4 w-4 mr-2 flex-shrink-0" />
             <span>
               {asset.acquisition_date
-                ? "Adiquirido em: " + formatDate(asset.acquisition_date)
-                : " Adicionado em: " + formatDate(asset.created_at)
+                ? "Adiquirido em: " + formatDate(asset.acquisition_date + 'T00:00:00')
+                : "Adicionado em: " + formatDate(asset.created_at)
               }
             </span>
           </div>
