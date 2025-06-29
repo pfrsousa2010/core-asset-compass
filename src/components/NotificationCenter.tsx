@@ -152,14 +152,14 @@ export function NotificationCenter({ isOpen, onClose }: NotificationCenterProps)
             <div className="flex items-center justify-center h-32">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
             </div>
-          ) : notifications.length === 0 ? (
+          ) : notifications.filter(n => n.type !== 'app_update').length === 0 ? (
             <div className="flex flex-col items-center justify-center h-32 text-gray-500">
               <Bell className="h-12 w-12 mb-2 opacity-50" />
               <p className="text-sm">Nenhuma notificação</p>
             </div>
           ) : (
             <div className="space-y-3">
-              {notifications.map((notification) => (
+              {notifications.filter(n => n.type !== 'app_update').map((notification) => (
                 <div
                   key={notification.id}
                   className={`p-3 rounded-lg border transition-colors ${

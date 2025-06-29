@@ -53,7 +53,9 @@ CREATE POLICY "Users can update their own notifications"
 CREATE OR REPLACE FUNCTION public.create_asset_notification(
   asset_id UUID,
   action TEXT, -- 'created', 'updated', 'deleted'
-  actor_name TEXT
+  actor_name TEXT,
+  asset_name TEXT DEFAULT NULL,
+  asset_code TEXT DEFAULT NULL
 )
 RETURNS VOID
 LANGUAGE plpgsql
@@ -62,14 +64,25 @@ AS $$
 DECLARE
   asset_record RECORD;
   admin_users RECORD;
+  final_asset_name TEXT;
+  final_asset_code TEXT;
 BEGIN
-  -- Buscar informações do ativo
-  SELECT name, code INTO asset_record
-  FROM public.assets
-  WHERE id = asset_id;
-  
-  IF NOT FOUND THEN
-    RETURN;
+  -- Para deleção, usar os parâmetros fornecidos (já que o ativo não existe mais)
+  IF action = 'deleted' THEN
+    final_asset_name := asset_name;
+    final_asset_code := asset_code;
+  ELSE
+    -- Para criação e atualização, buscar informações do ativo
+    SELECT name, code INTO asset_record
+    FROM public.assets
+    WHERE id = asset_id;
+    
+    IF NOT FOUND THEN
+      RETURN;
+    END IF;
+    
+    final_asset_name := asset_record.name;
+    final_asset_code := asset_record.code;
   END IF;
   
   -- Buscar todos os usuários admin da mesma empresa
@@ -92,16 +105,16 @@ BEGIN
         ELSE 'Ativo modificado'
       END,
       CASE 
-        WHEN action = 'created' THEN format('%s adicionou o ativo "%s" (%s)', actor_name, asset_record.name, asset_record.code)
-        WHEN action = 'updated' THEN format('%s atualizou o ativo "%s" (%s)', actor_name, asset_record.name, asset_record.code)
-        WHEN action = 'deleted' THEN format('%s removeu o ativo "%s" (%s)', actor_name, asset_record.name, asset_record.code)
-        ELSE format('%s modificou o ativo "%s" (%s)', actor_name, asset_record.name, asset_record.code)
+        WHEN action = 'created' THEN format('%s adicionou o ativo "%s" (%s)', actor_name, final_asset_name, final_asset_code)
+        WHEN action = 'updated' THEN format('%s atualizou o ativo "%s" (%s)', actor_name, final_asset_name, final_asset_code)
+        WHEN action = 'deleted' THEN format('%s removeu o ativo "%s" (%s)', actor_name, final_asset_name, final_asset_code)
+        ELSE format('%s modificou o ativo "%s" (%s)', actor_name, final_asset_name, final_asset_code)
       END,
       'asset_' || action,
       jsonb_build_object(
         'asset_id', asset_id,
-        'asset_name', asset_record.name,
-        'asset_code', asset_record.code,
+        'asset_name', final_asset_name,
+        'asset_code', final_asset_code,
         'actor_name', actor_name,
         'action', action
       )
@@ -152,7 +165,9 @@ BEGIN
   PERFORM public.create_asset_notification(
     NEW.id,
     'created',
-    (SELECT name FROM public.profiles WHERE id = auth.uid())
+    (SELECT name FROM public.profiles WHERE id = auth.uid()),
+    NEW.name,
+    NEW.code
   );
   RETURN NEW;
 END;
@@ -172,7 +187,9 @@ BEGIN
   PERFORM public.create_asset_notification(
     NEW.id,
     'updated',
-    (SELECT name FROM public.profiles WHERE id = auth.uid())
+    (SELECT name FROM public.profiles WHERE id = auth.uid()),
+    NEW.name,
+    NEW.code
   );
   RETURN NEW;
 END;
@@ -192,7 +209,9 @@ BEGIN
   PERFORM public.create_asset_notification(
     OLD.id,
     'deleted',
-    (SELECT name FROM public.profiles WHERE id = auth.uid())
+    (SELECT name FROM public.profiles WHERE id = auth.uid()),
+    OLD.name,
+    OLD.code
   );
   RETURN OLD;
 END;
