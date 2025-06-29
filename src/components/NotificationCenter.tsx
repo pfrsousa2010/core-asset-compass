@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
+import { useNavigate } from 'react-router-dom';
 
 interface NotificationCenterProps {
   isOpen: boolean;
@@ -35,6 +36,7 @@ export function NotificationCenter({ isOpen, onClose }: NotificationCenterProps)
   } = useNotifications();
 
   const [isSubscribing, setIsSubscribing] = useState(false);
+  const navigate = useNavigate();
 
   const handleSubscribe = async () => {
     setIsSubscribing(true);
@@ -85,8 +87,14 @@ export function NotificationCenter({ isOpen, onClose }: NotificationCenterProps)
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/50 flex items-start justify-end p-4">
-      <Card className="w-full max-w-md h-[80vh] flex flex-col">
+    <div
+      className="fixed inset-0 z-50 bg-black/50 flex items-start justify-end p-4"
+      onClick={() => onClose()}
+    >
+      <Card
+        className="w-full max-w-md h-[80vh] flex flex-col"
+        onClick={e => e.stopPropagation()}
+      >
         <CardHeader className="flex-shrink-0">
           <div className="flex items-center justify-between">
             <CardTitle className="flex items-center gap-2">
@@ -159,51 +167,62 @@ export function NotificationCenter({ isOpen, onClose }: NotificationCenterProps)
             </div>
           ) : (
             <div className="space-y-3">
-              {notifications.filter(n => n.type !== 'app_update').map((notification) => (
-                <div
-                  key={notification.id}
-                  className={`p-3 rounded-lg border transition-colors ${
-                    notification.read_at 
-                      ? 'bg-gray-50 border-gray-200' 
-                      : 'bg-white border-blue-200 shadow-sm'
-                  }`}
-                >
-                  <div className="flex items-start gap-3">
-                    <div className={`p-2 rounded-full ${getNotificationColor(notification.type)}`}>
-                      {getNotificationIcon(notification.type)}
-                    </div>
-                    
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-start justify-between gap-2">
-                        <h4 className="font-medium text-sm text-gray-900">
-                          {notification.title}
-                        </h4>
-                        {!notification.read_at && (
-                          <Button
-                            size="sm"
-                            variant="ghost"
-                            onClick={() => markAsRead(notification.id)}
-                            className="h-6 w-6 p-0"
-                          >
-                            <Check className="h-3 w-3" />
-                          </Button>
-                        )}
+              {notifications.filter(n => n.type !== 'app_update').map((notification) => {
+                const isAssetNav = notification.type === 'asset_created' || notification.type === 'asset_updated';
+                let assetId: string | undefined = undefined;
+                if (isAssetNav && notification.data && typeof notification.data === 'object' && 'asset_id' in notification.data) {
+                  assetId = (notification.data as any).asset_id;
+                }
+                const handleCardClick = () => {
+                  if (isAssetNav && assetId) {
+                    onClose();
+                    navigate(`/assets/${assetId}`);
+                  }
+                };
+                return (
+                  <div
+                    key={notification.id}
+                    className={`p-3 rounded-lg border transition-colors ${
+                      notification.read_at 
+                        ? 'bg-gray-50 border-gray-200' 
+                        : 'bg-white border-blue-200 shadow-sm'
+                    } ${isAssetNav && assetId ? 'cursor-pointer hover:bg-blue-50' : ''}`}
+                    onClick={isAssetNav && assetId ? handleCardClick : undefined}
+                  >
+                    <div className="flex items-start gap-3">
+                      <div className={`p-2 rounded-full ${getNotificationColor(notification.type)}`}>
+                        {getNotificationIcon(notification.type)}
                       </div>
-                      
-                      <p className="text-sm text-gray-600 mt-1">
-                        {notification.body}
-                      </p>
-                      
-                      <p className="text-xs text-gray-400 mt-2">
-                        {formatDistanceToNow(new Date(notification.created_at), {
-                          addSuffix: true,
-                          locale: ptBR,
-                        })}
-                      </p>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-start justify-between gap-2">
+                          <h4 className="font-medium text-sm text-gray-900">
+                            {notification.title}
+                          </h4>
+                          {!notification.read_at && (
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              onClick={e => { e.stopPropagation(); markAsRead(notification.id); }}
+                              className="h-6 w-6 p-0"
+                            >
+                              <Check className="h-3 w-3" />
+                            </Button>
+                          )}
+                        </div>
+                        <p className="text-sm text-gray-600 mt-1">
+                          {notification.body}
+                        </p>
+                        <p className="text-xs text-gray-400 mt-2">
+                          {formatDistanceToNow(new Date(notification.created_at), {
+                            addSuffix: true,
+                            locale: ptBR,
+                          })}
+                        </p>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </ScrollArea>
