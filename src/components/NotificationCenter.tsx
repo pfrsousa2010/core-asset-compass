@@ -174,6 +174,7 @@ export function NotificationCenter({ isOpen, onClose }: NotificationCenterProps)
                   assetId = (notification.data as any).asset_id;
                 }
                 const handleCardClick = () => {
+                  markAsRead(notification.id);
                   if (isAssetNav && assetId) {
                     onClose();
                     navigate(`/assets/${assetId}`);
@@ -187,7 +188,7 @@ export function NotificationCenter({ isOpen, onClose }: NotificationCenterProps)
                         ? 'bg-gray-50 border-gray-200' 
                         : 'bg-white border-blue-200 shadow-sm'
                     } ${isAssetNav && assetId ? 'cursor-pointer hover:bg-blue-50' : ''}`}
-                    onClick={isAssetNav && assetId ? handleCardClick : undefined}
+                    onClick={isAssetNav && assetId ? handleCardClick : () => markAsRead(notification.id)}
                   >
                     <div className="flex items-start gap-3">
                       <div className={`p-2 rounded-full ${getNotificationColor(notification.type)}`}>
