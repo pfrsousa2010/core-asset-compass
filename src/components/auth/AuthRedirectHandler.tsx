@@ -21,6 +21,9 @@ export default function AuthRedirectHandler() {
           if (type === "recovery") {
             // redireciona para página de nova senha
             navigate("/reset-password", { replace: true });
+          } else if (type === "signup") {
+            // redireciona para página de cadastro de senha
+            navigate("/set-password", { replace: true });
           } else {
             navigate("/dashboard", { replace: true });
           }

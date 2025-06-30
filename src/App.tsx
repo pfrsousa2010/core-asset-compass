@@ -20,6 +20,7 @@ import AccessDenied from "@/pages/AccessDenied";
 import "./App.css";
 import AuthRedirectHandler from "@/components/auth/AuthRedirectHandler";
 import ResetPassword from "@/pages/ResetPassword";
+import SetPassword from "@/pages/SetPassword";
 
 
 const queryClient = new QueryClient();
@@ -99,6 +100,7 @@ function App() {
                   </Layout>
                 </AuthGuard>
               } />
+              <Route path="/set-password" element={<SetPassword />} />
             </Routes>
           </div>
           <OfflineIndicator />
