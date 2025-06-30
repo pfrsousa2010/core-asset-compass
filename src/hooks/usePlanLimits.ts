@@ -4,7 +4,7 @@ import { useAuth } from '@/contexts/AuthContext';
 
 export const planRules = {
   free: {
-    maxAssets: 25,
+    maxAssets: 50,
     maxUsers: 1,
     support: "E-mail (até 72h)",
     icon: "🟢",
@@ -12,7 +12,7 @@ export const planRules = {
     name: "Free",
   },
   basic: {
-    maxAssets: 250,
+    maxAssets: 500,
     maxUsers: 3,
     support: "E-mail (até 48h)",
     icon: "🔵",

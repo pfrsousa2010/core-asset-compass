@@ -62,12 +62,6 @@ export default function MyPlan() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold text-gray-900">Meu Plano</h1>
-        {planLimits.currentPlan !== 'premium' && (
-          <Button className="flex items-center gap-2">
-            Fazer Upgrade
-            <ArrowUpRight className="h-4 w-4" />
-          </Button>
-        )}
       </div>
 
       <div className="grid gap-6 md:grid-cols-2">
@@ -246,6 +240,15 @@ export default function MyPlan() {
               {Object.entries(planRules).map(([planKey, planInfo]) => {
                 if (planKey === planLimits.currentPlan || planKey === 'enterprise') return null;
                 if (planLimits.currentPlan === 'basic' && planKey === 'free') return null;
+
+                // Definir o link de upgrade para cada plano
+                let upgradeLink = '';
+                if (planKey === 'basic') {
+                  upgradeLink = 'https://www.mercadopago.com.br/subscriptions/checkout?preapproval_plan_id=2c93808497ad02ae0197c173507007c2';
+                } else if (planKey === 'premium') {
+                  upgradeLink = 'https://www.mercadopago.com.br/subscriptions/checkout?preapproval_plan_id=2c93808497b74ff10197c174c6fe0343';
+                }
+
                 return (
                   <div key={planKey} className="border rounded-lg p-4 space-y-3">
                     <div className="flex items-center gap-2">
@@ -257,9 +260,17 @@ export default function MyPlan() {
                       <div>Até {planInfo.maxUsers} usuários</div>
                       <div>{planInfo.support}</div>
                     </div>
-                    <Button variant="outline" size="sm" className="w-full">
-                      Fazer Upgrade
-                    </Button>
+                    {upgradeLink ? (
+                      <Button variant="outline" size="sm" className="w-full" asChild>
+                        <a href={upgradeLink} target="_blank" rel="noopener noreferrer">
+                          Fazer Upgrade
+                        </a>
+                      </Button>
+                    ) : (
+                      <Button variant="outline" size="sm" className="w-full" disabled>
+                        Fazer Upgrade
+                      </Button>
+                    )}
                   </div>
                 );
               })}
