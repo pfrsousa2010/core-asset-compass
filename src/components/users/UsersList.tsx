@@ -20,9 +20,11 @@ interface UsersListProps {
   isLoading: boolean;
   onEdit: (user: User) => void;
   onCreateUser: () => void;
+  profile: any;
+  onDelete: (user: User) => void;
 }
 
-export function UsersList({ users, isLoading, onEdit, onCreateUser }: UsersListProps) {
+export function UsersList({ users, isLoading, onEdit, onCreateUser, profile, onDelete }: UsersListProps) {
   if (isLoading) {
     return (
       <div className="col-span-full flex justify-center py-12">
@@ -59,10 +61,14 @@ export function UsersList({ users, isLoading, onEdit, onCreateUser }: UsersListP
     );
   }
 
+  const handleDelete = (user: User) => {
+    onDelete(user);
+  };
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
       {users.map((user) => (
-        <UserCard key={user.id} user={user} onEdit={onEdit} />
+        <UserCard key={user.id} user={user} onEdit={onEdit} profile={profile} onDelete={handleDelete} />
       ))}
     </div>
   );

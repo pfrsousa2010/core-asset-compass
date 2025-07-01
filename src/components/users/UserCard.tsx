@@ -1,9 +1,11 @@
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Mail, Calendar, Edit } from 'lucide-react';
+import { Mail, Calendar, Edit, Trash2 } from 'lucide-react';
 import { formatDate } from '@/lib/utils';
 import { Database } from '@/integrations/supabase/types';
+import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
+import { AlertDialog, AlertDialogTrigger, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter, AlertDialogCancel, AlertDialogAction } from '@/components/ui/alert-dialog';
 
 type UserRole = Database['public']['Enums']['user_role'];
 
@@ -19,9 +21,11 @@ interface User {
 interface UserCardProps {
   user: User;
   onEdit: (user: User) => void;
+  profile: any;
+  onDelete: (user: User) => void;
 }
 
-export function UserCard({ user, onEdit }: UserCardProps) {
+export function UserCard({ user, onEdit, profile, onDelete }: UserCardProps) {
   const getRoleBadge = (role: string) => {
     const styles = {
       admin: 'bg-red-100 text-red-800',
@@ -82,6 +86,41 @@ export function UserCard({ user, onEdit }: UserCardProps) {
             <Edit className="h-3 w-3 mr-1" />
             Editar
           </Button>
+          {profile?.role === 'admin' && user.role !== 'admin' && (
+            <AlertDialog>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <AlertDialogTrigger asChild>
+                    <Button 
+                      variant="destructive" 
+                      size="sm" 
+                      className="flex items-center justify-center"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </AlertDialogTrigger>
+                </TooltipTrigger>
+                <TooltipContent>Apagar usuário</TooltipContent>
+              </Tooltip>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Confirmar exclusão</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    Tem certeza que deseja apagar o usuário "{user.name}"? Esta ação não pode ser desfeita.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={() => onDelete(user)}
+                    className="bg-red-600 hover:bg-red-700"
+                  >
+                    Apagar usuário
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          )}
         </div>
       </CardContent>
     </Card>

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
@@ -13,6 +13,7 @@ import { usePlanLimits } from '@/hooks/usePlanLimits';
 import { useToast } from '@/hooks/use-toast';
 import { Database } from '@/integrations/supabase/types';
 import { useDevice } from '@/hooks/useDevice';
+import { TooltipProvider } from '@/components/ui/tooltip';
 
 type UserRole = Database['public']['Enums']['user_role'];
 
@@ -22,6 +23,7 @@ export default function Users() {
   const { data: planLimits } = usePlanLimits();
   const { toast } = useToast();
   const { isMobile, isMobileOrTablet } = useDevice();
+  const queryClient = useQueryClient();
   
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [editingUser, setEditingUser] = useState<any>(null);
@@ -150,81 +152,100 @@ export default function Users() {
   // Verificar se o usuário está editando a si mesmo
   const isEditingSelf = editingUser && editingUser.id === profile?.id;
 
+  // Função para deletar usuário
+  const handleDelete = async (user: any) => {
+    if (!window.confirm(`Tem certeza que deseja deletar o usuário ${user.name}?`)) return;
+    const { error } = await supabase
+      .from('profiles')
+      .delete()
+      .eq('id', user.id);
+    if (error) {
+      toast({ title: 'Erro ao deletar usuário', description: error.message, variant: 'destructive' });
+    } else {
+      toast({ title: 'Usuário deletado com sucesso' });
+      queryClient.invalidateQueries({ queryKey: ['company-users'] });
+    }
+  };
+
   return (
-    <div className="space-y-6 pb-10">
-      {/* Header */}
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">Usuários</h1>
-          <p className="mt-2 text-gray-600">
-            Gerencie os usuários da sua empresa
-          </p>
-        </div>
-        
-        <Dialog open={isCreateModalOpen} onOpenChange={setIsCreateModalOpen}>
-          <DialogTrigger asChild>
-            <Button 
-              onClick={handleCreateUser} 
-              size={isMobile ? 'icon' : undefined}
-              disabled={planLimits?.isUsersLimitReached}
-            >
-              <Plus className="h-4 w-4" />
-              {!isMobile && (
-                <span className="ml-2">Novo Usuário</span>
+    <TooltipProvider>
+      <div className="space-y-6 pb-10">
+        {/* Header */}
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">Usuários</h1>
+            <p className="mt-2 text-gray-600">
+              Gerencie os usuários da sua empresa
+            </p>
+          </div>
+          
+          <Dialog open={isCreateModalOpen} onOpenChange={setIsCreateModalOpen}>
+            <DialogTrigger asChild>
+              <Button 
+                onClick={handleCreateUser} 
+                size={isMobile ? 'icon' : undefined}
+                disabled={planLimits?.isUsersLimitReached}
+              >
+                <Plus className="h-4 w-4" />
+                {!isMobile && (
+                  <span className="ml-2">Novo Usuário</span>
+                )}
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>
+                  {editingUser ? 'Editar Usuário' : 'Novo Usuário'}
+                </DialogTitle>
+                <DialogDescription>
+                  {editingUser 
+                    ? 'Modifique as informações do usuário' 
+                    : 'Adicione um novo usuário à empresa. O usuário receberá um convite por email.'
+                  }
+                </DialogDescription>
+              </DialogHeader>
+
+              {planLimits?.isUsersLimitReached && !editingUser && (
+                <Alert>
+                  <AlertDescription>
+                    Você atingiu o limite de usuários do seu plano atual ({planLimits.usersCount}/{planLimits.usersLimit}). 
+                    <Button 
+                      variant="link" 
+                      className="p-0 h-auto font-semibold ml-1"
+                      onClick={() => window.location.href = '/meu-plano'}
+                    >
+                      Faça upgrade do seu plano
+                    </Button>
+                    para adicionar mais usuários.
+                  </AlertDescription>
+                </Alert>
               )}
-            </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>
-                {editingUser ? 'Editar Usuário' : 'Novo Usuário'}
-              </DialogTitle>
-              <DialogDescription>
-                {editingUser 
-                  ? 'Modifique as informações do usuário' 
-                  : 'Adicione um novo usuário à empresa. O usuário receberá um convite por email.'
-                }
-              </DialogDescription>
-            </DialogHeader>
 
-            {planLimits?.isUsersLimitReached && !editingUser && (
-              <Alert>
-                <AlertDescription>
-                  Você atingiu o limite de usuários do seu plano atual ({planLimits.usersCount}/{planLimits.usersLimit}). 
-                  <Button 
-                    variant="link" 
-                    className="p-0 h-auto font-semibold ml-1"
-                    onClick={() => window.location.href = '/meu-plano'}
-                  >
-                    Faça upgrade do seu plano
-                  </Button>
-                  para adicionar mais usuários.
-                </AlertDescription>
-              </Alert>
-            )}
+              <UserForm
+                formData={formData}
+                setFormData={setFormData}
+                onSubmit={handleSubmit}
+                onCancel={handleCancel}
+                error={error}
+                isLoading={createUserMutation.isPending || updateUserMutation.isPending}
+                isEditing={!!editingUser}
+                isEditingSelf={isEditingSelf}
+                disabled={planLimits?.isUsersLimitReached && !editingUser}
+              />
+            </DialogContent>
+          </Dialog>
+        </div>
 
-            <UserForm
-              formData={formData}
-              setFormData={setFormData}
-              onSubmit={handleSubmit}
-              onCancel={handleCancel}
-              error={error}
-              isLoading={createUserMutation.isPending || updateUserMutation.isPending}
-              isEditing={!!editingUser}
-              isEditingSelf={isEditingSelf}
-              disabled={planLimits?.isUsersLimitReached && !editingUser}
-            />
-          </DialogContent>
-        </Dialog>
+        {/* Users List */}
+        <UsersList 
+          users={users}
+          isLoading={isLoading}
+          onEdit={handleEdit}
+          onCreateUser={handleCreateUser}
+          profile={profile}
+          onDelete={handleDelete}
+        />
       </div>
-
-      {/* Users List */}
-      <UsersList 
-        users={users}
-        isLoading={isLoading}
-        onEdit={handleEdit}
-        onCreateUser={handleCreateUser}
-      />
-    </div>
+    </TooltipProvider>
   );
 }

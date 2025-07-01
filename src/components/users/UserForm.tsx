@@ -6,6 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Switch } from '@/components/ui/switch';
 import { Database } from '@/integrations/supabase/types';
+import { Badge } from '@/components/ui/badge';
 
 type UserRole = Database['public']['Enums']['user_role'];
 
@@ -75,9 +76,24 @@ export function UserForm({
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="viewer">Viewer - Apenas visualização</SelectItem>
-            <SelectItem value="editor">Editor - Pode criar e editar</SelectItem>
-            <SelectItem value="admin">Admin - Controle total</SelectItem>
+            <SelectItem value="viewer">
+              <div className="flex items-center gap-2">
+                <Badge className="bg-green-100 text-green-800">Visualizador</Badge>
+                <span className="text-xs text-gray-600">Apenas visualiza dados</span>
+              </div>
+            </SelectItem>
+            <SelectItem value="editor">
+              <div className="flex items-center gap-2">
+                <Badge className="bg-yellow-100 text-yellow-800">Editor</Badge>
+                <span className="text-xs text-gray-600">Pode criar e editar</span>
+              </div>
+            </SelectItem>
+            <SelectItem value="admin">
+              <div className="flex items-center gap-2">
+                <Badge className="bg-red-100 text-red-800">Administrador</Badge>
+                <span className="text-xs text-gray-600">Controle total</span>
+              </div>
+            </SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -109,6 +125,14 @@ export function UserForm({
 
       <div className="flex space-x-4">
         <Button 
+          type="button" 
+          variant="outline" 
+          onClick={onCancel}
+          className="flex-1"
+        >
+          Cancelar
+        </Button>
+        <Button 
           type="submit" 
           disabled={isLoading || disabled}
           className="flex-1"
@@ -117,14 +141,6 @@ export function UserForm({
             ? 'Salvando...' 
             : isEditing ? 'Salvar Alterações' : 'Criar Usuário'
           }
-        </Button>
-        <Button 
-          type="button" 
-          variant="outline" 
-          onClick={onCancel}
-          className="flex-1"
-        >
-          Cancelar
         </Button>
       </div>
     </form>

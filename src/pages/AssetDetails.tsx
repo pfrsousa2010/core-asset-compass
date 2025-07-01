@@ -209,9 +209,8 @@ export default function AssetDetails() {
             {canDelete && (
               <AlertDialog>
                 <AlertDialogTrigger asChild>
-                  <Button variant="destructive">
-                    <Trash2 className="h-4 w-4 mr-2" />
-                    Apagar
+                  <Button variant="destructive" size="default" className="flex items-center justify-center">
+                    <Trash2 className="h-4 w-4" />
                   </Button>
                 </AlertDialogTrigger>
                 <AlertDialogContent>
@@ -229,7 +228,7 @@ export default function AssetDetails() {
                       className="bg-red-600 hover:bg-red-700"
                       disabled={deleteAssetMutation.isPending}
                     >
-                      {deleteAssetMutation.isPending ? 'Deletando...' : 'Deletar Ativo'}
+                      {deleteAssetMutation.isPending ? 'Deletando...' : 'Apagar Ativo'}
                     </AlertDialogAction>
                   </AlertDialogFooter>
                 </AlertDialogContent>
