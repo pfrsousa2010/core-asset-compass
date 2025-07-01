@@ -14,17 +14,19 @@ import { useToast } from '@/hooks/use-toast';
 import { Database } from '@/integrations/supabase/types';
 import { useDevice } from '@/hooks/useDevice';
 import { TooltipProvider } from '@/components/ui/tooltip';
+import { useNavigate } from 'react-router-dom';
 
 type UserRole = Database['public']['Enums']['user_role'];
 
 export default function Users() {
+  const navigate = useNavigate();
   const { profile } = useAuth();
   const { createUserMutation, updateUserMutation } = useUserMutations();
   const { data: planLimits } = usePlanLimits();
   const { toast } = useToast();
   const { isMobile, isMobileOrTablet } = useDevice();
   const queryClient = useQueryClient();
-  
+
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [editingUser, setEditingUser] = useState<any>(null);
   const [formData, setFormData] = useState({
@@ -48,7 +50,7 @@ export default function Users() {
         console.error('Error fetching users:', error);
         throw error;
       }
-      
+
       return data || [];
     },
     enabled: !!profile?.company_id,
@@ -93,8 +95,8 @@ export default function Users() {
     if (editingUser) {
       updateUserMutation.mutate({
         userId: editingUser.id,
-        updates: { 
-          name: formData.name, 
+        updates: {
+          name: formData.name,
           role: formData.role,
           is_active: formData.is_active
         }
@@ -119,7 +121,7 @@ export default function Users() {
         onSuccess: () => {
           setIsCreateModalOpen(false);
           resetForm();
-          
+
           // Verificar se está próximo do limite e mostrar aviso
           if (planLimits?.isUsersLimitWarning && !planLimits?.isUsersLimitReached) {
             toast({
@@ -178,11 +180,11 @@ export default function Users() {
               Gerencie os usuários da sua empresa
             </p>
           </div>
-          
+
           <Dialog open={isCreateModalOpen} onOpenChange={setIsCreateModalOpen}>
             <DialogTrigger asChild>
-              <Button 
-                onClick={handleCreateUser} 
+              <Button
+                onClick={handleCreateUser}
                 size={isMobile ? 'icon' : undefined}
                 disabled={planLimits?.isUsersLimitReached}
               >
@@ -198,8 +200,8 @@ export default function Users() {
                   {editingUser ? 'Editar Usuário' : 'Novo Usuário'}
                 </DialogTitle>
                 <DialogDescription>
-                  {editingUser 
-                    ? 'Modifique as informações do usuário' 
+                  {editingUser
+                    ? 'Modifique as informações do usuário'
                     : 'Adicione um novo usuário à empresa. O usuário receberá um convite por email.'
                   }
                 </DialogDescription>
@@ -208,15 +210,15 @@ export default function Users() {
               {planLimits?.isUsersLimitReached && !editingUser && (
                 <Alert>
                   <AlertDescription>
-                    Você atingiu o limite de usuários do seu plano atual ({planLimits.usersCount}/{planLimits.usersLimit}). 
-                    <Button 
-                      variant="link" 
+                    Você atingiu o limite de usuários do seu plano atual ({planLimits.usersCount}/{planLimits.usersLimit}).
+                    <Button
+                      variant="link"
                       className="p-0 h-auto font-semibold ml-1"
-                      onClick={() => window.location.href = '/meu-plano'}
+                      onClick={() => navigate('/my-plan')}
                     >
                       Faça upgrade do seu plano
                     </Button>
-                    para adicionar mais usuários.
+                    {' '}para adicionar mais usuários.
                   </AlertDescription>
                 </Alert>
               )}
@@ -236,8 +238,25 @@ export default function Users() {
           </Dialog>
         </div>
 
+        {/* Alerta de limite de usuários */}
+        {planLimits?.isUsersLimitReached && (
+          <Alert className="mb-6">
+            <AlertDescription>
+              Você atingiu o limite de usuários do seu plano atual ({planLimits.usersCount}/{planLimits.usersLimit}).
+              <Button
+                variant="link"
+                className="p-0 h-auto font-semibold ml-1"
+                onClick={() => window.location.href = '/my-plan'}
+              >
+                Faça upgrade do seu plano
+              </Button>
+              {' '}para adicionar mais usuários.
+            </AlertDescription>
+          </Alert>
+        )}
+
         {/* Users List */}
-        <UsersList 
+        <UsersList
           users={users}
           isLoading={isLoading}
           onEdit={handleEdit}

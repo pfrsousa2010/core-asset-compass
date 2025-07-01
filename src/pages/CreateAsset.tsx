@@ -3,7 +3,6 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { ArrowLeft } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
@@ -58,7 +57,7 @@ export default function CreateAsset() {
       queryClient.invalidateQueries({ queryKey: ['dashboard-stats'] });
       queryClient.invalidateQueries({ queryKey: ['recent-assets'] });
       queryClient.invalidateQueries({ queryKey: ['plan-limits'] });
-      
+
       // Mostrar toast de sucesso
       toast({
         title: "Ativo criado com sucesso!",
@@ -119,9 +118,9 @@ export default function CreateAsset() {
         {planLimits?.isAssetsLimitReached && (
           <Alert className="mb-6">
             <AlertDescription>
-              Você atingiu o limite de ativos do seu plano atual ({planLimits.assetsCount}/{planLimits.assetsLimit}). 
-              <Button 
-                variant="link" 
+              Você atingiu o limite de ativos do seu plano atual ({planLimits.assetsCount}/{planLimits.assetsLimit}).
+              <Button
+                variant="link"
                 className="p-0 h-auto font-semibold ml-1"
                 onClick={() => navigate('/my-plan')}
               >
