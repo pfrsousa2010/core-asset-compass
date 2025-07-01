@@ -68,11 +68,15 @@ export default function MyPlan() {
         {/* Plano Atual */}
         <Card
           className={
-            planLimits.isAssetsLimitReached || planLimits.isUsersLimitReached
-              ? 'border-red-500 bg-red-50'
-              : planLimits.isAssetsLimitWarning || planLimits.isUsersLimitWarning
-                ? 'border-yellow-500 bg-yellow-50'
-                : ''
+            planLimits.currentPlan === 'free'
+              ? 'bg-green-50 border-green-300'
+              : `${planLimits.isAssetsLimitReached || planLimits.isUsersLimitReached
+                  ? 'border-red-500 bg-red-50'
+                  : planLimits.isAssetsLimitWarning || planLimits.isUsersLimitWarning
+                    ? 'border-yellow-500 bg-yellow-50'
+                    : ''}
+                ${planLimits.currentPlan === 'basic' ? ' bg-blue-50 border-blue-300' : ''}
+                ${planLimits.currentPlan === 'premium' ? ' bg-purple-50 border-purple-300' : ''}`
           }
         >
           <CardHeader>
@@ -250,7 +254,13 @@ export default function MyPlan() {
                 }
 
                 return (
-                  <div key={planKey} className="border rounded-lg p-4 space-y-3">
+                  <div
+                    key={planKey}
+                    className={`border rounded-lg p-4 space-y-3
+                      ${planKey === 'basic' ? 'bg-blue-50 border-blue-300' : ''}
+                      ${planKey === 'premium' ? 'bg-purple-50 border-purple-300' : ''}
+                    `}
+                  >
                     <div className="flex items-center gap-2">
                       <span className="text-xl">{planInfo.icon}</span>
                       <h3 className="font-semibold">{planInfo.name}</h3>
