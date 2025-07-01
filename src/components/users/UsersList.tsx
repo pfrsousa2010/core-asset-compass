@@ -67,9 +67,11 @@ export function UsersList({ users, isLoading, onEdit, onCreateUser, profile, onD
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-      {users.map((user) => (
-        <UserCard key={user.id} user={user} onEdit={onEdit} profile={profile} onDelete={handleDelete} />
-      ))}
+      {users
+        .filter((user) => user.id !== profile?.id)
+        .map((user) => (
+          <UserCard key={user.id} user={user} onEdit={onEdit} profile={profile} onDelete={handleDelete} />
+        ))}
     </div>
   );
 }
