@@ -3,12 +3,18 @@ import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { usePlanLimits, planRules } from '@/hooks/usePlanLimits';
-import { ArrowUpRight, Users, Package, HeadphonesIcon, Mail, MessageCircle } from 'lucide-react';
+import { ArrowUpRight, Users, Package, HeadphonesIcon, Mail, MessageCircle, Loader2 } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
+import { handleUpgradeBasic, handleUpgradePremium } from '@/api/stripe';
+import { useState } from 'react';
+import { useToast } from '@/hooks/use-toast';
 
 export default function MyPlan() {
   const { data: planLimits, isLoading, error } = usePlanLimits();
   const { profile, company } = useAuth();
+  const [isLoadingBasic, setIsLoadingBasic] = useState(false);
+  const [isLoadingPremium, setIsLoadingPremium] = useState(false);
+  const { toast } = useToast();
 
   if (isLoading) {
     return (
@@ -56,6 +62,40 @@ export default function MyPlan() {
     if (usage >= 100) return 'bg-red-100';
     if (usage >= 80) return 'bg-yellow-100';
     return 'bg-green-100';
+  };
+
+  // Função para lidar com upgrade do plano Basic
+  const handleBasicUpgrade = async () => {
+    setIsLoadingBasic(true);
+    try {
+      await handleUpgradeBasic();
+    } catch (error) {
+      console.error('Erro ao fazer upgrade para Basic:', error);
+      toast({
+        title: "Erro ao processar pagamento",
+        description: "Não foi possível iniciar o processo de pagamento. Tente novamente.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoadingBasic(false);
+    }
+  };
+
+  // Função para lidar com upgrade do plano Premium
+  const handlePremiumUpgrade = async () => {
+    setIsLoadingPremium(true);
+    try {
+      await handleUpgradePremium();
+    } catch (error) {
+      console.error('Erro ao fazer upgrade para Premium:', error);
+      toast({
+        title: "Erro ao processar pagamento",
+        description: "Não foi possível iniciar o processo de pagamento. Tente novamente.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoadingPremium(false);
+    }
   };
 
   return (
@@ -245,14 +285,6 @@ export default function MyPlan() {
                 if (planKey === planLimits.currentPlan || planKey === 'enterprise') return null;
                 if (planLimits.currentPlan === 'basic' && planKey === 'free') return null;
 
-                // Definir o link de upgrade para cada plano
-                let upgradeLink = '';
-                if (planKey === 'basic') {
-                  upgradeLink = 'https://www.mercadopago.com.br/subscriptions/checkout?preapproval_plan_id=2c93808497ad02ae0197c173507007c2';
-                } else if (planKey === 'premium') {
-                  upgradeLink = 'https://www.mercadopago.com.br/subscriptions/checkout?preapproval_plan_id=2c93808497b74ff10197c174c6fe0343';
-                }
-
                 return (
                   <div
                     key={planKey}
@@ -270,11 +302,39 @@ export default function MyPlan() {
                       <div>Até {planInfo.maxUsers} usuários</div>
                       <div>{planInfo.support}</div>
                     </div>
-                    {upgradeLink ? (
-                      <Button variant="outline" size="sm" className="w-full" asChild>
-                        <a href={upgradeLink} target="_blank" rel="noopener noreferrer">
-                          Fazer Upgrade
-                        </a>
+                    {planKey === 'basic' ? (
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        className="w-full" 
+                        onClick={handleBasicUpgrade}
+                        disabled={isLoadingBasic}
+                      >
+                        {isLoadingBasic ? (
+                          <>
+                            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                            Processando...
+                          </>
+                        ) : (
+                          'Fazer Upgrade'
+                        )}
+                      </Button>
+                    ) : planKey === 'premium' ? (
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        className="w-full" 
+                        onClick={handlePremiumUpgrade}
+                        disabled={isLoadingPremium}
+                      >
+                        {isLoadingPremium ? (
+                          <>
+                            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                            Processando...
+                          </>
+                        ) : (
+                          'Fazer Upgrade'
+                        )}
                       </Button>
                     ) : (
                       <Button variant="outline" size="sm" className="w-full" disabled>
