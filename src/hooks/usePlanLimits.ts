@@ -5,7 +5,7 @@ import { useAuth } from '@/contexts/AuthContext';
 export const planRules = {
   free: {
     maxAssets: 50,
-    maxUsers: 1,
+    maxUsers: 2,
     support: "E-mail (até 72h)",
     icon: "🟢",
     color: "green",
