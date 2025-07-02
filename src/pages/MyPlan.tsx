@@ -64,6 +64,13 @@ export default function MyPlan() {
     return 'bg-green-100';
   };
 
+  // Função para cor do preenchimento da barra
+  const getProgressIndicatorColor = (usage: number) => {
+    if (usage >= 100) return 'bg-red-500';
+    if (usage >= 80) return 'bg-yellow-400';
+    return 'bg-green-400';
+  };
+
   // Função para lidar com upgrade do plano Basic
   const handleBasicUpgrade = async () => {
     setIsLoadingBasic(true);
@@ -176,6 +183,7 @@ export default function MyPlan() {
                 <Progress 
                   value={planLimits.assetsUsage} 
                   className={`h-2 ${getProgressBgColor(planLimits.assetsUsage)}`}
+                  indicatorClassName={getProgressIndicatorColor(planLimits.assetsUsage)}
                 />
                 <div className="flex justify-between text-xs text-gray-500">
                   <span>{planLimits.assetsUsage}% usado</span>
@@ -203,6 +211,7 @@ export default function MyPlan() {
                 <Progress 
                   value={planLimits.usersUsage} 
                   className={`h-2 ${getProgressBgColor(planLimits.usersUsage)}`}
+                  indicatorClassName={getProgressIndicatorColor(planLimits.usersUsage)}
                 />
                 <div className="flex justify-between text-xs text-gray-500">
                   <span>{planLimits.usersUsage}% usado</span>
