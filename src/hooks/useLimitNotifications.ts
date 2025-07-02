@@ -1,13 +1,18 @@
 import { useEffect } from 'react';
 import { usePlanLimits } from './usePlanLimits';
 import { useToast } from './use-toast';
+import { useAuth } from '@/contexts/AuthContext';
 
 export function useLimitNotifications() {
   const { data: planLimits } = usePlanLimits();
   const { toast } = useToast();
+  const { profile } = useAuth();
+
+  // Only admins should see plan limit toasts
+  const isAdmin = profile?.role === 'admin';
 
   useEffect(() => {
-    if (!planLimits) return;
+    if (!planLimits || !isAdmin) return;
 
     // Notificar quando atingir 100% do limite de ativos
     if (planLimits.isAssetsLimitReached) {
@@ -46,12 +51,12 @@ export function useLimitNotifications() {
         duration: 6000,
       });
     }
-  }, [planLimits, toast]);
+  }, [planLimits, toast, isAdmin]);
 
   return {
     planLimits,
     showLimitWarning: (type: 'assets' | 'users') => {
-      if (!planLimits) return;
+      if (!planLimits || !isAdmin) return;
 
       if (type === 'assets' && planLimits.isAssetsLimitWarning) {
         toast({
