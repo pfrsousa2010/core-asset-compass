@@ -59,7 +59,14 @@ export function UserCard({ user, onEdit, profile, onDelete }: UserCardProps) {
       <CardContent className="p-6">
         <div className="flex justify-between items-start mb-4">
           <div className="flex-1">
-            <h3 className="font-semibold text-gray-900">{user.name}</h3>
+            <div className="flex items-center gap-2">
+              <h3 className="font-semibold text-gray-900">{user.name}</h3>
+              {user.id === profile?.id && (
+                <Badge className="bg-blue-100 text-blue-800 text-xs">
+                  Você
+                </Badge>
+              )}
+            </div>
             <div className="flex items-center text-sm text-gray-500 mt-1">
               <Mail className="h-3 w-3 mr-1" />
               {user.email}
@@ -77,15 +84,17 @@ export function UserCard({ user, onEdit, profile, onDelete }: UserCardProps) {
         </div>
 
         <div className="flex space-x-2">
-          <Button 
-            variant="outline" 
-            size="sm" 
-            onClick={() => onEdit(user)}
-            className="flex-1"
-          >
-            <Edit className="h-3 w-3 mr-1" />
-            Editar
-          </Button>
+          {user.id !== profile?.id && (
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={() => onEdit(user)}
+              className="flex-1"
+            >
+              <Edit className="h-3 w-3 mr-1" />
+              Editar
+            </Button>
+          )}
           {profile?.role === 'admin' && user.role !== 'admin' && (
             <AlertDialog>
               <Tooltip>
