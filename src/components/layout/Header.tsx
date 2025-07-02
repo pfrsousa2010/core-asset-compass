@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { MobileNav } from './MobileNav';
 import { NotificationCenter } from '@/components/NotificationCenter';
 import { PlanBadge } from '@/components/PlanBadge';
-import { LogOut, Building2, Bell } from 'lucide-react';
+import { LogOut, Building2, Bell, RefreshCw } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 
 export function Header() {
@@ -70,6 +70,17 @@ export function Header() {
                   {unreadCount > 9 ? '9+' : unreadCount}
                 </Badge>
               )}
+            </Button>
+
+            {/* Botão de reload - apenas para tablets e celulares */}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => window.location.reload()}
+              title="Recarregar página"
+              className="md:hidden"
+            >
+              <RefreshCw className="h-4 w-4" />
             </Button>
 
             {profile && (
