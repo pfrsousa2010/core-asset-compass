@@ -5,7 +5,6 @@ import { AuthProvider } from "@/contexts/AuthContext";
 import { AuthGuard } from "@/components/auth/AuthGuard";
 import { Layout } from "@/components/layout/Layout";
 import { PWAInstallBanner } from "@/components/PWAInstallBanner";
-import { PWAUpdateBanner } from "@/components/PWAUpdateBanner";
 import { OfflineIndicator } from "@/components/OfflineIndicator";
 import Login from "@/pages/Login";
 import Dashboard from "@/pages/Dashboard";
@@ -104,7 +103,6 @@ function App() {
             </Routes>
           </div>
           <OfflineIndicator />
-          <PWAUpdateBanner />
           <PWAInstallBanner />
           <Toaster />
         </AuthProvider>
