@@ -20,6 +20,7 @@ import "./App.css";
 import AuthRedirectHandler from "@/components/auth/AuthRedirectHandler";
 import ResetPassword from "@/pages/ResetPassword";
 import SetPassword from "@/pages/SetPassword";
+import Register from "./pages/Register";
 
 
 const queryClient = new QueryClient();
@@ -34,7 +35,7 @@ function App() {
             <Routes>
               <Route path="/reset-password" element={<ResetPassword />} />
               <Route path="/login" element={<Login />} />
-              {/* <Route path="/register" element={<Register />} /> */}
+              <Route path="/register" element={<Register />} />
               <Route path="/acesso-negado" element={<AccessDenied />} />
               <Route path="/" element={
                 <AuthGuard>

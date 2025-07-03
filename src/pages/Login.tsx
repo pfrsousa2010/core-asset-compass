@@ -207,6 +207,13 @@ export default function Login() {
                   </form>
                 </DialogContent>
               </Dialog>
+              <div className="mt-2">
+                <Link to="/register">
+                  <Button variant="link" className="text-sm text-blue-600 hover:text-blue-800">
+                    Não tem uma conta? Criar conta
+                  </Button>
+                </Link>
+              </div>
             </div>
           </CardContent>
         </Card>

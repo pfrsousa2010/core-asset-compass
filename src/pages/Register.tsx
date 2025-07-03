@@ -62,10 +62,10 @@ export default function Register() {
             </div>
           </div>
           <h2 className="mt-6 text-3xl font-bold text-gray-900">
-            Patrimony Manager
+            Armazena App
           </h2>
-          <p className="mt-2 text-sm text-gray-600">
-            Crie sua conta e comece a gerenciar seus ativos
+          <p className="mt-6 text-2xl font-bold text-gray-900">
+            Sistema de Gestão de Ativos
           </p>
         </div>
 
