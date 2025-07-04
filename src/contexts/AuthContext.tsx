@@ -145,8 +145,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };  
 
   const signUp = async (email: string, password: string, name: string): Promise<void> => {
-    const redirectUrl = `${window.location.origin}/`;
-    
+    const redirectUrl = `${window.location.origin}/onboarding`;
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
@@ -157,30 +156,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
       }
     });
-
-    if (error) {
-      throw error;
-    }
-
-    // Note: For new users, we'll create the profile without company_id initially
-    // They will need to be assigned to a company by an admin later
-    if (data.user) {
-      const { error: profileError } = await supabase
-        .from('profiles')
-        .insert({
-          id: data.user.id,
-          name: name,
-          email: email,
-          role: 'viewer' as const,
-          company_id: '', // This will need to be set by an admin later
-        });
-
-      if (profileError) {
-        console.error('Erro ao criar perfil:', profileError);
-        throw profileError;
-      }
-    }
-  };
+  
+    if (error) throw error;
+  };  
 
   const signOut = async () => {
     try {

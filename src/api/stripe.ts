@@ -2,7 +2,8 @@ import { loadStripe } from '@stripe/stripe-js';
 import { supabase } from '@/integrations/supabase/client';
 
 // Configuração do Stripe
-const STRIPE_PUBLISHABLE_KEY = 'pk_live_51RgE7aCpLUoYVzVwqFuUAyAotOLJnfXY6ZxSCTtHoijgcj5h1QBpIH1NYsSakSYDQeZ8T2n138c8KHhy5upz2WRu00JxHw6RRn';
+// const STRIPE_PUBLISHABLE_KEY = 'pk_live_51RgE7aCpLUoYVzVwqFuUAyAotOLJnfXY6ZxSCTtHoijgcj5h1QBpIH1NYsSakSYDQeZ8T2n138c8KHhy5upz2WRu00JxHw6RRn';
+const STRIPE_PUBLISHABLE_KEY = 'pk_test_51RgE7aCpLUoYVzVwrZOCrwcgRH2nlX8parLqUT2mrWOYrd67HlpzY46aLhSS0Ogv6JmoSbJ5LUE1zgZEMcS0qEGh00LUyFtQe7';
 
 // Carregar Stripe no frontend
 export const stripePromise = loadStripe(STRIPE_PUBLISHABLE_KEY);
@@ -47,8 +48,11 @@ export const STRIPE_PLANS: Record<string, StripePlan> = {
 
 // IDs dos produtos no Stripe
 export const STRIPE_PRODUCT_IDS = {
-  basic: 'price_1RgEawCpLUoYVzVwlcuui2Qc',    // Basic 39,90
-  premium: 'price_1RgEbCCpLUoYVzVwu5xAwQpV', // Premium 79,90
+  // basic: 'price_1RgEawCpLUoYVzVwlcuui2Qc',    // Basic 39,90
+  // premium: 'price_1RgEbCCpLUoYVzVwu5xAwQpV', // Premium 79,90
+  //Teste
+  basic: 'price_1RgFlKCpLUoYVzVwvY3ggQGJ',    // Basic teste 39,90
+  premium: 'price_1RgFlKCpLUoYVzVwvY3ggQGJ', // Premium teste 79,90
 };
 
 // URL da função Supabase Edge Function

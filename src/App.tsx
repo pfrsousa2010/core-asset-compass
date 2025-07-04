@@ -1,7 +1,7 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
-import { AuthProvider } from "@/contexts/AuthContext";
+import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { AuthGuard } from "@/components/auth/AuthGuard";
 import { Layout } from "@/components/layout/Layout";
 import { PWAInstallBanner } from "@/components/PWAInstallBanner";
@@ -21,9 +21,30 @@ import AuthRedirectHandler from "@/components/auth/AuthRedirectHandler";
 import ResetPassword from "@/pages/ResetPassword";
 import SetPassword from "@/pages/SetPassword";
 import Register from "./pages/Register";
+import Onboarding from './pages/Onboarding';
+import { useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 
 const queryClient = new QueryClient();
+
+function OnboardingGuard({ children }: { children: React.ReactNode }) {
+  const { profile, company, loading } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    if (!loading && profile && !company && location.pathname !== '/onboarding') {
+      navigate('/onboarding', { replace: true });
+    }
+  }, [profile, company, loading, location.pathname, navigate]);
+
+  // Só renderiza children se já carregou e:
+  // - tem empresa OU está na página de onboarding
+  if (loading) return null;
+  if (profile && !company && location.pathname !== '/onboarding') return null;
+  return <>{children}</>;
+}
 
 function App() {
   return (
@@ -46,9 +67,11 @@ function App() {
               } />
               <Route path="/dashboard" element={
                 <AuthGuard>
-                  <Layout>
-                    <Dashboard />
-                  </Layout>
+                  <OnboardingGuard>
+                    <Layout>
+                      <Dashboard />
+                    </Layout>
+                  </OnboardingGuard>
                 </AuthGuard>
               } />
               <Route path="/assets" element={
@@ -101,6 +124,11 @@ function App() {
                 </AuthGuard>
               } />
               <Route path="/set-password" element={<SetPassword />} />
+              <Route path="/onboarding" element={
+                <AuthGuard>
+                  <Onboarding />
+                </AuthGuard>
+              } />
             </Routes>
           </div>
           <OfflineIndicator />
