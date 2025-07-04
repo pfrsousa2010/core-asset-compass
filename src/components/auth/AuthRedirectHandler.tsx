@@ -8,6 +8,8 @@ export default function AuthRedirectHandler() {
   const navigate = useNavigate();
 
   useEffect(() => {
+    console.log('AuthRedirectHandler - Localização atual:', { pathname, search, hash });
+
     // Verificar se é uma confirmação via query params (link de e-mail)
     const searchParams = new URLSearchParams(search);
     const token = searchParams.get('token');
@@ -16,22 +18,37 @@ export default function AuthRedirectHandler() {
     if (token && type) {
       console.log('Processando confirmação via query params:', { type, token: token.substring(0, 10) + '...' });
       
-      // Para confirmações de signup, redirecionar para onboarding
-      if (type === 'signup') {
-        console.log('Redirecionando para onboarding após confirmação de signup');
-        navigate('/onboarding', { replace: true });
-        return;
-      }
+      // Processar o token de confirmação
+      supabase.auth.verifyOtp({
+        token_hash: token,
+        type: type as any
+      }).then(({ data, error }) => {
+        if (error) {
+          console.error('Erro ao verificar token:', error);
+          navigate('/login?error=confirmation_failed', { replace: true });
+          return;
+        }
+
+        console.log('Token verificado com sucesso:', data);
+        
+        // Para confirmações de signup, redirecionar para onboarding
+        if (type === 'signup') {
+          console.log('Redirecionando para onboarding após confirmação de signup');
+          navigate('/onboarding', { replace: true });
+          return;
+        }
+        
+        // Para recovery, redirecionar para reset password
+        if (type === 'recovery') {
+          console.log('Redirecionando para reset password');
+          navigate('/reset-password', { replace: true });
+          return;
+        }
+        
+        // Para outros tipos, redirecionar para dashboard
+        navigate('/dashboard', { replace: true });
+      });
       
-      // Para recovery, redirecionar para reset password
-      if (type === 'recovery') {
-        console.log('Redirecionando para reset password');
-        navigate('/reset-password', { replace: true });
-        return;
-      }
-      
-      // Para outros tipos, redirecionar para dashboard
-      navigate('/dashboard', { replace: true });
       return;
     }
 

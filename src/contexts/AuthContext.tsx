@@ -36,6 +36,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const loadUserData = async (currentUser: User) => {
     try {
+      console.log('Carregando dados do usuário:', currentUser.id);
+      
       // Buscar perfil do usuário
       const { data: profileData, error: profileError } = await supabase
         .from('profiles')
@@ -45,12 +47,38 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       if (profileError) {
         console.error('Erro ao carregar perfil:', profileError);
-        if (profileError.code === 'PGRST116') {
-          // Perfil não encontrado, fazer logout
-          await signOut();
-          return;
+        
+        // Se perfil não existe, mas usuário está confirmado, criar perfil
+        if (profileError.code === 'PGRST116' && currentUser.email_confirmed_at) {
+          console.log('Criando perfil para usuário confirmado');
+          
+          const userName = currentUser.user_metadata?.name || currentUser.email?.split('@')[0] || 'Usuário';
+          
+          const { data: newProfile, error: createError } = await supabase
+            .from('profiles')
+            .insert({
+              id: currentUser.id,
+              email: currentUser.email || '',
+              name: userName,
+              role: 'viewer',
+              is_active: true,
+            })
+            .select()
+            .single();
+
+          if (createError) {
+            console.error('Erro ao criar perfil:', createError);
+            await signOut();
+            return;
+          }
+
+          setProfile(newProfile);
+          return; // Não tem empresa ainda, precisa fazer onboarding
         }
-        throw profileError;
+        
+        // Outros erros, fazer logout
+        await signOut();
+        return;
       }
 
       // Verificar se o usuário está ativo
@@ -126,13 +154,29 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   
     if (data.user) {
+      console.log('Login realizado, verificando perfil do usuário:', data.user.id);
+      
       const { data: profile, error: profileError } = await supabase
         .from('profiles')
         .select('is_active')
         .eq('id', data.user.id)
         .single();
   
-      if (profileError || !profile?.is_active) {
+      if (profileError) {
+        console.error('Erro ao verificar perfil:', profileError);
+        
+        // Se perfil não existe, mas usuário existe e está confirmado
+        if (profileError.code === 'PGRST116' && data.user.email_confirmed_at) {
+          console.log('Usuário confirmado mas sem perfil, redirecionando para onboarding');
+          setUser(data.user);
+          return 'success';
+        }
+        
+        await supabase.auth.signOut();
+        throw new Error('Conta não encontrada ou não confirmada.');
+      }
+      
+      if (!profile?.is_active) {
         await supabase.auth.signOut();
         return 'inactive';
       }
