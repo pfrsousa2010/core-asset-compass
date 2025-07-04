@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -209,7 +210,7 @@ export default function Login() {
                 </DialogContent>
               </Dialog>
               <div className="mt-2">
-                <Link to="/register">
+                <Link to="/signup">
                   <Button variant="link" className="text-sm text-blue-600 hover:text-blue-800">
                     Não tem uma conta? Criar conta
                   </Button>

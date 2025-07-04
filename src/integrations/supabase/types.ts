@@ -118,34 +118,34 @@ export type Database = {
       }
       notifications: {
         Row: {
-          id: string
-          user_id: string
-          title: string
           body: string
-          type: string
-          data: Json
+          created_at: string | null
+          data: Json | null
+          id: string
           read_at: string | null
-          created_at: string
+          title: string
+          type: string
+          user_id: string | null
         }
         Insert: {
-          id?: string
-          user_id: string
-          title: string
           body: string
-          type: string
-          data?: Json
+          created_at?: string | null
+          data?: Json | null
+          id?: string
           read_at?: string | null
-          created_at?: string
+          title: string
+          type: string
+          user_id?: string | null
         }
         Update: {
-          id?: string
-          user_id?: string
-          title?: string
           body?: string
-          type?: string
-          data?: Json
+          created_at?: string | null
+          data?: Json | null
+          id?: string
           read_at?: string | null
-          created_at?: string
+          title?: string
+          type?: string
+          user_id?: string | null
         }
         Relationships: [
           {
@@ -159,7 +159,7 @@ export type Database = {
       }
       profiles: {
         Row: {
-          company_id: string
+          company_id: string | null
           created_at: string
           email: string
           id: string
@@ -171,7 +171,7 @@ export type Database = {
           updated_by_user_name: string | null
         }
         Insert: {
-          company_id: string
+          company_id?: string | null
           created_at?: string
           email: string
           id: string
@@ -183,7 +183,7 @@ export type Database = {
           updated_by_user_name?: string | null
         }
         Update: {
-          company_id?: string
+          company_id?: string | null
           created_at?: string
           email?: string
           id?: string
@@ -206,31 +206,31 @@ export type Database = {
       }
       push_subscriptions: {
         Row: {
-          id: string
-          user_id: string
-          endpoint: string
-          p256dh: string
           auth: string
-          created_at: string
-          updated_at: string
+          created_at: string | null
+          endpoint: string
+          id: string
+          p256dh: string
+          updated_at: string | null
+          user_id: string | null
         }
         Insert: {
-          id?: string
-          user_id: string
-          endpoint: string
-          p256dh: string
           auth: string
-          created_at?: string
-          updated_at?: string
+          created_at?: string | null
+          endpoint: string
+          id?: string
+          p256dh: string
+          updated_at?: string | null
+          user_id?: string | null
         }
         Update: {
-          id?: string
-          user_id?: string
-          endpoint?: string
-          p256dh?: string
           auth?: string
-          created_at?: string
-          updated_at?: string
+          created_at?: string | null
+          endpoint?: string
+          id?: string
+          p256dh?: string
+          updated_at?: string | null
+          user_id?: string | null
         }
         Relationships: [
           {
@@ -256,15 +256,13 @@ export type Database = {
         }
         Returns: undefined
       }
-      create_app_update_notification: {
-        Args: Record<PropertyKey, never>
-        Returns: undefined
-      }
       create_asset_notification: {
         Args: {
           asset_id: string
           action: string
           actor_name: string
+          asset_name?: string
+          asset_code?: string
         }
         Returns: undefined
       }

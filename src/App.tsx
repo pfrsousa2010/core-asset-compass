@@ -1,3 +1,4 @@
+
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { Toaster } from "@/components/ui/toaster";
@@ -7,6 +8,7 @@ import { Layout } from "@/components/layout/Layout";
 import { PWAInstallBanner } from "@/components/PWAInstallBanner";
 import { OfflineIndicator } from "@/components/OfflineIndicator";
 import Login from "@/pages/Login";
+import Signup from "@/pages/Signup";
 import Dashboard from "@/pages/Dashboard";
 import Assets from "@/pages/Assets";
 import AssetDetails from "@/pages/AssetDetails";
@@ -22,6 +24,7 @@ import ResetPassword from "@/pages/ResetPassword";
 import SetPassword from "@/pages/SetPassword";
 import Register from "./pages/Register";
 import Onboarding from './pages/Onboarding';
+import OnboardingNew from './pages/OnboardingNew';
 import { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
@@ -56,6 +59,7 @@ function App() {
             <Routes>
               <Route path="/reset-password" element={<ResetPassword />} />
               <Route path="/login" element={<Login />} />
+              <Route path="/signup" element={<Signup />} />
               <Route path="/register" element={<Register />} />
               <Route path="/acesso-negado" element={<AccessDenied />} />
               <Route path="/" element={
@@ -126,7 +130,7 @@ function App() {
               <Route path="/set-password" element={<SetPassword />} />
               <Route path="/onboarding" element={
                 <AuthGuard>
-                  <Onboarding />
+                  <OnboardingNew />
                 </AuthGuard>
               } />
             </Routes>
