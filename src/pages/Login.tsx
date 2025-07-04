@@ -28,7 +28,10 @@ export default function Login() {
   const location = useLocation();
   const { toast } = useToast();
 
-  const from = location.state?.from?.pathname || '/dashboard';
+  // Novo: extrair redirect_to da query string
+  const searchParams = new URLSearchParams(location.search);
+  const redirectTo = searchParams.get('redirect_to');
+  const from = redirectTo || location.state?.from?.pathname || '/dashboard';
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
