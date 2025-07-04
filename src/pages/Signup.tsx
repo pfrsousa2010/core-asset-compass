@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
@@ -36,7 +35,11 @@ export default function Signup() {
         return;
       }
 
-      const emailRedirectTo = `${window.location.origin}/onboarding`;
+      // Usar a URL atual como base para o redirect
+      const baseUrl = window.location.origin;
+      const emailRedirectTo = `${baseUrl}/onboarding`;
+
+      console.log('Enviando signup com redirect para:', emailRedirectTo);
 
       const { error } = await supabase.auth.signUp({
         email,
@@ -55,6 +58,7 @@ export default function Signup() {
 
       setSuccess(true);
     } catch (err: any) {
+      console.error('Erro no signup:', err);
       setError(err.message || 'Erro ao criar conta');
     } finally {
       setLoading(false);
