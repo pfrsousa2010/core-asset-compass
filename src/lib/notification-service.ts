@@ -3,7 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 // Função para enviar notificação de atualização do app
 export async function sendAppUpdateNotification() {
   try {
-    const { error } = await supabase.rpc('create_app_update_notification');
+    const { error } = await supabase.rpc('create_app_update_notification' as any);
     if (error) throw error;
     
     // Aqui você enviaria as notificações push para todos os usuários
@@ -75,4 +75,4 @@ export async function getUnreadCount() {
     console.error('Erro ao contar notificações não lidas:', error);
     return 0;
   }
-} 
+}

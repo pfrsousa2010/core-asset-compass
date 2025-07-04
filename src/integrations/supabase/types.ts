@@ -256,6 +256,10 @@ export type Database = {
         }
         Returns: undefined
       }
+      create_app_update_notification: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
       create_asset_notification: {
         Args: {
           asset_id: string
