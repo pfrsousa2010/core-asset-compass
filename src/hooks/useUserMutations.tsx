@@ -30,33 +30,20 @@ export function useUserMutations() {
 
   const createUserMutation = useMutation({
     mutationFn: async (userData: CreateUserData) => {
-      // Primeiro criar o usuário via Auth
-      const { data, error: authError } = await supabase.auth.signUp({
+      const { data, error } = await supabase.auth.signUp({
         email: userData.email,
-        password: Math.random().toString(36).slice(-12), // Password temporário
+        password: Math.random().toString(36).slice(-12),   // senha temporária
         options: {
           data: {
             name: userData.name,
-            company_id: profile?.company_id,
-          },
-        },
+            company_id: profile?.company_id,   // empresa do admin
+            role: userData.role,               // viewer / editor / admin
+            is_active: userData.is_active
+          }
+        }
       });
 
-      if (authError) throw authError;
-
-      // Se o usuário foi criado, atualizar o perfil com o role correto
-      if (data.user) {
-        const { error: profileError } = await supabase
-          .from('profiles')
-          .update({ 
-            role: userData.role,
-            company_id: profile?.company_id,
-            is_active: userData.is_active
-          })
-          .eq('id', data.user.id);
-
-        if (profileError) throw profileError;
-      }
+      if (error) throw error;
 
       return data;
     },
