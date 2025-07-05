@@ -56,17 +56,14 @@ export default function SetPassword() {
   return (
     <div className="min-h-[85vh] flex items-center justify-center bg-gradient-to-br from-slate-50 to-blue-50 px-4">
       <div className="max-w-md w-full space-y-8">
-        {/* cabeçalho igual ao Login */}
         <div className="text-center">
-          <div className="flex justify-center">
+          <div className="flex justify-center items-center gap-3 mt-6">
             <div className="bg-blue-600 p-3 rounded-full">
               <Package className="h-8 w-8 text-white" />
             </div>
+            <h2 className="text-3xl font-bold text-gray-900">Armazena App</h2>
           </div>
-          <h2 className="mt-6 text-3xl font-bold text-gray-900">
-            Armazena App
-          </h2>
-          <p className="mt-2 text-xl font-semibold text-gray-900">
+          <p className="mt-6 text-2xl font-bold text-gray-900">
             Definir senha de acesso
           </p>
         </div>
