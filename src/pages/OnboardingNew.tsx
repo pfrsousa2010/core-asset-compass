@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
@@ -7,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Package, Star } from 'lucide-react';
+import { Package, Star, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 
@@ -16,6 +15,7 @@ export default function OnboardingNew() {
   const [selectedPlan, setSelectedPlan] = useState<'free' | 'basic' | 'premium' | ''>('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [redirecting, setRedirecting] = useState(false);
 
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -105,7 +105,7 @@ export default function OnboardingNew() {
         description: 'Sua empresa foi criada com sucesso. Bem‑vindo ao Armazena!',
       });
 
-      // Aguardar 2 segundos e dar reload na página
+      setRedirecting(true);
       setTimeout(() => {
         window.location.href = '/dashboard';
       }, 2000);
@@ -123,7 +123,13 @@ export default function OnboardingNew() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 px-4 py-8 overflow-y-auto">
+    <div className="h-screen bg-gradient-to-br from-slate-50 to-blue-50 px-4 py-8 overflow-y-auto">
+      {redirecting && (
+        <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-white/80 backdrop-blur-sm">
+          <Loader2 className="w-10 h-10 animate-spin text-blue-600 mb-4" />
+          <span className="text-lg font-semibold text-blue-700">Redirecionando...</span>
+        </div>
+      )}
       <div className="max-w-md w-full space-y-8 mx-auto">
         <div className="text-center">
           <div className="flex justify-center items-center gap-3 mb-6">
@@ -178,7 +184,6 @@ export default function OnboardingNew() {
                       <li>Até 50 ativos</li>
                       <li>Até 2 usuários</li>
                       <li>Suporte por e-mail (até 72h)</li>
-                      <li>Relatórios básicos</li>
                     </ul>
                   </div>
 
@@ -204,7 +209,6 @@ export default function OnboardingNew() {
                       <li>Até 500 ativos</li>
                       <li>Até 3 usuários</li>
                       <li>Suporte por e-mail (até 48h)</li>
-                      <li>Relatórios avançados</li>
                     </ul>
                   </div>
 
@@ -224,8 +228,6 @@ export default function OnboardingNew() {
                       <li>Até 1000 ativos</li>
                       <li>Até 10 usuários</li>
                       <li>Suporte por WhatsApp (até 24h)</li>
-                      <li>Relatórios avançados</li>
-                      <li>Integração com APIs</li>
                     </ul>
                   </div>
                 </div>
