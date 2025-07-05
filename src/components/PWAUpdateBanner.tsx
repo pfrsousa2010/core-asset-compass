@@ -13,7 +13,7 @@ export function PWAUpdateBanner() {
       navigator.serviceWorker.addEventListener('controllerchange', () => {
         setShowUpdateBanner(true);
         // Enviar notificação de atualização para todos os usuários
-        sendAppUpdateNotification();
+        //sendAppUpdateNotification();
       });
     }
   }, []);
