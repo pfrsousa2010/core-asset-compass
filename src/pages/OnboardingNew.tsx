@@ -66,44 +66,42 @@ export default function OnboardingNew() {
         return;
       }
 
-      // 1. Criar a empresa
-      const { data: companyData, error: companyError } = await supabase
+      /* 1️⃣  Criar empresa — lendo apenas o id para evitar RLS no SELECT */
+      const { data: insertedCompanies, error: companyError } = await supabase
         .from('companies')
         .insert({
           name: companyName,
-          plan: selectedPlan,
+          plan: selectedPlan,   // hoje pode ser 'free'; depois, 'free' + checkout
         })
-        .select()
-        .single();
+        .select('id');          // ✅ só o id é suficiente
 
       if (companyError) throw companyError;
 
-      const companyId = companyData?.id;
+      const companyId = insertedCompanies?.[0]?.id;
       if (!companyId) throw new Error('Erro ao criar empresa.');
 
-      // 2. Criar/atualizar o perfil do usuário como admin
-      const userMetadata = user.user_metadata || {};
-      const userName = userMetadata.name || user.email?.split('@')[0] || 'Usuário';
+      /* 2️⃣  Atualizar (ou criar) perfil do usuário como admin da empresa */
+      const userName =
+        user.user_metadata?.name ?? user.email?.split('@')[0] ?? 'Usuário';
 
       const { error: profileError } = await supabase
         .from('profiles')
-        .upsert({
-          id: user.id,
-          email: user.email || '',
-          name: userName,
+        .update({
           role: 'admin',
           company_id: companyId,
+          name: userName,
           is_active: true,
-        });
+        })
+        .eq('id', user.id);
 
       if (profileError) throw profileError;
 
+      /* 3️⃣  Feedback + redirecionamento */
       toast({
         title: 'Cadastro completo!',
-        description: 'Sua empresa foi criada com sucesso. Bem-vindo ao Armazena!',
+        description: 'Sua empresa foi criada com sucesso. Bem‑vindo ao Armazena!',
       });
 
-      // Redirecionar para o dashboard
       navigate('/dashboard', { replace: true });
     } catch (err: any) {
       console.error('Erro no onboarding:', err);
@@ -160,11 +158,10 @@ export default function OnboardingNew() {
                 <div className="flex flex-col gap-3">
                   {/* Plano Free */}
                   <div
-                    className={`border rounded-lg p-4 cursor-pointer transition-all ${
-                      selectedPlan === 'free' 
-                        ? 'border-green-600 ring-2 ring-green-200 bg-green-50' 
-                        : 'border-gray-200 bg-white hover:border-gray-300'
-                    }`}
+                    className={`border rounded-lg p-4 cursor-pointer transition-all ${selectedPlan === 'free'
+                      ? 'border-green-600 ring-2 ring-green-200 bg-green-50'
+                      : 'border-gray-200 bg-white hover:border-gray-300'
+                      }`}
                     onClick={() => setSelectedPlan('free')}
                   >
                     <div className="flex items-center justify-between mb-2">
@@ -181,11 +178,10 @@ export default function OnboardingNew() {
 
                   {/* Plano Basic */}
                   <div
-                    className={`border rounded-lg p-4 cursor-pointer transition-all relative ${
-                      selectedPlan === 'basic' 
-                        ? 'border-blue-600 ring-2 ring-blue-200 bg-blue-50' 
-                        : 'border-gray-200 bg-white hover:border-gray-300'
-                    }`}
+                    className={`border rounded-lg p-4 cursor-pointer transition-all relative ${selectedPlan === 'basic'
+                      ? 'border-blue-600 ring-2 ring-blue-200 bg-blue-50'
+                      : 'border-gray-200 bg-white hover:border-gray-300'
+                      }`}
                     onClick={() => setSelectedPlan('basic')}
                   >
                     <div className="flex items-center justify-between mb-2">
@@ -208,11 +204,10 @@ export default function OnboardingNew() {
 
                   {/* Plano Premium */}
                   <div
-                    className={`border rounded-lg p-4 cursor-pointer transition-all ${
-                      selectedPlan === 'premium' 
-                        ? 'border-purple-600 ring-2 ring-purple-200 bg-purple-50' 
-                        : 'border-gray-200 bg-white hover:border-gray-300'
-                    }`}
+                    className={`border rounded-lg p-4 cursor-pointer transition-all ${selectedPlan === 'premium'
+                      ? 'border-purple-600 ring-2 ring-purple-200 bg-purple-50'
+                      : 'border-gray-200 bg-white hover:border-gray-300'
+                      }`}
                     onClick={() => setSelectedPlan('premium')}
                   >
                     <div className="flex items-center justify-between mb-2">
