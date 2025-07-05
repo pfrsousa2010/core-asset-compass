@@ -39,7 +39,7 @@ export default function OnboardingNew() {
 
         if (profile?.company_id) {
           // Usuário já tem empresa, redirecionar para dashboard
-          navigate('/dashboard', { replace: true });
+          navigate('/set-password', { replace: true });
         }
       } catch (error) {
         console.error('Erro ao verificar empresa existente:', error);
