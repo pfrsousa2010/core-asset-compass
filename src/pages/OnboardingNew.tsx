@@ -105,7 +105,10 @@ export default function OnboardingNew() {
         description: 'Sua empresa foi criada com sucesso. Bem‑vindo ao Armazena!',
       });
 
-      navigate('/dashboard', { replace: true });
+      // Aguardar 2 segundos e dar reload na página
+      setTimeout(() => {
+        window.location.href = '/dashboard';
+      }, 2000);
     } catch (err: any) {
       console.error('Erro no onboarding:', err);
       setError(err.message || 'Erro ao completar cadastro');
@@ -120,8 +123,8 @@ export default function OnboardingNew() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 px-4 flex items-center justify-center">
-      <div className="max-w-md w-full space-y-8">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 px-4 py-8 overflow-y-auto">
+      <div className="max-w-md w-full space-y-8 mx-auto">
         <div className="text-center">
           <div className="flex justify-center items-center gap-3 mb-6">
             <div className="bg-blue-600 p-3 rounded-full">
