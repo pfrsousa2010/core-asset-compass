@@ -6,6 +6,7 @@ import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { AuthGuard } from "@/components/auth/AuthGuard";
 import { Layout } from "@/components/layout/Layout";
 import { PWAInstallBanner } from "@/components/PWAInstallBanner";
+import { PWAUpdateBanner } from "@/components/PWAUpdateBanner";
 import { OfflineIndicator } from "@/components/OfflineIndicator";
 import Login from "@/pages/Login";
 import Signup from "@/pages/Signup";
@@ -136,6 +137,7 @@ function App() {
             </Routes>
           </div>
           <OfflineIndicator />
+          <PWAUpdateBanner />
           <PWAInstallBanner />
           <Toaster />
         </AuthProvider>
