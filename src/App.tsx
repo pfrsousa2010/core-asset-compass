@@ -24,7 +24,6 @@ import AuthRedirectHandler from "@/components/auth/AuthRedirectHandler";
 import ResetPassword from "@/pages/ResetPassword";
 import SetPassword from "@/pages/SetPassword";
 import Register from "./pages/Register";
-import Onboarding from './pages/Onboarding';
 import OnboardingNew from './pages/OnboardingNew';
 import { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
