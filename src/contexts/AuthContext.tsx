@@ -134,6 +134,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     });
   
     if (error) {
+      // Adiciona tratamento para e-mail não confirmado
+      if (error.code === 'email_not_confirmed') {
+        throw new Error('Você precisa confirmar seu e-mail antes de acessar. Verifique sua caixa de entrada ou spam.');
+      }
       throw new Error('Email ou senha inválidos.');
     }
   
