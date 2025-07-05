@@ -48,32 +48,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (profileError) {
         console.error('Erro ao carregar perfil:', profileError);
         
-        // Se perfil não existe, mas usuário está confirmado, criar perfil
+        // Se perfil não existe mas usuário está confirmado, redirecionar para onboarding
         if (profileError.code === 'PGRST116' && currentUser.email_confirmed_at) {
-          console.log('Criando perfil para usuário confirmado');
-          
-          const userName = currentUser.user_metadata?.name || currentUser.email?.split('@')[0] || 'Usuário';
-          
-          const { data: newProfile, error: createError } = await supabase
-            .from('profiles')
-            .insert({
-              id: currentUser.id,
-              email: currentUser.email || '',
-              name: userName,
-              role: 'viewer',
-              is_active: true,
-            })
-            .select()
-            .single();
-
-          if (createError) {
-            console.error('Erro ao criar perfil:', createError);
-            await signOut();
-            return;
-          }
-
-          setProfile(newProfile);
-          return; // Não tem empresa ainda, precisa fazer onboarding
+          console.log('Usuário confirmado mas sem perfil, precisa fazer onboarding');
+          navigate('/onboarding', { replace: true });
+          return;
         }
         
         // Outros erros, fazer logout
@@ -102,6 +81,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         } else {
           setCompany(companyData);
         }
+      } else {
+        // Se usuário não tem empresa, redirecionar para onboarding
+        console.log('Usuário sem empresa, redirecionando para onboarding');
+        navigate('/onboarding', { replace: true });
+        return;
       }
     } catch (error) {
       console.error('Erro ao carregar dados do usuário:', error);
@@ -158,17 +142,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       
       const { data: profile, error: profileError } = await supabase
         .from('profiles')
-        .select('is_active')
+        .select('is_active, company_id')
         .eq('id', data.user.id)
         .single();
   
       if (profileError) {
         console.error('Erro ao verificar perfil:', profileError);
         
-        // Se perfil não existe, mas usuário existe e está confirmado
+        // Se perfil não existe mas usuário está confirmado, redirecionar para onboarding
         if (profileError.code === 'PGRST116' && data.user.email_confirmed_at) {
           console.log('Usuário confirmado mas sem perfil, redirecionando para onboarding');
           setUser(data.user);
+          navigate('/onboarding', { replace: true });
           return 'success';
         }
         
@@ -179,6 +164,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (!profile?.is_active) {
         await supabase.auth.signOut();
         return 'inactive';
+      }
+
+      // Se não tem empresa, redirecionar para onboarding
+      if (!profile?.company_id) {
+        setUser(data.user);
+        navigate('/onboarding', { replace: true });
+        return 'success';
       }
   
       setUser(data.user);
