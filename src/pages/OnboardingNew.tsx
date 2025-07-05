@@ -75,9 +75,6 @@ export default function OnboardingNew() {
         })
         .select('id');          // ✅ só o id é suficiente
 
-      console.log('insertedCompanies', insertedCompanies);
-      console.log('error', error);
-
       if (companyError) throw companyError;
 
       const companyId = insertedCompanies?.[0]?.id;
