@@ -7,10 +7,12 @@ import { useScrollToTop } from '@/hooks/useScrollToTop';
 import { AssetHeader } from '@/components/assets/AssetHeader';
 import { AssetFilters } from '@/components/assets/AssetFilters';
 import { AssetList } from '@/components/assets/AssetList';
+import { ExportFormatModal } from '@/components/assets/ExportFormatModal';
 import { Button } from '@/components/ui/button';
 import { ArrowUp } from 'lucide-react';
 import { BarcodeScanner } from '@/components/scanner/BarcodeScanner';
 import { ScrollContext } from "@/components/layout/Layout";
+import { ExportFormat } from '@/hooks/useAssetExport';
 
 export default function Assets() {
   const { profile, company } = useAuth();
@@ -22,6 +24,7 @@ export default function Assets() {
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [locationFilter, setLocationFilter] = useState<string>('all');
   const [showScanner, setShowScanner] = useState(false);
+  const [showExportModal, setShowExportModal] = useState(false);
 
   // Custom hooks
   const {
@@ -33,7 +36,7 @@ export default function Assets() {
     locations,
   } = useAssets({ search, statusFilter, locationFilter });
 
-  const { exportLoading, exportToCSV } = useAssetExport();
+  const { exportLoading, exportToFormat } = useAssetExport();
   
   const { showScrollToTop, scrollToTop } = useScrollToTop(scrollRef?.current);
 
@@ -45,13 +48,22 @@ export default function Assets() {
     setSearch(code);
   };
 
-  const handleExportCSV = () => {
-    exportToCSV({
+  const handleExport = (format: ExportFormat) => {
+    exportToFormat(format, {
       search,
       statusFilter,
       locationFilter,
       companyName: company.name,
     });
+  };
+
+  const handleExportButtonClick = () => {
+    if (isDesktop) {
+      setShowExportModal(true);
+    } else {
+      // Em mobile, exporta diretamente em CSV
+      handleExport('csv');
+    }
   };
 
   return (
@@ -74,7 +86,7 @@ export default function Assets() {
         loading={loading}
         exportLoading={exportLoading}
         onScannerOpen={() => setShowScanner(true)}
-        onExportCSV={handleExportCSV}
+        onExport={handleExportButtonClick}
       />
 
       {/* Filters */}
@@ -117,6 +129,14 @@ export default function Assets() {
         isOpen={showScanner}
         onClose={() => setShowScanner(false)}
         onScan={handleScanResult}
+      />
+
+      {/* Export Format Modal */}
+      <ExportFormatModal
+        isOpen={showExportModal}
+        onClose={() => setShowExportModal(false)}
+        onExport={handleExport}
+        loading={exportLoading}
       />
     </div>
   );

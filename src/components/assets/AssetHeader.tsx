@@ -11,7 +11,7 @@ interface AssetHeaderProps {
   loading: boolean;
   exportLoading: boolean;
   onScannerOpen: () => void;
-  onExportCSV: () => void;
+  onExport: () => void;
 }
 
 export function AssetHeader({
@@ -21,7 +21,7 @@ export function AssetHeader({
   loading,
   exportLoading,
   onScannerOpen,
-  onExportCSV,
+  onExport,
 }: AssetHeaderProps) {
   if (!canEdit) {
     return (
@@ -63,12 +63,12 @@ export function AssetHeader({
           <>
             <Button
               variant="outline"
-              onClick={onExportCSV}
+              onClick={onExport}
               className="w-full sm:w-auto"
               disabled={loading || exportLoading}
             >
               <FileText className="h-4 w-4 mr-2" />
-              Exportar CSV
+              Exportar
             </Button>
 
             <Dialog>
