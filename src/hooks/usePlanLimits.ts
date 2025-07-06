@@ -15,7 +15,7 @@ export const planRules = {
   },
   basic: {
     maxAssets: 500,
-    maxUsers: 3,
+    maxUsers: 5,
     support: "E-mail (até 48h)",
     icon: "🔵",
     color: "blue",

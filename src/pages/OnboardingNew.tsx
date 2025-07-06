@@ -216,7 +216,7 @@ export default function OnboardingNew() {
                     </div>
                     <ul className="text-sm text-gray-700 list-disc list-inside space-y-1">
                       <li>Até 500 ativos</li>
-                      <li>Até 3 usuários</li>
+                      <li>Até 5 usuários</li>
                       <li>Suporte por e-mail (até 48h)</li>
                     </ul>
                   </div>
