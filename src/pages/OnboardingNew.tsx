@@ -209,7 +209,10 @@ export default function OnboardingNew() {
                           <Star className="w-3 h-3 text-yellow-300" fill="#fde047" />
                         </span>
                       </div>
-                      <span className="text-blue-700 font-semibold">R$ 39,90/mês</span>
+                      <span className="flex items-end gap-2">
+                        <span className="text-base text-gray-500 line-through">R$ 59,90</span>
+                        <span className="text-blue-700 font-semibold">R$ 39,90/mês</span>
+                      </span>
                     </div>
                     <ul className="text-sm text-gray-700 list-disc list-inside space-y-1">
                       <li>Até 500 ativos</li>
@@ -228,7 +231,10 @@ export default function OnboardingNew() {
                   >
                     <div className="flex items-center justify-between mb-2">
                       <span className="text-lg font-bold text-purple-700">Premium</span>
-                      <span className="text-purple-700 font-semibold">R$ 79,90/mês</span>
+                      <span className="flex items-end gap-2">
+                        <span className="text-base text-gray-500 line-through">R$ 99,90</span>
+                        <span className="text-purple-700 font-semibold">R$ 79,90/mês</span>
+                      </span>
                     </div>
                     <ul className="text-sm text-gray-700 list-disc list-inside space-y-1">
                       <li>Até 1000 ativos</li>

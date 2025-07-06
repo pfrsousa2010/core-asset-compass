@@ -311,6 +311,14 @@ export default function MyPlan() {
                       <div>Até {planInfo.maxUsers} usuários</div>
                       <div>{planInfo.support}</div>
                     </div>
+                    {planInfo.price && (
+                      <div className="text-lg font-bold text-gray-800 mt-2 flex items-end gap-2">
+                        {planInfo.oldPrice && (
+                          <span className="text-base text-gray-500 line-through">R$ {planInfo.oldPrice.toFixed(2).replace('.', ',')}</span>
+                        )}
+                        <span>R$ {planInfo.price.toFixed(2).replace('.', ',')} <span className="text-xs font-normal text-gray-600">/mês</span></span>
+                      </div>
+                    )}
                     {planKey === 'basic' ? (
                       <Button 
                         variant="outline" 

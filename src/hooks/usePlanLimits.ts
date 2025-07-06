@@ -10,6 +10,8 @@ export const planRules = {
     icon: "🟢",
     color: "green",
     name: "Free",
+    price: undefined,
+    oldPrice: undefined,
   },
   basic: {
     maxAssets: 500,
@@ -18,6 +20,8 @@ export const planRules = {
     icon: "🔵",
     color: "blue",
     name: "Basic",
+    price: 39.90,
+    oldPrice: 59.90,
   },
   premium: {
     maxAssets: 1000,
@@ -26,8 +30,23 @@ export const planRules = {
     icon: "🟣",
     color: "purple",
     name: "Premium",
+    price: 79.90,
+    oldPrice: 99.90,
   },
 };
+
+type PlanRule = {
+  maxAssets: number;
+  maxUsers: number;
+  support: string;
+  icon: string;
+  color: string;
+  name: string;
+  price?: number;
+  oldPrice?: number;
+};
+
+export const planRulesTyped: Record<string, PlanRule> = planRules;
 
 export type PlanType = keyof typeof planRules;
 
