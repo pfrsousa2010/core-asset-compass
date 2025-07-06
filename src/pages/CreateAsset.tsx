@@ -116,17 +116,23 @@ export default function CreateAsset() {
         )}
 
         {planLimits?.isAssetsLimitReached && (
-          <Alert className="mb-6">
+          <Alert className="mb-6 bg-red-50 border border-red-200">
             <AlertDescription>
-              Você atingiu o limite de ativos do seu plano atual ({planLimits.assetsCount}/{planLimits.assetsLimit}).
-              <Button
-                variant="link"
-                className="p-0 h-auto font-semibold ml-1"
-                onClick={() => navigate('/my-plan')}
-              >
-                Faça upgrade do seu plano
-              </Button>
-              {' '}para adicionar mais ativos.
+              {profile?.role === 'admin' ? (
+                <>
+                  Você atingiu o limite de ativos do seu plano atual ({planLimits.assetsCount}/{planLimits.assetsLimit}).
+                  <Button
+                    variant="link"
+                    className="p-0 h-auto font-semibold ml-1"
+                    onClick={() => navigate('/my-plan')}
+                  >
+                    Faça upgrade do seu plano
+                  </Button>
+                  {' '}para adicionar mais ativos.
+                </>
+              ) : (
+                <>Você atingiu o limite de ativos do seu plano atual. <b>Fale com seu administrador.</b></>
+              )}
             </AlertDescription>
           </Alert>
         )}
