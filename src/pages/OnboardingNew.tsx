@@ -9,6 +9,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Package, Star, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import { redirectToCheckout } from '@/api/stripe';
 
 export default function OnboardingNew() {
   const [companyName, setCompanyName] = useState('');
@@ -53,37 +54,37 @@ export default function OnboardingNew() {
     e.preventDefault();
     setError('');
     setLoading(true);
-
+  
     try {
       if (!companyName || !selectedPlan) {
         setError('Preencha todos os campos');
         return;
       }
-
+  
       if (!user) {
         setError('Usuário não autenticado. Faça login novamente.');
         navigate('/login', { replace: true });
         return;
       }
-
-      /* 1️⃣  Criar empresa — lendo apenas o id para evitar RLS no SELECT */
+  
+      /* 1️⃣ Criar empresa com plano 'free' inicialmente */
       const { data: insertedCompanies, error: companyError } = await supabase
         .from('companies')
         .insert({
           name: companyName,
-          plan: selectedPlan,   // hoje pode ser 'free'; depois, 'free' + checkout
+          plan: 'free', // será atualizado pelo webhook após pagamento
         })
-        .select('id');          // ✅ só o id é suficiente
-
+        .select('id');
+  
       if (companyError) throw companyError;
-
+  
       const companyId = insertedCompanies?.[0]?.id;
       if (!companyId) throw new Error('Erro ao criar empresa.');
-
-      /* 2️⃣  Atualizar (ou criar) perfil do usuário como admin da empresa */
+  
+      /* 2️⃣ Atualizar perfil do usuário como admin da empresa */
       const userName =
         user.user_metadata?.name ?? user.email?.split('@')[0] ?? 'Usuário';
-
+  
       const { error: profileError } = await supabase
         .from('profiles')
         .update({
@@ -93,19 +94,27 @@ export default function OnboardingNew() {
           is_active: true,
         })
         .eq('id', user.id);
-
+  
       if (profileError) throw profileError;
-
-      /* 3️⃣  Feedback + redirecionamento */
-      toast({
-        title: 'Cadastro completo!',
-        description: 'Sua empresa foi criada com sucesso. Bem‑vindo ao Armazena!',
-      });
-
-      setRedirecting(true);
-      setTimeout(() => {
-        window.location.href = '/dashboard';
-      }, 2000);
+  
+      /* 3️⃣ Se plano for FREE, finaliza direto */
+      if (selectedPlan === 'free') {
+        toast({
+          title: 'Cadastro completo!',
+          description: 'Sua empresa foi criada com sucesso. Bem‑vindo ao Armazena!',
+        });
+  
+        setRedirecting(true);
+        setTimeout(() => {
+          window.location.href = '/dashboard';
+        }, 1500);
+  
+        return; // evita continuar para o checkout
+      }
+  
+      /* 4️⃣ Se for plano pago, redireciona para o Stripe */
+      await redirectToCheckout(selectedPlan); // helper já mapeia price
+  
     } catch (err: any) {
       console.error('Erro no onboarding:', err);
       setError(err.message || 'Erro ao completar cadastro');

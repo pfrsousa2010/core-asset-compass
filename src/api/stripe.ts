@@ -59,7 +59,7 @@ export const STRIPE_PRODUCT_IDS = {
 const SUPABASE_FUNCTION_URL = 'https://nvwscxburlixyqkbhfux.supabase.co/functions/v1/create-stripe-session';
 
 // Função para criar sessão de checkout do Stripe
-export async function createStripeSession(plan: 'basic' | 'premium') {
+export async function createStripeSession(plan: 'free' | 'basic' | 'premium') {
   try {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
@@ -108,11 +108,11 @@ export async function createStripeSession(plan: 'basic' | 'premium') {
 }
 
 // Função para redirecionar para checkout
-export async function redirectToCheckout(plan: 'basic' | 'premium') {
+export async function redirectToCheckout(plan: 'free' | 'basic' | 'premium') {
   try {
     const sessionId = await createStripeSession(plan);
     const stripe = await stripePromise;
-    
+
     if (!stripe) {
       throw new Error('Stripe não carregado');
     }
