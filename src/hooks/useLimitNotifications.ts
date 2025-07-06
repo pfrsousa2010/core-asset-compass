@@ -32,25 +32,6 @@ export function useLimitNotifications() {
         duration: 6000,
       });
     }
-
-    // Notificar quando atingir 100% do limite de usuários
-    if (planLimits.isUsersLimitReached) {
-      toast({
-        title: "Limite de usuários atingido",
-        description: `Você atingiu o limite de ${planLimits.usersLimit} usuários do seu plano. Faça upgrade para adicionar mais usuários.`,
-        variant: "destructive",
-        duration: 8000,
-      });
-    }
-    // Notificar quando atingir 80% do limite de usuários
-    else if (planLimits.isUsersLimitWarning) {
-      toast({
-        title: "Aproximando do limite de usuários",
-        description: `Você está usando ${planLimits.usersUsage}% do seu limite de usuários. Considere fazer upgrade do seu plano.`,
-        variant: "destructive",
-        duration: 6000,
-      });
-    }
   }, [planLimits, toast, isAdmin]);
 
   return {
@@ -62,14 +43,6 @@ export function useLimitNotifications() {
         toast({
           title: "Aproximando do limite de ativos",
           description: `Você está usando ${planLimits.assetsUsage}% do seu limite de ativos. Considere fazer upgrade do seu plano.`,
-          variant: "destructive",
-        });
-      }
-
-      if (type === 'users' && planLimits.isUsersLimitWarning) {
-        toast({
-          title: "Aproximando do limite de usuários",
-          description: `Você está usando ${planLimits.usersUsage}% do seu limite de usuários. Considere fazer upgrade do seu plano.`,
           variant: "destructive",
         });
       }
