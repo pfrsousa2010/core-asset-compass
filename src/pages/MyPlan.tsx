@@ -280,91 +280,104 @@ export default function MyPlan() {
       </div>
 
       {/* Próximos Planos */}
-      {planLimits.currentPlan !== 'premium' && (
-        <Card>
+      <Card>
           <CardHeader>
             <CardTitle>Próximos Planos</CardTitle>
-            <CardDescription>
-              Conheça os benefícios dos outros planos
-            </CardDescription>
+            {planLimits.currentPlan !== 'premium' && (
+              <CardDescription>
+                Conheça os benefícios dos outros planos
+              </CardDescription>
+            )}
           </CardHeader>
           <CardContent>
-            <div className="grid gap-4 md:grid-cols-3">
-              {Object.entries(planRules).map(([planKey, planInfo]) => {
-                if (planKey === planLimits.currentPlan || planKey === 'enterprise') return null;
-                if (planLimits.currentPlan === 'basic' && planKey === 'free') return null;
-
-                return (
-                  <div
-                    key={planKey}
-                    className={`border rounded-lg p-4 space-y-3
-                      ${planKey === 'basic' ? 'bg-blue-50 border-blue-300' : ''}
-                      ${planKey === 'premium' ? 'bg-purple-50 border-purple-300' : ''}
-                    `}
-                  >
-                    <div className="flex items-center gap-2">
-                      <span className="text-xl">{planInfo.icon}</span>
-                      <h3 className="font-semibold">{planInfo.name}</h3>
-                    </div>
-                    <div className="space-y-2 text-sm text-gray-600">
-                      <div>Até {planInfo.maxAssets} ativos</div>
-                      <div>Até {planInfo.maxUsers} usuários</div>
-                      <div>{planInfo.support}</div>
-                    </div>
-                    {planInfo.price && (
-                      <div className="text-lg font-bold text-gray-800 mt-2 flex items-end gap-2">
-                        {planInfo.oldPrice && (
-                          <span className="text-base text-gray-500 line-through">R$ {planInfo.oldPrice.toFixed(2).replace('.', ',')}</span>
-                        )}
-                        <span>R$ {planInfo.price.toFixed(2).replace('.', ',')} <span className="text-xs font-normal text-gray-600">/mês</span></span>
-                      </div>
-                    )}
-                    {planKey === 'basic' ? (
-                      <Button 
-                        variant="outline" 
-                        size="sm" 
-                        className="w-full" 
-                        onClick={handleBasicUpgrade}
-                        disabled={isLoadingBasic}
-                      >
-                        {isLoadingBasic ? (
-                          <>
-                            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                            Processando...
-                          </>
-                        ) : (
-                          'Fazer Upgrade'
-                        )}
-                      </Button>
-                    ) : planKey === 'premium' ? (
-                      <Button 
-                        variant="outline" 
-                        size="sm" 
-                        className="w-full" 
-                        onClick={handlePremiumUpgrade}
-                        disabled={isLoadingPremium}
-                      >
-                        {isLoadingPremium ? (
-                          <>
-                            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                            Processando...
-                          </>
-                        ) : (
-                          'Fazer Upgrade'
-                        )}
-                      </Button>
-                    ) : (
-                      <Button variant="outline" size="sm" className="w-full" disabled>
-                        Fazer Upgrade
-                      </Button>
-                    )}
+            <div className={`grid gap-4 ${String(planLimits.currentPlan) === 'premium' ? 'md:grid-cols-1' : 'md:grid-cols-3'}`}>
+              {/* Mostrar Basic só se plano atual for free */}
+              {planLimits.currentPlan === 'free' && (
+                <div className="border rounded-lg p-4 space-y-3 bg-blue-50 border-blue-300">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xl">{planRules.basic.icon}</span>
+                    <h3 className="font-semibold">{planRules.basic.name}</h3>
                   </div>
-                );
-              })}
+                  <div className="space-y-2 text-sm text-gray-600">
+                    <div>Até {planRules.basic.maxAssets} ativos</div>
+                    <div>Até {planRules.basic.maxUsers} usuários</div>
+                    <div>{planRules.basic.support}</div>
+                  </div>
+                  <div className="text-lg font-bold text-gray-800 mt-2 flex items-end gap-2">
+                    <span className="text-base text-gray-500 line-through">R$ {planRules.basic.oldPrice.toFixed(2).replace('.', ',')}</span>
+                    <span>R$ {planRules.basic.price.toFixed(2).replace('.', ',')} <span className="text-xs font-normal text-gray-600">/mês</span></span>
+                  </div>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="w-full" 
+                    onClick={handleBasicUpgrade}
+                    disabled={isLoadingBasic}
+                  >
+                    {isLoadingBasic ? (
+                      <>
+                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                        Processando...
+                      </>
+                    ) : (
+                      'Fazer Upgrade'
+                    )}
+                  </Button>
+                </div>
+              )}
+              {/* Mostrar Premium se plano atual for free ou basic */}
+              {(planLimits.currentPlan === 'free' || planLimits.currentPlan === 'basic') && (
+                <div className="border rounded-lg p-4 space-y-3 bg-purple-50 border-purple-300">
+                  <div className="flex items-center gap-2">
+                    <span className="text-xl">{planRules.premium.icon}</span>
+                    <h3 className="font-semibold">{planRules.premium.name}</h3>
+                  </div>
+                  <div className="space-y-2 text-sm text-gray-600">
+                    <div>Até {planRules.premium.maxAssets} ativos</div>
+                    <div>Até {planRules.premium.maxUsers} usuários</div>
+                    <div>{planRules.premium.support}</div>
+                  </div>
+                  <div className="text-lg font-bold text-gray-800 mt-2 flex items-end gap-2">
+                    <span className="text-base text-gray-500 line-through">R$ {planRules.premium.oldPrice.toFixed(2).replace('.', ',')}</span>
+                    <span>R$ {planRules.premium.price.toFixed(2).replace('.', ',')} <span className="text-xs font-normal text-gray-600">/mês</span></span>
+                  </div>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    className="w-full" 
+                    onClick={handlePremiumUpgrade}
+                    disabled={isLoadingPremium}
+                  >
+                    {isLoadingPremium ? (
+                      <>
+                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                        Processando...
+                      </>
+                    ) : (
+                      'Fazer Upgrade'
+                    )}
+                  </Button>
+                </div>
+              )}
+              {/* Box de contato ao lado dos planos, ou sozinho se premium */}
+              <div className="flex flex-col h-full justify-center">
+                <div className="bg-gray-100 border border-gray-200 rounded-lg px-4 py-3 text-center">
+                  <span className="block text-sm text-gray-700 mb-1">
+                    Precisa de um plano maior ou personalizado?
+                  </span>
+                  <a
+                    href="mailto:microfocuspro@gmail.com"
+                    className="text-blue-700 font-semibold underline hover:text-blue-900"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Fale conosco: microfocuspro@gmail.com
+                  </a>
+                </div>
+              </div>
             </div>
           </CardContent>
         </Card>
-      )}
     </div>
   );
 } 

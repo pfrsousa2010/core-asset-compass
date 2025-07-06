@@ -274,6 +274,14 @@ export default function OnboardingNew() {
               >
                 {loading ? 'Finalizando cadastro...' : 'Finalizar Cadastro'}
               </Button>
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full h-11 mt-2"
+                onClick={() => navigate('/login')}
+              >
+                Cancelar
+              </Button>
             </form>
           </CardContent>
         </Card>
