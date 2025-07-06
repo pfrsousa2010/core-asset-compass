@@ -2,8 +2,8 @@ import { loadStripe } from '@stripe/stripe-js';
 import { supabase } from '@/integrations/supabase/client';
 
 // Configuração do Stripe
-// const STRIPE_PUBLISHABLE_KEY = 'pk_live_51RgE7aCpLUoYVzVwqFuUAyAotOLJnfXY6ZxSCTtHoijgcj5h1QBpIH1NYsSakSYDQeZ8T2n138c8KHhy5upz2WRu00JxHw6RRn';
-const STRIPE_PUBLISHABLE_KEY = 'pk_test_51RgE7aCpLUoYVzVwrZOCrwcgRH2nlX8parLqUT2mrWOYrd67HlpzY46aLhSS0Ogv6JmoSbJ5LUE1zgZEMcS0qEGh00LUyFtQe7';
+const STRIPE_PUBLISHABLE_KEY = 'pk_live_51RgE7aCpLUoYVzVwqFuUAyAotOLJnfXY6ZxSCTtHoijgcj5h1QBpIH1NYsSakSYDQeZ8T2n138c8KHhy5upz2WRu00JxHw6RRn';
+// const STRIPE_PUBLISHABLE_KEY = 'pk_test_51RgE7aCpLUoYVzVwrZOCrwcgRH2nlX8parLqUT2mrWOYrd67HlpzY46aLhSS0Ogv6JmoSbJ5LUE1zgZEMcS0qEGh00LUyFtQe7';
 
 // Carregar Stripe no frontend
 export const stripePromise = loadStripe(STRIPE_PUBLISHABLE_KEY);
@@ -17,42 +17,13 @@ export interface StripePlan {
   features: string[];
 }
 
-// Configuração dos planos no Stripe
-export const STRIPE_PLANS: Record<string, StripePlan> = {
-  basic: {
-    id: 'price_basic_monthly', // Será substituído pelo ID real do Stripe
-    name: 'Basic',
-    price: 29.90,
-    interval: 'month',
-    features: [
-      'Até 500 ativos',
-      'Até 3 usuários',
-      'Suporte por e-mail (até 48h)',
-      'Relatórios básicos'
-    ]
-  },
-  premium: {
-    id: 'price_premium_monthly', // Será substituído pelo ID real do Stripe
-    name: 'Premium',
-    price: 79.90,
-    interval: 'month',
-    features: [
-      'Até 1000 ativos',
-      'Até 10 usuários',
-      'Suporte por WhatsApp (até 24h)',
-      'Relatórios avançados',
-      'Integração com APIs'
-    ]
-  }
-};
-
 // IDs dos produtos no Stripe
 export const STRIPE_PRODUCT_IDS = {
-  // basic: 'price_1RgEawCpLUoYVzVwlcuui2Qc',    // Basic 39,90
-  // premium: 'price_1RgEbCCpLUoYVzVwu5xAwQpV', // Premium 79,90
+  basic: 'price_1RgEawCpLUoYVzVwlcuui2Qc',    // Basic 39,90
+  premium: 'price_1RgEbCCpLUoYVzVwu5xAwQpV', // Premium 79,90
   //Teste
-  basic: 'price_1RgFlKCpLUoYVzVwvY3ggQGJ',    // Basic teste 39,90
-  premium: 'price_1RgFlKCpLUoYVzVwvY3ggQGJ', // Premium teste 79,90
+  //basic: 'price_1RgFlKCpLUoYVzVwvY3ggQGJ',    // Basic teste 39,90
+  //premium: 'price_1RgFlKCpLUoYVzVwvY3ggQGJ', // Premium teste 79,90
 };
 
 // URL da função Supabase Edge Function
