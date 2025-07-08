@@ -27,6 +27,7 @@ import Register from "./pages/Register";
 import OnboardingNew from './pages/OnboardingNew';
 import { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import Index from "@/pages/Index";
 
 
 const queryClient = new QueryClient();
@@ -62,13 +63,7 @@ function App() {
               <Route path="/signup" element={<Signup />} />
               <Route path="/register" element={<Register />} />
               <Route path="/acesso-negado" element={<AccessDenied />} />
-              <Route path="/" element={
-                <AuthGuard>
-                  <Layout>
-                    <Navigate to="/dashboard" replace />
-                  </Layout>
-                </AuthGuard>
-              } />
+              <Route path="/" element={<Index />} />
               <Route path="/dashboard" element={
                 <AuthGuard>
                   <OnboardingGuard>
