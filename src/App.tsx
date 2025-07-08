@@ -28,6 +28,7 @@ import OnboardingNew from './pages/OnboardingNew';
 import { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Index from "@/pages/Index";
+import { PWABanners } from "@/components/PWABanners";
 
 
 const queryClient = new QueryClient();
@@ -131,8 +132,7 @@ function App() {
             </Routes>
           </div>
           <OfflineIndicator />
-          <PWAUpdateBanner />
-          <PWAInstallBanner />
+          <PWABanners />
           <Toaster />
         </AuthProvider>
       </BrowserRouter>
