@@ -189,6 +189,8 @@ export default function OnboardingNew() {
                     <ul className="text-sm text-gray-700 list-disc list-inside space-y-1">
                       <li>Até 50 ativos</li>
                       <li>Até 2 usuários</li>
+                      <li>Exportação CSV</li>
+                      <li>Importação CSV</li>
                       <li>Suporte por e-mail (até 72h)</li>
                     </ul>
                   </div>
@@ -217,6 +219,8 @@ export default function OnboardingNew() {
                     <ul className="text-sm text-gray-700 list-disc list-inside space-y-1">
                       <li>Até 500 ativos</li>
                       <li>Até 5 usuários</li>
+                      <li>Exportação PDF/Excel/CSV</li>
+                      <li>Importação CSV</li>
                       <li>Suporte por e-mail (até 48h)</li>
                     </ul>
                   </div>
@@ -239,6 +243,7 @@ export default function OnboardingNew() {
                     <ul className="text-sm text-gray-700 list-disc list-inside space-y-1">
                       <li>Até 1000 ativos</li>
                       <li>Até 10 usuários</li>
+                      <li>Todos os recursos</li>
                       <li>Suporte por WhatsApp (até 24h)</li>
                     </ul>
                   </div>
@@ -255,7 +260,7 @@ export default function OnboardingNew() {
                       target="_blank"
                       rel="noopener noreferrer"
                     >
-                      Fale conosco: microfocuspro@gmail.com
+                      Fale conosco!
                     </a>
                   </div>
                 </div>

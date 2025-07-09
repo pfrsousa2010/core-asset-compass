@@ -371,7 +371,7 @@ export default function MyPlan() {
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    Fale conosco: microfocuspro@gmail.com
+                    Fale conosco!
                   </a>
                 </div>
               </div>

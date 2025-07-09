@@ -12,6 +12,8 @@ import {
   CarouselPrevious,
   CarouselNext,
 } from "@/components/ui/carousel";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
 
 const features = [
   { icon: <CheckCircle className="text-blue-600 w-7 h-7" />, title: 'Cadastro de ativos', desc: 'Registre e organize todos os seus bens facilmente.' },
@@ -28,7 +30,7 @@ const plans = [
     price: 'R$ 0',
     oldPrice: '',
     desc: 'Ideal para começar',
-    features: ['Até 50 ativos', 'Até 2 usuários', 'Exportação CSV', 'Suporte por e-mail (até 72h)'],
+    features: ['Até 50 ativos', 'Até 2 usuários', 'Exportação CSV', 'Importação CSV', 'Suporte por e-mail (até 72h)'],
     highlight: false,
   },
   {
@@ -36,7 +38,7 @@ const plans = [
     price: 'R$ 39,90/mês',
     oldPrice: 'R$ 59,90',
     desc: 'Mais popular',
-    features: ['Até 500 ativos', 'Até 10 usuários', 'Exportação PDF/Excel/CSV', 'Importação CSV', 'Suporte prioritário'],
+    features: ['Até 500 ativos', 'Até 5 usuários', 'Exportação PDF/Excel/CSV', 'Importação CSV', 'Suporte por e-mail (até 48h)'],
     highlight: true,
   },
   {
@@ -44,7 +46,7 @@ const plans = [
     price: 'R$ 79,90/mês',
     oldPrice: 'R$ 99,90',
     desc: 'Para empresas exigentes',
-    features: ['Ativos ilimitados', 'Usuários ilimitados', 'Todos os recursos', 'Suporte dedicado'],
+    features: ['Até 1000 ativos', 'Até 10 usuários', 'Todos os recursos', 'Suporte WhatsApp (até 24h)'],
     highlight: false,
   },
 ];
@@ -75,6 +77,7 @@ const faqs = [
 export default function Index() {
   const [modalOpen, setModalOpen] = useState(false);
   const [modalImg, setModalImg] = useState<string | null>(null);
+  const [planModalOpen, setPlanModalOpen] = useState(false);
   const carouselImages = [
     { src: "/Ativos 2.png", alt: "Tela de Ativos" },
     { src: "/Meu plano 2.png", alt: "Tela Meu Plano" },
@@ -272,9 +275,24 @@ export default function Index() {
                     <li key={idx} className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-blue-600" /> {f}</li>
                   ))}
                 </ul>
-                <Link to="/login" className={`w-full py-3 rounded-lg font-bold transition ${plan.highlight ? 'bg-blue-700 text-white hover:bg-blue-800' : 'bg-blue-100 text-blue-800 hover:bg-blue-200'}`}>Comece agora</Link>
+                <Button onClick={() => setPlanModalOpen(true)} className={`w-full py-3 rounded-lg font-bold transition ${plan.highlight ? 'bg-blue-700 text-white hover:bg-blue-800' : 'bg-blue-100 text-blue-800 hover:bg-blue-200'}`}>Comece agora</Button>
               </div>
             ))}
+          </div>
+          <div className="flex justify-center mt-8">
+            <div className="bg-gray-100 border border-gray-200 rounded-lg px-4 py-3 text-center">
+              <span className="block text-sm text-gray-700 mb-1">
+                Precisa de um plano maior ou personalizado?
+              </span>
+              <a
+                href="mailto:microfocuspro@gmail.com"
+                className="text-blue-700 font-semibold underline hover:text-blue-900"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Fale conosco!
+              </a>
+            </div>
           </div>
         </div>
       </section>
@@ -309,6 +327,30 @@ export default function Index() {
           </div>
         </div>
       </section>
+
+      {/* Modal de orientação */}
+      <Dialog open={planModalOpen} onOpenChange={setPlanModalOpen}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Como começar?</DialogTitle>
+            <DialogDescription>
+              Você será direcionado para a tela de cadastro. Para usar o sistema:
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex flex-col md:flex-row gap-4 items-center md:items-start">
+            <div className="flex-1">
+              <ul className="list-disc pl-5 space-y-2 text-gray-700 text-sm">
+                <li>Crie sua conta com e-mail e senha.</li>
+                <li>Confirme seu e-mail na caixa de entrada.</li>
+                <li>Cadastre sua empresa e escolha o plano desejado na tela de onboarding.</li>
+              </ul>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button onClick={() => { setPlanModalOpen(false); navigate('/signup'); }} className="w-full">Entendi, ir para cadastro</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Rodapé */}
       <footer className="bg-white border-t py-8 px-6 mt-auto">
