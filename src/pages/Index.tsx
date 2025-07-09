@@ -300,13 +300,18 @@ export default function Index() {
       <section className="py-16 px-6">
         <div className="max-w-3xl mx-auto text-center">
           <h2 className="text-2xl font-bold text-blue-800 mb-6">Quem confia no Armazena</h2>
-          <div className="flex flex-col md:flex-row items-center justify-center gap-8">
-            <div className="bg-white rounded-xl shadow p-6 flex-1 mb-4 md:mb-0 border">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="bg-white rounded-xl shadow p-6 border">
               <p className="text-lg text-gray-700 italic mb-2">“O Armazena facilitou muito o controle dos bens da nossa empresa. Recomendo!”</p>
               <span className="font-semibold text-blue-700">João Silva, Inova Gestão</span>
             </div>
-            <div className="bg-white rounded-xl shadow p-6 flex-1 border">
-              <p className="text-lg text-gray-700 mb-2">Mais de <span className="font-bold text-blue-700">100 usuários</span> confiam no Armazena para controlar seu patrimônio.</p>
+            <div className="bg-white rounded-xl shadow p-6 border">
+              <p className="text-lg text-gray-700 italic mb-2">“Finalmente encontrei um sistema que se adapta ao nosso dia a dia. O Armazena nos ajudou a organizar todos os bens da ONG.”</p>
+              <span className="font-semibold text-blue-700">Mariana Alves, Instituto Vida Plena</span>
+            </div>
+            <div className="bg-white rounded-xl shadow p-6 border">
+              <p className="text-lg text-gray-700 italic mb-2">“Como autônomo, eu precisava de uma forma simples de controlar meus equipamentos. O plano gratuito já me atendeu muito bem.”</p>
+              <span className="font-semibold text-blue-700">Carlos Mendes, Fotógrafo</span>
             </div>
           </div>
         </div>
