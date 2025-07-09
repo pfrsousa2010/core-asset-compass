@@ -392,8 +392,8 @@ export default function Index() {
             <span className="font-bold text-blue-700">Armazena</span>
           </div>
           <div className="flex gap-6 text-sm text-gray-600 mb-4 md:mb-0">
-            <Link to="#" className="hover:underline">Termos de Uso</Link>
-            <Link to="#" className="hover:underline">Política de Privacidade</Link>
+            <Link to="/termos" className="hover:underline">Termos de Uso</Link>
+            <Link to="/privacidade" className="hover:underline">Política de Privacidade</Link>
             <a href="mailto:suporte.microfocuspro@gmail.com" className="hover:underline">Suporte</a>
           </div>
           <Link to="/login" className="text-blue-700 font-semibold hover:underline">Entrar</Link>

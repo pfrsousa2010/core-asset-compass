@@ -16,6 +16,8 @@ import EditAsset from "@/pages/EditAsset";
 import Users from "@/pages/Users";
 import Profile from "@/pages/Profile";
 import MyPlan from "@/pages/MyPlan";
+import TermosDeUso from "./pages/TermosDeUso";
+import { PoliticaPrivacidade } from "./pages/PoliticaPrivacidade";
 import AccessDenied from "@/pages/AccessDenied";
 import "./App.css";
 import AuthRedirectHandler from "@/components/auth/AuthRedirectHandler";
@@ -57,6 +59,8 @@ function App() {
         <AuthProvider>
           <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
             <Routes>
+              <Route path="/termos" element={<TermosDeUso />} />
+              <Route path="/privacidade" element={<PoliticaPrivacidade />} />
               <Route path="/reset-password" element={<ResetPassword />} />
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<Signup />} />
