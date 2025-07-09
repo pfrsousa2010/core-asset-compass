@@ -3,19 +3,22 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Button } from '@/components/ui/button';
 import { FileText, FileSpreadsheet, FileType } from 'lucide-react';
 import { ExportFormat } from '@/hooks/useAssetExport';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 interface ExportFormatModalProps {
   isOpen: boolean;
   onClose: () => void;
   onExport: (format: ExportFormat) => void;
   loading: boolean;
+  plan: string; // 'free', 'basic', 'premium', etc
 }
 
 export function ExportFormatModal({
   isOpen,
   onClose,
   onExport,
-  loading
+  loading,
+  plan
 }: ExportFormatModalProps) {
   const [selectedFormat, setSelectedFormat] = useState<ExportFormat | null>(null);
 
@@ -81,41 +84,47 @@ export function ExportFormatModal({
           </p>
           
           <div className="grid gap-3">
-            {formats.map((format) => {
-              const Icon = format.icon;
-              const isSelected = selectedFormat === format.id;
-              
-              return (
-                <button
-                  key={format.id}
-                  onClick={() => handleFormatSelect(format.id)}
-                  disabled={loading}
-                  className={`
-                    w-full p-4 rounded-lg border-2 transition-all duration-200
-                    ${isSelected 
-                      ? `${format.borderColor} ${format.bgColor} ring-2 ring-offset-2 ring-blue-500` 
-                      : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
-                    }
-                    ${loading ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
-                  `}
-                >
-                  <div className="flex items-center space-x-3">
-                    <div className={`p-2 rounded-lg ${format.bgColor}`}>
-                      <Icon className={`h-6 w-6 ${format.color}`} />
-                    </div>
-                    <div className="flex-1 text-left">
-                      <h3 className="font-medium text-gray-900">{format.name}</h3>
-                      <p className="text-sm text-gray-500">{format.description}</p>
-                    </div>
-                    {isSelected && (
-                      <div className="w-5 h-5 bg-blue-600 rounded-full flex items-center justify-center">
-                        <div className="w-2 h-2 bg-white rounded-full"></div>
+            <TooltipProvider delayDuration={500}>
+              {formats.map((format) => {
+                const Icon = format.icon;
+                const isSelected = selectedFormat === format.id;
+                const isDisabled = plan === 'free' && format.id !== 'csv';
+                const card = (
+                  <button
+                    key={format.id}
+                    onClick={() => !isDisabled && handleFormatSelect(format.id)}
+                    disabled={loading || isDisabled}
+                    className={`
+                      w-full p-4 rounded-lg border-2 transition-all duration-200
+                      ${isSelected 
+                        ? `${format.borderColor} ${format.bgColor} ring-2 ring-offset-2 ring-blue-500` 
+                        : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+                      }
+                      ${loading ? 'opacity-50 cursor-not-allowed' : isDisabled ? 'opacity-60 cursor-not-allowed' : 'cursor-pointer'}
+                    `}
+                  >
+                    <div className="flex items-center space-x-3">
+                      <div className={`p-2 rounded-lg ${format.bgColor}`}><Icon className={`h-6 w-6 ${format.color}`} /></div>
+                      <div className="flex-1 text-left">
+                        <h3 className="font-medium text-gray-900">{format.name}</h3>
+                        <p className="text-sm text-gray-500">{format.description}</p>
                       </div>
-                    )}
-                  </div>
-                </button>
-              );
-            })}
+                      {isSelected && (
+                        <div className="w-5 h-5 bg-blue-600 rounded-full flex items-center justify-center">
+                          <div className="w-2 h-2 bg-white rounded-full"></div>
+                        </div>
+                      )}
+                    </div>
+                  </button>
+                );
+                return isDisabled ? (
+                  <Tooltip key={format.id}>
+                    <TooltipTrigger asChild>{card}</TooltipTrigger>
+                    <TooltipContent side="right">Faça o upgrade e tenha acesso a esse recurso</TooltipContent>
+                  </Tooltip>
+                ) : card;
+              })}
+            </TooltipProvider>
           </div>
         </div>
         

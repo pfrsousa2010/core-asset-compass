@@ -137,6 +137,7 @@ export default function Assets() {
         onClose={() => setShowExportModal(false)}
         onExport={handleExport}
         loading={exportLoading}
+        plan={company?.plan || 'free'}
       />
     </div>
   );
