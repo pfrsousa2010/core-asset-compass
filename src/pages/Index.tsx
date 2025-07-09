@@ -80,7 +80,7 @@ const faqs = [
     q: 'Preciso instalar algo para usar?',
     a: (
       <>
-        Não. O Armazena é <strong>100% online</strong>, acessível via navegador. Você também pode instalá-lo como <strong>aplicativo PWA</strong>.
+        Não. O Armazena é <strong>100% online</strong>, acessível via navegador. Se preferir, você pode instalar como aplicativo no seu celular, tablet ou computador para <strong>acessar rapidamente.</strong>
       </>
     ),
   },
