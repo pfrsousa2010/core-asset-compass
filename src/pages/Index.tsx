@@ -54,23 +54,51 @@ const plans = [
 const faqs = [
   {
     q: 'O plano Free tem alguma limitação?',
-    a: 'Sim, o plano Free permite até 50 ativos e 2 usuários, mas já inclui exportação e suporte por e-mail.'
+    a: (
+      <>
+        Sim. O plano Free permite até <strong>50 ativos</strong> e <strong>2 usuários</strong>, mas já inclui <strong>exportação</strong>, <strong>importação CSV</strong> e <strong>suporte por e-mail</strong>.
+      </>
+    ),
   },
   {
-    q: 'Posso migrar de plano depois?',
-    a: 'Sim! Você pode mudar de plano a qualquer momento, sem burocracia.'
+    q: 'Posso mudar de plano depois?',
+    a: (
+      <>
+        Sim! Você pode migrar de plano a qualquer momento, de forma <strong>simples</strong> e <strong>sem burocracia</strong>.
+      </>
+    ),
   },
   {
     q: 'Preciso cadastrar cartão no plano gratuito?',
-    a: 'Não! O cadastro no plano Free não exige cartão de crédito.'
+    a: (
+      <>
+        Não. O plano Free <strong>não exige cartão de crédito</strong> para começar a usar.
+      </>
+    ),
+  },
+  {
+    q: 'Preciso instalar algo para usar?',
+    a: (
+      <>
+        Não. O Armazena é <strong>100% online</strong>, acessível via navegador. Você também pode instalá-lo como <strong>aplicativo PWA</strong>.
+      </>
+    ),
+  },
+  {
+    q: 'Consigo usar no celular ou tablet?',
+    a: (
+      <>
+        Sim. O sistema é <strong>totalmente responsivo</strong> e adaptado para qualquer dispositivo: <strong>desktop, tablet ou smartphone</strong>.
+      </>
+    ),
   },
   {
     q: 'O sistema é seguro?',
-    a: 'Sim, utilizamos criptografia e boas práticas para proteger seus dados.'
-  },
-  {
-    q: 'Tem suporte?',
-    a: 'Sim, todos os planos contam com suporte por e-mail.'
+    a: (
+      <>
+        Sim. Utilizamos <strong>criptografia</strong> e práticas modernas de segurança para proteger seus dados.
+      </>
+    ),
   },
 ];
 
@@ -319,9 +347,9 @@ export default function Index() {
 
       {/* FAQ */}
       <section className="bg-blue-50 py-16 px-6">
-        <div className="max-w-4xl mx-auto">
-          <h2 className="text-2xl font-bold text-blue-800 mb-8 text-center">Perguntas frequentes</h2>
-          <div className="space-y-4">
+        <div className="max-w-5xl mx-auto">
+          <h2 className="text-2xl font-bold text-blue-800 mb-8 text-center">Perguntas Frequentes</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {faqs.map((faq, i) => (
               <div key={i} className="bg-white rounded-lg shadow p-6 border">
                 <div className="font-semibold text-blue-900 mb-2">{faq.q}</div>
