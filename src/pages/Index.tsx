@@ -81,9 +81,9 @@ export default function Index() {
     { src: "/Exportar 1.png", alt: "Tela Exportar" },
   ];
   return (
-    <div className="bg-white min-h-screen flex flex-col">
+    <div className="bg-white min-h-screen flex flex-col pt-20">
       {/* Topbar com botão Entrar */}
-      <header className="w-full flex justify-between items-center px-6 py-4 border-b bg-white/80 backdrop-blur z-10">
+      <header className="fixed top-0 left-0 w-full flex justify-between items-center px-6 py-4 border-b bg-white/80 backdrop-blur z-30">
         <div className="flex items-center gap-2">
           <img src="/icons/icon-72x72.png" alt="Logo Armazena" className="w-8 h-8" />
           <span className="font-bold text-xl text-blue-700">Armazena</span>
