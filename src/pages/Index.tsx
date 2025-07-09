@@ -108,7 +108,7 @@ export default function Index() {
         <div className="flex-1 text-center md:text-left">
           <h1 className="text-4xl md:text-5xl font-extrabold mb-4 text-blue-800">Gestão de Ativos e Patrimônio<br />para Empresas e Pessoas</h1>
           <p className="text-lg md:text-xl text-gray-600 mb-8">Organize, controle e proteja seus bens de forma simples, segura e eficiente. O Armazena é o sistema ideal para quem busca praticidade e controle total do patrimônio.</p>
-          <Link to="/login" className="inline-block bg-blue-700 text-white font-bold px-8 py-4 rounded-lg shadow hover:bg-blue-800 transition text-lg">Comece Grátis</Link>
+          <Link to="/signup" className="inline-block bg-blue-700 text-white font-bold px-8 py-4 rounded-lg shadow hover:bg-blue-800 transition text-lg">Comece Grátis</Link>
         </div>
         <div className="flex-1 flex justify-center items-center">
           {/* Print ilustrativo do sistema - agora clicável */}
