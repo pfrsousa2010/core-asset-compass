@@ -116,14 +116,13 @@ export default function Index() {
             src="/dashboard-print.png"
             alt="Print do sistema Armazena"
             className="rounded-xl shadow-lg w-full max-w-md border cursor-zoom-in transition hover:shadow-2xl"
-            onClick={() => setModalOpen(true)}
-            style={{objectFit: 'cover'}}
+            onClick={() => { setModalOpen(true); setModalImg("/dashboard-print.png"); }}
           />
         </div>
       </section>
 
       {/* Modal de imagem expandida */}
-      {modalOpen && (
+      {/* {modalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70" onClick={() => setModalOpen(false)}>
           <div className="relative max-w-3xl w-full p-4" onClick={e => e.stopPropagation()}>
             <button
@@ -137,11 +136,11 @@ export default function Index() {
               src="/dashboard-print.png"
               alt="Print do sistema Armazena expandido"
               className="rounded-xl w-full h-auto max-h-[80vh] shadow-2xl border-2 border-white"
-              style={{objectFit: 'contain'}}
+              style={{ objectFit: 'contain' }}
             />
           </div>
         </div>
-      )}
+      )} */}
 
       {/* Sobre o Sistema */}
       <section className="bg-blue-50 py-12 px-6">
@@ -234,24 +233,24 @@ export default function Index() {
       </section>
 
       {/* Modal de imagem expandida (usado tanto para o print do Hero quanto para o carrossel) */}
-      {modalOpen && (
+      {modalOpen && modalImg && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70" onClick={() => { setModalOpen(false); setModalImg(null); }}>
           <div className="relative flex items-center justify-center w-full h-full p-4" onClick={e => e.stopPropagation()}>
-            <div className="bg-white rounded-2xl p-4 md:p-8 shadow-2xl border-4 border-white flex items-center justify-center">
-              <button
-                className="absolute top-2 right-2 text-white bg-black/60 rounded-full p-1 hover:bg-black/80 transition"
-                onClick={() => { setModalOpen(false); setModalImg(null); }}
-                aria-label="Fechar"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
-              </button>
-              <img
-                src={modalImg || "/dashboard-print.png"}
-                alt="Tela expandida do sistema Armazena"
-                className="rounded-xl w-auto h-auto max-h-[70vh] max-w-full mx-auto"
-                style={{objectFit: 'contain'}}
-              />
-            </div>
+            <button
+              className="absolute top-2 right-2 text-white bg-black/60 rounded-full p-1 hover:bg-black/80 transition"
+              onClick={() => { setModalOpen(false); setModalImg(null); }}
+              aria-label="Fechar"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+            <img
+              src={modalImg}
+              alt="Tela expandida do sistema Armazena"
+              className="rounded-xl w-auto h-auto max-h-[85vh] max-w-full mx-auto"
+              style={{ objectFit: 'contain' }}
+            />
           </div>
         </div>
       )}
