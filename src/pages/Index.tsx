@@ -1,8 +1,10 @@
 import { Link } from 'react-router-dom';
 import { CheckCircle, Users, FileText, Shield, Upload, History, ArrowRight, Mail, Facebook, Instagram, Twitter, Smartphone, Tablet, Monitor, Download } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 // Se framer-motion estiver instalado, pode ser importado para animações leves
 // import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
+import { usePWA } from '@/hooks/usePWA';
 import {
   Carousel,
   CarouselContent,
@@ -80,6 +82,13 @@ export default function Index() {
     { src: "/Usuarios 1.png", alt: "Tela Usuários" },
     { src: "/Exportar 1.png", alt: "Tela Exportar" },
   ];
+  const navigate = useNavigate();
+  const { isInstalled } = usePWA();
+  useEffect(() => {
+    if (isInstalled) {
+      navigate('/login', { replace: true });
+    }
+  }, [isInstalled, navigate]);
   return (
     <div className="bg-white min-h-screen flex flex-col pt-20">
       {/* Topbar com botão Entrar */}
