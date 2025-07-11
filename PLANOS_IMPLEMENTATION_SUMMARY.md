@@ -23,12 +23,12 @@ Foi implementado um sistema completo de planos baseado na tabela "companies" do 
 - ✅ Criado hook centralizado para gerenciar limites
 - ✅ Consulta empresa atual, conta ativos e usuários
 - ✅ Retorna informações completas sobre limites e uso
-- ✅ Calcula percentuais de uso (80% e 100%)
+- ✅ Calcula percentuais de uso (90% e 100%)
 - ✅ Filtra usuários ativos apenas
 
 ### 4. Notificações de Limite
 - ✅ Implementado `useLimitNotifications` hook
-- ✅ Toast automático quando atinge 80% ou 100% dos limites
+- ✅ Toast automático quando atinge 90% ou 100% dos limites
 - ✅ Integrado ao Layout principal para funcionar em todo o sistema
 - ✅ Notificações específicas para ativos e usuários
 
@@ -98,7 +98,7 @@ const planRules = {
 ## Funcionalidades de Notificação
 
 ### Avisos Automáticos:
-- **80% do limite**: Toast amarelo de aviso
+- **90% do limite**: Toast amarelo de aviso
 - **100% do limite**: Toast vermelho de erro
 - **Criação de recursos**: Validação antes da criação
 - **Dashboard**: Alertas visuais persistentes

@@ -61,8 +61,8 @@ export interface PlanLimits {
   usersUsage: number; // percentage
   isAssetsLimitReached: boolean;
   isUsersLimitReached: boolean;
-  isAssetsLimitWarning: boolean; // 80% or more
-  isUsersLimitWarning: boolean; // 80% or more
+  isAssetsLimitWarning: boolean; // 90% ou mais
+  isUsersLimitWarning: boolean; // 90% ou mais
 }
 
 export function usePlanLimits() {
@@ -108,8 +108,8 @@ export function usePlanLimits() {
         usersUsage,
         isAssetsLimitReached: (assetsCount || 0) >= assetsLimit,
         isUsersLimitReached: (usersCount || 0) >= usersLimit,
-        isAssetsLimitWarning: assetsUsage >= 80,
-        isUsersLimitWarning: usersUsage >= 80,
+        isAssetsLimitWarning: assetsUsage >= 90,
+        isUsersLimitWarning: usersUsage >= 90,
       };
     },
     enabled: !!profile?.company_id && !!company,

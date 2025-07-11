@@ -68,7 +68,7 @@ export default function CreateAsset() {
       if (planLimits?.isAssetsLimitWarning && !planLimits?.isAssetsLimitReached) {
         toast({
           title: "Aproximando do limite",
-          description: "Você está próximo do limite de ativos do seu plano. Considere fazer upgrade.",
+          description: "Você está próximo do limite de ativos do seu plano (90%). Considere fazer upgrade.",
           variant: "destructive",
         });
       }

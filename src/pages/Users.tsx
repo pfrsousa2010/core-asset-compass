@@ -126,7 +126,7 @@ export default function Users() {
           if (planLimits?.isUsersLimitWarning && !planLimits?.isUsersLimitReached) {
             toast({
               title: "Aproximando do limite",
-              description: "Você está próximo do limite de usuários do seu plano. Considere fazer upgrade.",
+              description: "Você está próximo do limite de usuários do seu plano (90%). Considere fazer upgrade.",
               variant: "destructive",
             });
           }

@@ -60,14 +60,14 @@ export default function MyPlan() {
 
   const getProgressBgColor = (usage: number) => {
     if (usage >= 100) return 'bg-red-100';
-    if (usage >= 80) return 'bg-yellow-100';
+    if (usage >= 90) return 'bg-yellow-100';
     return 'bg-green-100';
   };
 
   // Função para cor do preenchimento da barra
   const getProgressIndicatorColor = (usage: number) => {
     if (usage >= 100) return 'bg-red-500';
-    if (usage >= 80) return 'bg-yellow-400';
+    if (usage >= 90) return 'bg-yellow-400';
     return 'bg-green-400';
   };
 
@@ -189,7 +189,7 @@ export default function MyPlan() {
                   <span>{planLimits.assetsUsage}% usado</span>
                   {planLimits.isAssetsLimitWarning && (
                     <Badge variant="destructive" className="text-xs">
-                      {planLimits.isAssetsLimitReached ? 'Limite atingido' : 'Aproximando do limite'}
+                      {planLimits.isAssetsLimitReached ? 'Limite atingido' : 'Aproximando do limite (90%)'}
                     </Badge>
                   )}
                 </div>
@@ -217,7 +217,7 @@ export default function MyPlan() {
                   <span>{planLimits.usersUsage}% usado</span>
                   {planLimits.isUsersLimitWarning && (
                     <Badge variant="destructive" className="text-xs">
-                      {planLimits.isUsersLimitReached ? 'Limite atingido' : 'Aproximando do limite'}
+                      {planLimits.isUsersLimitReached ? 'Limite atingido' : 'Aproximando do limite (90%)'}
                     </Badge>
                   )}
                 </div>

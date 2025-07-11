@@ -23,7 +23,7 @@ export function useLimitNotifications() {
         duration: 8000,
       });
     }
-    // Notificar quando atingir 80% do limite de ativos
+    // Notificar quando atingir 90% do limite de ativos
     else if (planLimits.isAssetsLimitWarning) {
       toast({
         title: "Aproximando do limite de ativos",
