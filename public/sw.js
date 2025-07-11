@@ -9,6 +9,7 @@ const urlsToCache = [
 
 // Install event - cache resources
 self.addEventListener('install', (event) => {
+  self.skipWaiting(); // ativa imediatamente o novo SW
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then((cache) => {
