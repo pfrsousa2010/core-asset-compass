@@ -23,6 +23,7 @@ export interface AssetFormData {
   name: string;
   code: string;
   location: string;
+  unity: string; // <--- Adicionado
   status: AssetStatus;
   acquisition_date: string;
   value: string;
@@ -44,6 +45,7 @@ export function AssetForm({ asset, onSubmit, isSubmitting, submitLabel, disabled
     name: asset?.name || '',
     code: asset?.code || '',
     location: asset?.location || '',
+    unity: asset?.unity || '', // <--- Adicionado
     status: asset?.status || 'ativo',
     acquisition_date: asset?.acquisition_date || '',
     value: asset?.value?.toString() || '',
@@ -203,6 +205,16 @@ export function AssetForm({ asset, onSubmit, isSubmitting, submitLabel, disabled
               value={formData.location}
               onChange={(e) => handleInputChange('location', e.target.value)}
               placeholder="Ex: Sala 201, Almoxarifado"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="unity">Unidade</Label>
+            <Input
+              id="unity"
+              value={formData.unity}
+              onChange={(e) => handleInputChange('unity', e.target.value)}
+              placeholder="Ex: Unidade Centro, Unidade Filial"
             />
           </div>
 

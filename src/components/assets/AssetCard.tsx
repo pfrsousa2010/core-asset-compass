@@ -50,10 +50,11 @@ export function AssetCard({ asset, isLast = false, onIntersect }: AssetCardProps
           <div className="flex items-center text-sm text-gray-600">
             <MapPin className="h-4 w-4 mr-2 flex-shrink-0" />
             <span className="truncate">
-              {asset.location
-                ? asset.location
-                : "-"
-              }</span>
+              {asset.location ? asset.location : "-"}
+            </span>
+            {asset.unity && (
+              <span className="ml-2 px-2 py-0.5 rounded bg-blue-50 text-blue-800 text-xs font-medium">{asset.unity}</span>
+            )}
           </div>
 
           <div className="flex items-center text-sm text-gray-600">

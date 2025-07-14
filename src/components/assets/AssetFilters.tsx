@@ -8,20 +8,26 @@ interface AssetFiltersProps {
   search: string;
   statusFilter: string;
   locationFilter: string;
+  unityFilter: string;
   locations?: string[];
+  unities?: string[];
   onSearchChange: (value: string) => void;
   onStatusFilterChange: (value: string) => void;
   onLocationFilterChange: (value: string) => void;
+  onUnityFilterChange: (value: string) => void;
 }
 
 export function AssetFilters({
   search,
   statusFilter,
   locationFilter,
+  unityFilter,
   locations,
+  unities,
   onSearchChange,
   onStatusFilterChange,
   onLocationFilterChange,
+  onUnityFilterChange,
 }: AssetFiltersProps) {
   return (
     <Card className="border-0 shadow-md">
@@ -29,7 +35,7 @@ export function AssetFilters({
         <CardTitle className="text-lg">Filtros</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
             <Input
@@ -79,6 +85,19 @@ export function AssetFilters({
               {locations?.map((location) => (
                 <SelectItem key={location} value={location}>
                   {location}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Select value={unityFilter} onValueChange={onUnityFilterChange}>
+            <SelectTrigger>
+              <SelectValue placeholder="Unidade" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Todas as unidades</SelectItem>
+              {unities?.map((unity) => (
+                <SelectItem key={unity} value={unity}>
+                  {unity}
                 </SelectItem>
               ))}
             </SelectContent>

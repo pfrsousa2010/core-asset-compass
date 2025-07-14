@@ -280,6 +280,15 @@ export default function AssetDetails() {
                   </div>
                 </div>
               )}
+              {asset.unity && (
+                <div className="flex items-center space-x-3">
+                  <MapPin className="h-5 w-5 text-blue-400" />
+                  <div>
+                    <p className="text-sm font-medium text-gray-500">Unidade</p>
+                    <p className="text-lg text-blue-900">{asset.unity}</p>
+                  </div>
+                </div>
+              )}
 
               {asset.holder && (
                 <div className="flex items-center space-x-3">

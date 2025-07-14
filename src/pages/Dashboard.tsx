@@ -215,6 +215,12 @@ export default function Dashboard() {
                             <span>{asset.location}</span>
                           </>
                         )}
+                        {asset.unity && (
+                          <>
+                            <span>•</span>
+                            <span className="text-blue-700 font-semibold">{asset.unity}</span>
+                          </>
+                        )}
                       </div>
                     </div>
                   </div>

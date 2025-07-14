@@ -46,6 +46,7 @@ export default function EditAsset() {
           name: data.name,
           code: data.code,
           location: data.location || null,
+          unity: data.unity || null,
           status: data.status,
           acquisition_date: data.acquisition_date || null,
           value: data.value ? parseFloat(data.value) : null,

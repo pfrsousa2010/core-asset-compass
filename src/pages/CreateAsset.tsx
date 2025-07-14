@@ -33,6 +33,7 @@ export default function CreateAsset() {
         name: data.name,
         code: data.code,
         location: data.location || null,
+        unity: data.unity || null, // <--- Adicionado
         status: data.status,
         acquisition_date: data.acquisition_date || null,
         value: data.value ? parseFloat(data.value) : null,

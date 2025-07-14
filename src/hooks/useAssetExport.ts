@@ -12,6 +12,7 @@ interface ExportFilters {
   search: string;
   statusFilter: string;
   locationFilter: string;
+  unityFilter?: string; // <--- Adicionado
   companyName: string;
 }
 
@@ -30,6 +31,7 @@ const CSV_HEADERS = [
   'Código',
   'Status',
   'Localização',
+  'Unidade', // <--- Adicionado
   'Valor',
   'Data de Aquisição',
   'Fabricante',
@@ -50,6 +52,7 @@ const EXCEL_HEADERS = [
   'Código',
   'Status',
   'Localização',
+  'Unidade', // <--- Adicionado
   'Valor',
   'Data de Aquisição',
   'Fabricante',
@@ -83,7 +86,9 @@ export function useAssetExport(): UseAssetExportReturn {
     if (filters.locationFilter !== 'all') {
       query = query.eq('location', filters.locationFilter);
     }
-
+    if (filters.unityFilter && filters.unityFilter !== 'all') {
+      query = query.eq('unity', filters.unityFilter);
+    }
     return query;
   };
 
@@ -99,6 +104,7 @@ export function useAssetExport(): UseAssetExportReturn {
       asset.code,
       asset.status,
       asset.location || '',
+      asset.unity || '', // <--- Adicionado
       asset.value || '',
       asset.acquisition_date || '',
       asset.manufacturer || '',
@@ -126,6 +132,7 @@ export function useAssetExport(): UseAssetExportReturn {
       asset.code,
       asset.status,
       asset.location || '',
+      asset.unity || '', // <--- Adicionado
       asset.value || '',
       asset.acquisition_date || '',
       asset.manufacturer || '',
@@ -153,6 +160,9 @@ export function useAssetExport(): UseAssetExportReturn {
       }
       if (filters.locationFilter && filters.locationFilter !== 'all') {
         filterStr += `_local-${filters.locationFilter.replace(/\s+/g, '')}`;
+      }
+      if (filters.unityFilter && filters.unityFilter !== 'all') {
+        filterStr += `_unidade-${filters.unityFilter.replace(/\s+/g, '')}`;
       }
       if (filters.search) {
         filterStr += `_busca-${filters.search.replace(/\s+/g, '')}`;
@@ -248,6 +258,7 @@ export function useAssetExport(): UseAssetExportReturn {
         asset.code || '',
         asset.status || '',
         asset.location || '',
+        asset.unity || '', // <--- Adicionado
         asset.value || '',
         asset.acquisition_date || '',
         asset.manufacturer || '',
@@ -290,23 +301,24 @@ export function useAssetExport(): UseAssetExportReturn {
           textColor: 50,
         },
         columnStyles: {
-          0: { cellWidth: 44 }, // Nome
+          0: { cellWidth: 30 }, // Nome
           1: { cellWidth: 12 }, // Código
           2: { cellWidth: 13 }, // Status
           3: { cellWidth: 18 }, // Localização
-          4: { cellWidth: 12 }, // Valor
-          5: { cellWidth: 15 }, // Data de Aquisição
-          6: { cellWidth: 17 }, // Fabricante
-          7: { cellWidth: 13 }, // Modelo
-          8: { cellWidth: 11 }, // Cor
-          9: { cellWidth: 15 }, // Número de Série
-          10: { cellWidth: 17 }, // Capacidade
-          11: { cellWidth: 15 }, // Voltagem
-          12: { cellWidth: 18 }, // Condições
-          13: { cellWidth: 13 }, // Detentor
-          14: { cellWidth: 13 }, // Origem
-          15: { cellWidth: 16 }, // Inalienável
-          16: { cellWidth: 20 }, // Observações
+          4: { cellWidth: 18 }, // Unidade
+          5: { cellWidth: 12 }, // Valor
+          6: { cellWidth: 15 }, // Data de Aquisição
+          7: { cellWidth: 17 }, // Fabricante
+          8: { cellWidth: 13 }, // Modelo
+          9: { cellWidth: 11 }, // Cor
+          10: { cellWidth: 15 }, // Número de Série
+          11: { cellWidth: 17 }, // Capacidade
+          12: { cellWidth: 15 }, // Voltagem
+          13: { cellWidth: 18 }, // Condições
+          14: { cellWidth: 13 }, // Detentor
+          15: { cellWidth: 13 }, // Origem
+          16: { cellWidth: 16 }, // Inalienável
+          17: { cellWidth: 20 }, // Observações
         },
         margin: { left: 8, right: 8 },
       });

@@ -10,6 +10,7 @@ interface UseAssetsFilters {
   search: string;
   statusFilter: string;
   locationFilter: string;
+  unityFilter?: string; // <--- Adicionado
 }
 
 interface UseAssetsReturn {
@@ -21,6 +22,7 @@ interface UseAssetsReturn {
   resetFilters: () => void;
   loadMore: () => void;
   locations: string[] | undefined;
+  unities: string[] | undefined; // <--- Adicionado
 }
 
 const ITEMS_PER_PAGE = 20;
@@ -47,6 +49,9 @@ export function useAssets(filters: UseAssetsFilters): UseAssetsReturn {
     if (filters.locationFilter !== 'all') {
       query = query.eq('location', filters.locationFilter);
     }
+    if (filters.unityFilter && filters.unityFilter !== 'all') {
+      query = query.eq('unity', filters.unityFilter);
+    }
 
     const from = (page - 1) * ITEMS_PER_PAGE;
     const to = from + ITEMS_PER_PAGE - 1;
@@ -54,7 +59,7 @@ export function useAssets(filters: UseAssetsFilters): UseAssetsReturn {
     
     if (error) throw error;
     return data || [];
-  }, [filters.search, filters.statusFilter, filters.locationFilter]);
+  }, [filters.search, filters.statusFilter, filters.locationFilter, filters.unityFilter]);
 
   const loadAssets = useCallback(async (page: number) => {
     const isFirstPage = page === 1;
@@ -96,7 +101,7 @@ export function useAssets(filters: UseAssetsFilters): UseAssetsReturn {
   // Reset when filters change
   useEffect(() => {
     resetFilters();
-  }, [filters.search, filters.statusFilter, filters.locationFilter, resetFilters]);
+  }, [filters.search, filters.statusFilter, filters.locationFilter, filters.unityFilter, resetFilters]);
 
   // Load assets when page changes
   useEffect(() => {
@@ -116,6 +121,18 @@ export function useAssets(filters: UseAssetsFilters): UseAssetsReturn {
       return uniqueLocations;
     },
   });
+  // Fetch unities
+  const { data: unities } = useQuery({
+    queryKey: ['asset-unities'],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from('assets')
+        .select('unity')
+        .not('unity', 'is', null);
+      const uniqueUnities = [...new Set(data?.map(item => item.unity).filter(Boolean))];
+      return uniqueUnities;
+    },
+  });
 
   return {
     assets,
@@ -126,5 +143,6 @@ export function useAssets(filters: UseAssetsFilters): UseAssetsReturn {
     resetFilters,
     loadMore,
     locations,
+    unities, // <--- Adicionado
   };
 } 

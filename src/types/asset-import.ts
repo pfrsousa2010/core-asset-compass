@@ -2,6 +2,7 @@ export interface CSVRow {
   nome: string;
   codigo: string;
   localizacao?: string;
+  unity?: string;
   status?: string;
   data_aquisicao?: string;
   valor?: string;
@@ -27,6 +28,7 @@ export interface AssetData {
   name: string;
   code: string;
   location: string | null;
+  unity: string | null;
   status: 'ativo' | 'manutenção' | 'baixado';
   acquisition_date: string | null;
   value: number | null;

@@ -23,6 +23,7 @@ export default function Assets() {
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [locationFilter, setLocationFilter] = useState<string>('all');
+  const [unityFilter, setUnityFilter] = useState<string>('all'); // <--- Adicionado
   const [showScanner, setShowScanner] = useState(false);
   const [showExportModal, setShowExportModal] = useState(false);
 
@@ -34,7 +35,8 @@ export default function Assets() {
     hasMore,
     loadMore,
     locations,
-  } = useAssets({ search, statusFilter, locationFilter });
+    unities, // <--- Adicionado
+  } = useAssets({ search, statusFilter, locationFilter, unityFilter });
 
   const { exportLoading, exportToFormat } = useAssetExport();
   
@@ -53,6 +55,7 @@ export default function Assets() {
       search,
       statusFilter,
       locationFilter,
+      unityFilter, // <--- Adicionado
       companyName: company.name,
     });
   };
@@ -94,10 +97,13 @@ export default function Assets() {
         search={search}
         statusFilter={statusFilter}
         locationFilter={locationFilter}
+        unityFilter={unityFilter} // <--- Adicionado
         locations={locations}
+        unities={unities} // <--- Adicionado
         onSearchChange={setSearch}
         onStatusFilterChange={setStatusFilter}
         onLocationFilterChange={setLocationFilter}
+        onUnityFilterChange={setUnityFilter} // <--- Adicionado
       />
 
       {/* Assets List */}

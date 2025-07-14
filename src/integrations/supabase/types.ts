@@ -34,6 +34,7 @@ export type Database = {
           updated_by_user_name: string | null
           value: number | null
           voltage: string | null
+          unity: string | null
         }
         Insert: {
           acquisition_date?: string | null
@@ -59,6 +60,7 @@ export type Database = {
           updated_by_user_name?: string | null
           value?: number | null
           voltage?: string | null
+          unity?: string | null
         }
         Update: {
           acquisition_date?: string | null
@@ -84,6 +86,7 @@ export type Database = {
           updated_by_user_name?: string | null
           value?: number | null
           voltage?: string | null
+          unity?: string | null
         }
         Relationships: [
           {
