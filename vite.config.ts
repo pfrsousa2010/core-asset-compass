@@ -49,9 +49,9 @@ export default defineConfig(({ mode }) => ({
       },
       includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'masked-icon.svg'],
       manifest: {
-        name: 'Armazena - Sistema de Gestão de Ativos',
+        name: 'Armazena - Sistema de Gestão de Patrimônios',
         short_name: 'Armazena',
-        description: 'Sistema completo de gestão e rastreamento de ativos empresariais com controle de acesso e monitoramento em tempo real',
+        description: 'Sistema completo de gestão e rastreamento de patrimônios empresariais com controle de acesso e monitoramento em tempo real',
         theme_color: '#2563eb',
         background_color: '#ffffff',
         display: 'standalone',
@@ -122,9 +122,9 @@ export default defineConfig(({ mode }) => ({
             ]
           },
           {
-            name: 'Ativos',
-            short_name: 'Ativos',
-            description: 'Gerenciar ativos',
+            name: 'Patrimônios',
+            short_name: 'Patrimônios',
+            description: 'Gerenciar patrimônios',
             url: '/assets',
             icons: [
               {

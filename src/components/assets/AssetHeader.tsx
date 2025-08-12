@@ -27,9 +27,9 @@ export function AssetHeader({
     return (
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Ativos</h1>
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Patrimônios</h1>
           <p className="mt-2 text-gray-600">
-            Gerencie todos os ativos patrimoniais da empresa
+            Gerencie todos os patrimônios da empresa
           </p>
         </div>
       </div>
@@ -39,9 +39,9 @@ export function AssetHeader({
   return (
     <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
       <div>
-        <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Ativos</h1>
+        <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Patrimônios</h1>
         <p className="mt-2 text-gray-600">
-          Gerencie todos os ativos patrimoniais da empresa
+          Gerencie todos os patrimônios da empresa
         </p>
       </div>
       

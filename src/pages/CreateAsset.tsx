@@ -26,7 +26,7 @@ export default function CreateAsset() {
 
       // Verificar limites do plano
       if (planLimits?.isAssetsLimitReached) {
-        throw new Error('Limite de ativos do seu plano foi atingido. Faça upgrade para adicionar mais ativos.');
+        throw new Error('Limite de patrimônios do seu plano foi atingido. Faça upgrade para adicionar mais itens.');
       }
 
       const { error } = await supabase.from('assets').insert({
@@ -61,15 +61,15 @@ export default function CreateAsset() {
 
       // Mostrar toast de sucesso
       toast({
-        title: "Ativo criado com sucesso!",
-        description: "O ativo foi adicionado ao sistema",
+        title: "Patrimônio criado com sucesso!",
+        description: "O patrimônio foi adicionado ao sistema",
       });
 
       // Verificar se está próximo do limite e mostrar aviso
       if (planLimits?.isAssetsLimitWarning && !planLimits?.isAssetsLimitReached) {
         toast({
           title: "Aproximando do limite",
-          description: "Você está próximo do limite de ativos do seu plano (90%). Considere fazer upgrade.",
+          description: "Você está próximo do limite de patrimônios do seu plano (90%). Considere fazer upgrade.",
           variant: "destructive",
         });
       }
@@ -77,7 +77,7 @@ export default function CreateAsset() {
       navigate('/assets');
     },
     onError: (error: any) => {
-      setError(error.message || 'Erro ao criar ativo');
+      setError(error.message || 'Erro ao criar patrimônio');
     },
   });
 
@@ -101,9 +101,9 @@ export default function CreateAsset() {
           Voltar
         </Button>
         <div>
-          <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Novo Ativo</h1>
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Novo patrimônio</h1>
           <p className="mt-2 text-gray-600">
-            Adicionar um novo ativo ao patrimônio da empresa
+            Adicionar um novo patrimônio ao patrimônio da empresa
           </p>
         </div>
       </div>
@@ -121,7 +121,7 @@ export default function CreateAsset() {
             <AlertDescription>
               {profile?.role === 'admin' ? (
                 <>
-                  Você atingiu o limite de ativos do seu plano atual ({planLimits.assetsCount}/{planLimits.assetsLimit}).
+                  Você atingiu o limite de patrimônios do seu plano atual ({planLimits.assetsCount}/{planLimits.assetsLimit}).
                   <Button
                     variant="link"
                     className="p-0 h-auto font-semibold ml-1"
@@ -129,10 +129,10 @@ export default function CreateAsset() {
                   >
                     Faça upgrade do seu plano
                   </Button>
-                  {' '}para adicionar mais ativos.
+                  {' '}para adicionar mais patrimônios.
                 </>
               ) : (
-                <>Você atingiu o limite de ativos do seu plano atual. <b>Fale com seu administrador.</b></>
+                <>Você atingiu o limite de patrimônios do seu plano atual. <b>Fale com seu administrador.</b></>
               )}
             </AlertDescription>
           </Alert>
@@ -141,7 +141,7 @@ export default function CreateAsset() {
         <AssetForm
           onSubmit={handleSubmit}
           isSubmitting={createAssetMutation.isPending}
-          submitLabel="Salvar Ativo"
+          submitLabel="Salvar Patrimônio"
           disabled={planLimits?.isAssetsLimitReached}
         />
       </div>

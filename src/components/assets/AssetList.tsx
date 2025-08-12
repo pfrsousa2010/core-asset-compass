@@ -50,7 +50,7 @@ export function AssetList({
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
           <div className="flex items-center space-x-2 text-gray-500">
             <Package className="h-5 w-5 animate-pulse" />
-            <span className="text-base">Carregando ativos...</span>
+            <span className="text-base">Carregando patrimônios...</span>
           </div>
         </div>
       </div>
@@ -64,10 +64,10 @@ export function AssetList({
           <CardContent className="text-center py-12">
             <Package className="h-12 w-12 mx-auto text-gray-400 mb-4" />
             <h3 className="text-lg font-medium text-gray-900 mb-2">
-              Nenhum ativo encontrado
+              Nenhum patrimônio encontrado
             </h3>
             <p className="text-gray-600 mb-6">
-              Comece adicionando seus primeiros ativos ao sistema
+              Comece adicionando seus primeiros patrimônios ao sistema
             </p>
             {canEdit && (
               <div className="flex flex-col sm:flex-row gap-2 justify-center">
@@ -81,7 +81,7 @@ export function AssetList({
                     </DialogTrigger>
                     <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
                       <DialogHeader>
-                        <DialogTitle>Importar Ativos</DialogTitle>
+                        <DialogTitle>Importar Patrimônios</DialogTitle>
                       </DialogHeader>
                       <AssetImport />
                     </DialogContent>
@@ -90,7 +90,7 @@ export function AssetList({
                 <Button asChild>
                   <Link to="/assets/new">
                     <Plus className="h-4 w-4 mr-2" />
-                    Adicionar Primeiro Ativo
+                    Adicionar Primeiro patrimônio
                   </Link>
                 </Button>
               </div>
@@ -119,7 +119,7 @@ export function AssetList({
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
             <div className="flex items-center space-x-2 text-gray-500">
               <Package className="h-4 w-4 animate-pulse" />
-              <span className="text-sm">Carregando mais ativos...</span>
+              <span className="text-sm">Carregando mais patrimônios...</span>
             </div>
           </div>
         </div>

@@ -152,7 +152,7 @@ export function useNotifications(): UseNotificationsReturn {
       
       toast({
         title: "Notificações ativadas",
-        description: "Você receberá notificações sobre mudanças nos ativos.",
+        description: "Você receberá notificações sobre mudanças nos patrimônios.",
       });
     } catch (error) {
       console.error('Erro ao inscrever para notificações:', error);

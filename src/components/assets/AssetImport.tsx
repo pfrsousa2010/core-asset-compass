@@ -76,7 +76,7 @@ export function AssetImport() {
           <CardHeader>
             <CardTitle className="flex items-center">
               <FileText className="h-5 w-5 mr-2 text-blue-600" />
-              Importar Ativos por CSV
+              Importar Patrimônios por CSV
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
@@ -98,7 +98,7 @@ export function AssetImport() {
               className="w-full"
             >
               <Upload className="h-4 w-4 mr-2" />
-              {importing || importMutation.isPending ? 'Importando...' : 'Importar Ativos'}
+              {importing || importMutation.isPending ? 'Importando...' : 'Importar Patrimônios'}
             </Button>
 
             <ImportResults result={result} />

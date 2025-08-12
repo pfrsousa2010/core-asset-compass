@@ -201,7 +201,7 @@ export function useAssetExport(): UseAssetExportReturn {
       const { data: assets, error } = await query;
       
       if (error || !assets || assets.length === 0) {
-        throw new Error('Nenhum ativo encontrado para exportar');
+        throw new Error('Nenhum patrimônio encontrado para exportar');
       }
 
       const csvContent = generateCSVContent(assets);
@@ -221,7 +221,7 @@ export function useAssetExport(): UseAssetExportReturn {
       const { data: assets, error } = await query;
       
       if (error || !assets || assets.length === 0) {
-        throw new Error('Nenhum ativo encontrado para exportar');
+        throw new Error('Nenhum patrimônio encontrado para exportar');
       }
 
       const excelData = generateExcelData(assets);
@@ -232,7 +232,7 @@ export function useAssetExport(): UseAssetExportReturn {
       worksheet['!cols'] = columnWidths;
 
       const workbook = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(workbook, worksheet, 'Ativos');
+      XLSX.utils.book_append_sheet(workbook, worksheet, 'Patrimônios');
       
       const fileName = generateFileName(filters.companyName, 'xlsx', filters);
       downloadExcel(workbook, fileName);
@@ -249,7 +249,7 @@ export function useAssetExport(): UseAssetExportReturn {
       const { data: assets, error } = await query;
       
       if (error || !assets || assets.length === 0) {
-        throw new Error('Nenhum ativo encontrado para exportar');
+        throw new Error('Nenhum patrimônio encontrado para exportar');
       }
 
       // Montar dados para a tabela
@@ -279,7 +279,7 @@ export function useAssetExport(): UseAssetExportReturn {
 
       // Título e cabeçalho
       doc.setFontSize(12);
-      doc.text(`Relatório de Ativos - ${filters.companyName}`, 10, 14);
+      doc.text(`Relatório de Patrimônios - ${filters.companyName}`, 10, 14);
       doc.setFontSize(10);
       doc.text(`Gerado em: ${new Date().toLocaleDateString('pt-BR')} às ${new Date().toLocaleTimeString('pt-BR')}`, 10, 21);
 

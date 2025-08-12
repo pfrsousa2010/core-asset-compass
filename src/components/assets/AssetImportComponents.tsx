@@ -97,7 +97,7 @@ interface ImportProgressProps {
 export const ImportProgress = ({ progress }: ImportProgressProps) => (
   <div className="space-y-2">
     <div className="flex items-center justify-between text-sm">
-      <span>Importando ativos...</span>
+      <span>Importando patrimônios...</span>
       <span>{Math.round(progress)}%</span>
     </div>
     <Progress value={progress} />
@@ -116,7 +116,7 @@ export const ImportResults = ({ result }: ImportResultsProps) => {
       <div className="flex items-center text-green-600">
         <CheckCircle className="h-5 w-5 mr-2" />
         <span className="font-medium">
-          {result.success} ativos importados com sucesso
+          {result.success} patrimônios importados com sucesso
         </span>
       </div>
 

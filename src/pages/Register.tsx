@@ -89,7 +89,7 @@ export default function Register() {
             <h2 className="text-3xl font-bold text-gray-900">Armazena App</h2>
           </div>
           <p className="mt-6 text-2xl font-bold text-gray-900">
-            Sistema de Gestão de Ativos
+            Sistema de Gestão de Patrimônios
           </p>
         </div>
         <Card className="shadow-lg border-0">

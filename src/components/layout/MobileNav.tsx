@@ -23,7 +23,7 @@ export function MobileNav() {
 
   const navigation = [
     { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
-    { name: 'Ativos', href: '/assets', icon: Package },
+    { name: 'Patrimônios', href: '/assets', icon: Package },
     ...(profile?.role === 'admin' ? [{ name: 'Usuários', href: '/users', icon: Users }] : []),
   ];
 

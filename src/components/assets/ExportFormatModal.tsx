@@ -80,7 +80,7 @@ export function ExportFormatModal({
         
         <div className="space-y-4 py-4">
           <p className="text-sm text-gray-600 text-center">
-            Selecione o formato desejado para exportar os ativos
+            Selecione o formato desejado para exportar os patrimônios
           </p>
           
           <div className="grid gap-3">

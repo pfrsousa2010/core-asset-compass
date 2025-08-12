@@ -91,7 +91,7 @@ export default function Dashboard() {
       <div>
         <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
         <p className="mt-2 text-gray-600">
-          Visão geral dos seus ativos patrimoniais
+          Visão geral dos seus patrimônios
         </p>
       </div>
 
@@ -109,7 +109,7 @@ export default function Dashboard() {
               {stats?.totalAssets || 0}
             </div>
             <p className="text-xs text-gray-500 mt-1">
-              Todos os ativos cadastrados
+              Todos os patrimônios cadastrados
             </p>
           </CardContent>
         </Card>
@@ -117,7 +117,7 @@ export default function Dashboard() {
         <Card className="border-0 shadow-md">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium text-gray-600">
-              Ativos
+            Patrimônios
             </CardTitle>
             <TrendingUp className="h-4 w-4 text-green-600" />
           </CardHeader>
@@ -188,10 +188,10 @@ export default function Dashboard() {
         <CardHeader>
           <CardTitle className="flex items-center">
             <Clock className="h-5 w-5 mr-2 text-blue-600" />
-            Ativos Recentes
+            Patrimônios Recentes
           </CardTitle>
           <CardDescription>
-            Últimos ativos adicionados ao sistema
+            Últimos patrimônios adicionados ao sistema
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -248,7 +248,7 @@ export default function Dashboard() {
                 Nenhum ativo cadastrado
               </h3>
               <p className="text-gray-600">
-                Comece adicionando seus primeiros ativos ao sistema
+                Comece adicionando seus primeiros patrimônios ao sistema
               </p>
             </div>
           )}

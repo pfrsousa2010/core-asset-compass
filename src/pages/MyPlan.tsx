@@ -147,7 +147,7 @@ export default function MyPlan() {
             <div className="flex items-center gap-2">
               <Package className="h-4 w-4 text-gray-500" />
               <span className="text-sm text-gray-600">
-                Ativos: Até {planLimits.planInfo.maxAssets}
+                Patrimônios: Até {planLimits.planInfo.maxAssets}
               </span>
             </div>
             <div className="flex items-center gap-2">
@@ -168,12 +168,12 @@ export default function MyPlan() {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
-            {/* Ativos */}
+            {/* Patrimônios */}
             <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Package className="h-4 w-4 text-gray-500" />
-                  <span className="text-sm font-medium">Ativos</span>
+                  <span className="text-sm font-medium">Patrimônios</span>
                 </div>
                 <span className="text-sm text-gray-600">
                   {planLimits.assetsCount} / {planLimits.assetsLimit}
@@ -299,7 +299,7 @@ export default function MyPlan() {
                     <h3 className="font-semibold">{planRules.basic.name}</h3>
                   </div>
                   <div className="space-y-2 text-sm text-gray-600">
-                    <div>Até {planRules.basic.maxAssets} ativos</div>
+                    <div>Até {planRules.basic.maxAssets} patrimônios</div>
                     <div>Até {planRules.basic.maxUsers} usuários</div>
                     <div>{planRules.basic.support}</div>
                   </div>
@@ -333,7 +333,7 @@ export default function MyPlan() {
                     <h3 className="font-semibold">{planRules.premium.name}</h3>
                   </div>
                   <div className="space-y-2 text-sm text-gray-600">
-                    <div>Até {planRules.premium.maxAssets} ativos</div>
+                    <div>Até {planRules.premium.maxAssets} patrimônios</div>
                     <div>Até {planRules.premium.maxUsers} usuários</div>
                     <div>{planRules.premium.support}</div>
                   </div>

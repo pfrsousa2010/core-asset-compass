@@ -187,7 +187,7 @@ export default function OnboardingNew() {
                       <span className="text-green-700 font-semibold">R$ 0/mês</span>
                     </div>
                     <ul className="text-sm text-gray-700 list-disc list-inside space-y-1">
-                      <li>Até 50 ativos</li>
+                      <li>Até 50 patrimônios</li>
                       <li>Até 2 usuários</li>
                       <li>Exportação CSV</li>
                       <li>Importação CSV</li>
@@ -217,7 +217,7 @@ export default function OnboardingNew() {
                       </span>
                     </div>
                     <ul className="text-sm text-gray-700 list-disc list-inside space-y-1">
-                      <li>Até 500 ativos</li>
+                      <li>Até 500 patrimônios</li>
                       <li>Até 5 usuários</li>
                       <li>Exportação PDF/Excel/CSV</li>
                       <li>Importação CSV</li>
@@ -241,7 +241,7 @@ export default function OnboardingNew() {
                       </span>
                     </div>
                     <ul className="text-sm text-gray-700 list-disc list-inside space-y-1">
-                      <li>Até 1000 ativos</li>
+                      <li>Até 1000 patrimônios</li>
                       <li>Até 10 usuários</li>
                       <li>Todos os recursos</li>
                       <li>Suporte por WhatsApp (até 24h)</li>

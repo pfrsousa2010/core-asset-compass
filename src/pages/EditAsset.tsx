@@ -72,13 +72,13 @@ export default function EditAsset() {
       queryClient.invalidateQueries({ queryKey: ['dashboard-stats'] });
       queryClient.invalidateQueries({ queryKey: ['recent-assets'] });
       toast({
-        title: "Ativo atualizado com sucesso!",
+        title: "Patrimônio atualizado com sucesso!",
         description: "As alterações foram salvas",
       });
       navigate(`/assets/${id}`);
     },
     onError: (error: any) => {
-      setError(error.message || 'Erro ao atualizar ativo');
+      setError(error.message || 'Erro ao atualizar patrimônio');
     },
   });
 
@@ -125,7 +125,7 @@ export default function EditAsset() {
           </Button>
         </div>
         <Alert variant="destructive">
-          <AlertDescription>Ativo não encontrado</AlertDescription>
+          <AlertDescription>Patrimônio não encontrado</AlertDescription>
         </Alert>
       </div>
     );
@@ -140,7 +140,7 @@ export default function EditAsset() {
           Voltar
         </Button>
         <div>
-          <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Editar Ativo</h1>
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-900">Editar Patrimônio</h1>
           <p className="mt-2 text-gray-600">
             Modificar informações de <strong>{asset.name}</strong>
           </p>

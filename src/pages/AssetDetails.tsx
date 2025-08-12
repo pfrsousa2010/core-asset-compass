@@ -77,15 +77,15 @@ export default function AssetDetails() {
       queryClient.invalidateQueries({ queryKey: ['dashboard-stats'] });
       queryClient.invalidateQueries({ queryKey: ['recent-assets'] });
       toast({
-        title: "Ativo deletado com sucesso!",
-        description: "O ativo foi removido do sistema",
+        title: "Patrimônio deletado com sucesso!",
+        description: "O patrimônio foi removido do sistema",
       });
       navigate('/assets');
     },
     onError: (error: any) => {
       toast({
-        title: "Erro ao deletar ativo",
-        description: error.message || 'Erro ao deletar o ativo',
+        title: "Erro ao deletar patrimônio",
+        description: error.message || 'Erro ao deletar o patrimônio',
         variant: "destructive",
       });
     },
@@ -171,10 +171,10 @@ export default function AssetDetails() {
           <CardContent className="text-center py-12">
             <Package className="h-12 w-12 mx-auto text-gray-400 mb-4" />
             <h3 className="text-lg font-medium text-gray-900 mb-2">
-              Ativo não encontrado
+              Patrimônio não encontrado
             </h3>
             <p className="text-gray-600">
-              O ativo solicitado não existe ou foi removido
+              O patrimônio solicitado não existe ou foi removido
             </p>
           </CardContent>
         </Card>
@@ -193,7 +193,7 @@ export default function AssetDetails() {
           </Button>
           <div>
             <h1 className="text-2xl md:text-3xl font-bold text-gray-900">{asset.name}</h1>
-            <p className="mt-2 text-gray-600">Detalhes do ativo</p>
+            <p className="mt-2 text-gray-600">Detalhes do patrimônio</p>
           </div>
         </div>
 
@@ -205,7 +205,7 @@ export default function AssetDetails() {
                 Editar
               </Link>
             </Button>
-            
+
             {canDelete && (
               <AlertDialog>
                 <AlertDialogTrigger asChild>
@@ -217,8 +217,8 @@ export default function AssetDetails() {
                   <AlertDialogHeader>
                     <AlertDialogTitle>Confirmar exclusão</AlertDialogTitle>
                     <AlertDialogDescription>
-                      Tem certeza que deseja apagar o ativo "{asset.name}"? 
-                      Esta ação não pode ser desfeita e todos os dados do ativo serão perdidos permanentemente.
+                      Tem certeza que deseja apagar o patrimônio "{asset.name}"?
+                      Esta ação não pode ser desfeita e todos os dados do patrimônio serão perdidos permanentemente.
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>

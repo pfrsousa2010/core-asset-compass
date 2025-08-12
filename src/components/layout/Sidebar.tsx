@@ -8,7 +8,7 @@ export function Sidebar() {
 
   const navigation = [
     { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
-    { name: 'Ativos', href: '/assets', icon: Package },
+    { name: 'Patrimônios', href: '/assets', icon: Package },
     ...(profile?.role === 'admin' ? [{ name: 'Usuários', href: '/users', icon: Users }] : []),
     ...(profile?.role === 'admin' ? [{ name: 'Meu Plano', href: '/my-plan', icon: CreditCard }] : []),
     { name: 'Meu Perfil', href: '/profile', icon: User },

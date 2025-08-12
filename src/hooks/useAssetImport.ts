@@ -162,13 +162,13 @@ export const useAssetImport = () => {
       
       toast({
         title: "Importação concluída!",
-        description: `${result.success} ativos importados com sucesso`,
+        description: `${result.success} patrimônios importados com sucesso`,
       });
     },
     onError: (error: any) => {
       toast({
         title: "Erro na importação",
-        description: error.message || 'Erro ao importar ativos',
+        description: error.message || 'Erro ao importar patrimônios',
         variant: "destructive",
       });
     },
