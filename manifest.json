@@ -1,7 +1,7 @@
 {
-  "name": "Armazena - Sistema de Gestão de Ativos",
+  "name": "Armazena - Sistema de Gestão de Patrimônios",
   "short_name": "Armazena",
-  "description": "Sistema completo de gestão e rastreamento de ativos empresariais com controle de acesso e monitoramento em tempo real",
+  "description": "Sistema completo de gestão e rastreamento de patrimônios empresariais com controle de acesso e monitoramento em tempo real",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#2563eb",
@@ -53,9 +53,9 @@
       "url": "/dashboard"
     },
     {
-      "name": "Ativos",
-      "short_name": "Ativos",
-      "description": "Gerenciar ativos",
+      "name": "Patrimônios",
+      "short_name": "Patrimônios",
+      "description": "Gerenciar patrimônios",
       "url": "/assets"
     },
     {
