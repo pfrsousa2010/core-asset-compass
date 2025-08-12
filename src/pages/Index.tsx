@@ -134,7 +134,7 @@ export default function Index() {
       {/* Hero Section */}
       <section className="flex flex-col-reverse md:flex-row items-center justify-between max-w-6xl mx-auto px-6 py-16 gap-10">
         <div className="flex-1 text-center md:text-left">
-          <h1 className="text-4xl md:text-5xl font-extrabold mb-4 text-blue-800">Gestão de Ativos e Patrimônio<br />para Empresas e Pessoas</h1>
+          <h1 className="text-4xl md:text-5xl font-extrabold mb-4 text-blue-800">Gestão de Patrimônio<br />para Empresas e Pessoas</h1>
           <p className="text-lg md:text-xl text-gray-600 mb-8">Organize, controle e proteja seus bens de forma simples, segura e eficiente. O Armazena é o sistema ideal para quem busca praticidade e controle total do patrimônio.</p>
           <Link to="/signup" className="inline-block bg-blue-700 text-white font-bold px-8 py-4 rounded-lg shadow hover:bg-blue-800 transition text-lg">Comece Grátis</Link>
         </div>
@@ -174,7 +174,7 @@ export default function Index() {
       <section className="bg-blue-50 py-12 px-6">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-3xl font-bold text-blue-800 mb-4">O que é o Armazena?</h2>
-          <p className="text-lg text-gray-700 mb-2">O Armazena é um sistema online para gestão de ativos e patrimônio, feito para empresas de todos os portes e também para uso pessoal.</p>
+          <p className="text-lg text-gray-700 mb-2">O Armazena é um sistema online para gestão de patrimônio, feito para empresas de todos os portes e também para uso pessoal.</p>
           <p className="text-lg text-gray-700">Fácil de usar, seguro e com recursos que facilitam a organização e o controle dos seus bens.</p>
         </div>
       </section>
