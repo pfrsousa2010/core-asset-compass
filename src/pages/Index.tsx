@@ -16,12 +16,12 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Button } from '@/components/ui/button';
 
 const features = [
-  { icon: <CheckCircle className="text-blue-600 w-7 h-7" />, title: 'Cadastro de ativos', desc: 'Registre e organize todos os seus bens facilmente.' },
+  { icon: <CheckCircle className="text-blue-600 w-7 h-7" />, title: 'Cadastro de patrimônio', desc: 'Registre e organize todos os seus bens facilmente.' },
   { icon: <Shield className="text-blue-600 w-7 h-7" />, title: 'Permissões por usuários', desc: 'Controle de acesso: Administrador, Editor e Visualizador.' },
-  { icon: <Users className="text-blue-600 w-7 h-7" />, title: 'Controle de localização', desc: 'Saiba onde está cada ativo em tempo real.' },
+  { icon: <Users className="text-blue-600 w-7 h-7" />, title: 'Controle de localização', desc: 'Saiba onde está cada patrimônio em tempo real.' },
   { icon: <FileText className="text-blue-600 w-7 h-7" />, title: 'Exportação em PDF, Excel e CSV', desc: 'Exporte relatórios completos em diversos formatos.' },
-  { icon: <Upload className="text-blue-600 w-7 h-7" />, title: 'Importação via CSV', desc: 'Importe ativos em massa com template pronto.' },
-  { icon: <History className="text-blue-600 w-7 h-7" />, title: 'Histórico e rastreamento', desc: 'Acompanhe todas as movimentações dos ativos.' },
+  { icon: <Upload className="text-blue-600 w-7 h-7" />, title: 'Importação via CSV', desc: 'Importe patrimônio em lote com template pronto.' },
+  { icon: <History className="text-blue-600 w-7 h-7" />, title: 'Histórico e rastreamento', desc: 'Acompanhe todas as movimentações dos patrimônios.' },
 ];
 
 const plans = [
@@ -30,7 +30,7 @@ const plans = [
     price: 'R$ 0',
     oldPrice: '',
     desc: 'Ideal para começar',
-    features: ['Até 50 ativos', 'Até 2 usuários', 'Exportação CSV', 'Importação CSV', 'Suporte por e-mail (até 72h)'],
+    features: ['Até 50 patrimônios', 'Até 2 usuários', 'Exportação CSV', 'Importação CSV', 'Suporte por e-mail (até 72h)'],
     highlight: false,
   },
   {
@@ -38,7 +38,7 @@ const plans = [
     price: 'R$ 39,90/mês',
     oldPrice: 'R$ 59,90',
     desc: 'Mais popular',
-    features: ['Até 500 ativos', 'Até 5 usuários', 'Exportação PDF/Excel/CSV', 'Importação CSV', 'Suporte por e-mail (até 48h)'],
+    features: ['Até 500 patrimônios', 'Até 5 usuários', 'Exportação PDF/Excel/CSV', 'Importação CSV', 'Suporte por e-mail (até 48h)'],
     highlight: true,
   },
   {
@@ -46,7 +46,7 @@ const plans = [
     price: 'R$ 79,90/mês',
     oldPrice: 'R$ 99,90',
     desc: 'Para empresas exigentes',
-    features: ['Até 1000 ativos', 'Até 10 usuários', 'Todos os recursos', 'Suporte WhatsApp (até 24h)'],
+    features: ['Até 1000 patrimônios', 'Até 10 usuários', 'Todos os recursos', 'Suporte WhatsApp (até 24h)'],
     highlight: false,
   },
 ];
@@ -56,7 +56,7 @@ const faqs = [
     q: 'O plano Free tem alguma limitação?',
     a: (
       <>
-        Sim. O plano Free permite até <strong>50 ativos</strong> e <strong>2 usuários</strong>, mas já inclui <strong>exportação</strong>, <strong>importação CSV</strong> e <strong>suporte por e-mail</strong>.
+        Sim. O plano Free permite até <strong>50 patrimônios</strong> e <strong>2 usuários</strong>, mas já inclui <strong>exportação</strong>, <strong>importação CSV</strong> e <strong>suporte por e-mail</strong>.
       </>
     ),
   },
@@ -229,7 +229,7 @@ export default function Index() {
           </div>
           <div className="flex-1">
             <h3 className="text-xl font-bold mb-2 text-blue-800">Totalmente Responsivo</h3>
-            <p className="text-gray-700 text-lg">O Armazena foi projetado para funcionar perfeitamente em qualquer dispositivo: computador, tablet ou celular. Gerencie seus ativos de onde estiver, com uma experiência fluida e adaptada à sua tela.</p>
+            <p className="text-gray-700 text-lg">O Armazena foi projetado para funcionar perfeitamente em qualquer dispositivo: computador, tablet ou celular. Gerencie seus patrimônios de onde estiver, com uma experiência fluida e adaptada à sua tela.</p>
           </div>
         </div>
       </section>
@@ -256,7 +256,7 @@ export default function Index() {
             <img src="/tela tablet menu.png" alt="Menu do Armazena em tablet" className="rounded-2xl shadow-lg border max-w-xs w-full cursor-zoom-in transition hover:shadow-2xl" onClick={() => { setModalImg('/tela tablet menu.png'); setModalOpen(true); }} />
             <img src="/tela tablet ativos 1.png" alt="Tela de ativos em tablet" className="rounded-2xl shadow-lg border max-w-xs w-full cursor-zoom-in transition hover:shadow-2xl" onClick={() => { setModalImg('/tela tablet ativos 1.png'); setModalOpen(true); }} />
           </div>
-          <p className="text-gray-700 text-md text-center">Se sua empresa utiliza etiquetas com códigos de barras ou QR Code, o Armazena permite escanear esses códigos diretamente pela câmera do tablet ou celular, facilitando a consulta de ativos de forma rápida e prática.</p>
+          <p className="text-gray-700 text-md text-center">Se sua empresa utiliza etiquetas com códigos de barras ou QR Code, o Armazena permite escanear esses códigos diretamente pela câmera do tablet ou celular, facilitando a consulta de patrimônios de forma rápida e prática.</p>
         </div>
       </section>
 
