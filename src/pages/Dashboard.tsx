@@ -10,52 +10,92 @@ import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { usePlanLimits } from '@/hooks/usePlanLimits';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function Dashboard() {
   const navigate = useNavigate();
+  const { profile } = useAuth();
   const { data: planLimits } = usePlanLimits();
 
+  // Query otimizada para suportar mais de 100 registros:
+  // - Usa count() para estatísticas (sem limite de registros)
+  // - Usa range(0, 999) para valores (suporta até 1000 registros)
+  // - Filtra por company_id para segurança e performance
   const { data: stats } = useQuery({
-    queryKey: ['dashboard-stats'],
+    queryKey: ['dashboard-stats', profile?.company_id],
     queryFn: async () => {
-      const { data: assets } = await supabase
+      if (!profile?.company_id) {
+        throw new Error('Company ID not found');
+      }
+
+      // Usar count para obter estatísticas mais precisas
+      const { count: totalAssets } = await supabase
         .from('assets')
-        .select('*');
+        .select('*', { count: 'exact', head: true })
+        .eq('company_id', profile.company_id);
 
-      if (!assets) return null;
+      const { count: activeAssets } = await supabase
+        .from('assets')
+        .select('*', { count: 'exact', head: true })
+        .eq('company_id', profile.company_id)
+        .eq('status', 'ativo');
 
-      const totalAssets = assets.length;
-      const activeAssets = assets.filter(a => a.status === 'ativo').length;
-      const maintenanceAssets = assets.filter(a => a.status === 'manutenção').length;
-      const deactivatedAssets = assets.filter(a => a.status === 'baixado').length;
+      const { count: maintenanceAssets } = await supabase
+        .from('assets')
+        .select('*', { count: 'exact', head: true })
+        .eq('company_id', profile.company_id)
+        .eq('status', 'manutenção');
 
-      const totalValue = assets.reduce((sum, asset) => sum + (asset.value || 0), 0);
-      const activeValue = assets
-        .filter(a => a.status === 'ativo')
-        .reduce((sum, asset) => sum + (asset.value || 0), 0);
+      const { count: deactivatedAssets } = await supabase
+        .from('assets')
+        .select('*', { count: 'exact', head: true })
+        .eq('company_id', profile.company_id)
+        .eq('status', 'baixado');
+
+      // Para calcular valores totais, buscar apenas os campos necessários
+      // Usar range para evitar buscar todos os registros de uma vez
+      const { data: assetsForValue } = await supabase
+        .from('assets')
+        .select('value')
+        .eq('company_id', profile.company_id)
+        .range(0, 999); // Buscar até 1000 registros para o cálculo
+
+      const totalValue = (assetsForValue || []).reduce((sum, asset) => sum + (asset.value || 0), 0);
+      
+      const { data: activeAssetsForValue } = await supabase
+        .from('assets')
+        .select('value')
+        .eq('company_id', profile.company_id)
+        .eq('status', 'ativo')
+        .range(0, 999); // Buscar até 1000 registros para o cálculo
+
+      const activeValue = (activeAssetsForValue || []).reduce((sum, asset) => sum + (asset.value || 0), 0);
 
       return {
-        totalAssets,
-        activeAssets,
-        maintenanceAssets,
-        deactivatedAssets,
+        totalAssets: totalAssets || 0,
+        activeAssets: activeAssets || 0,
+        maintenanceAssets: maintenanceAssets || 0,
+        deactivatedAssets: deactivatedAssets || 0,
         totalValue,
         activeValue,
       };
     },
+    enabled: !!profile?.company_id,
   });
 
   const { data: recentAssets } = useQuery({
-    queryKey: ['recent-assets'],
+    queryKey: ['recent-assets', profile?.company_id],
     queryFn: async () => {
       const { data } = await supabase
         .from('assets')
         .select('*')
+        .eq('company_id', profile.company_id)
         .order('created_at', { ascending: false })
         .limit(5);
 
       return data || [];
     },
+    enabled: !!profile?.company_id,
   });
 
   const getStatusBadge = (status: string) => {
