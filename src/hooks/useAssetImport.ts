@@ -84,7 +84,7 @@ const transformCSVRowToAssetData = (row: CSVRow, companyId: string): AssetData =
     name: row.nome,
     code: row.codigo,
     location: row.localizacao || null,
-    unity: row.unity || null, // <--- Adicionado
+    unity: row.unidade || null,
     status: parseStatus(row.status),
     acquisition_date: parseDate(row.data_aquisicao),
     value: parseValue(row.valor),

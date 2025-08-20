@@ -1,6 +1,7 @@
 export interface CSVRow {
   nome: string;
   codigo: string;
+  unidade?: string;
   localizacao?: string;
   unity?: string;
   status?: string;

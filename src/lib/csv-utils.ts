@@ -40,9 +40,9 @@ export const CSV_HEADER_MAP: Record<string, string> = {
 };
 
 // CSV Template for download
-export const CSV_TEMPLATE = `nome,codigo,localizacao,status,data_aquisicao,valor,numero_serie,cor,fabricante,modelo,capacidade,voltagem,origem,condicoes,inalienavel,detentor,observacoes
-Notebook Dell,NB001,Sala 101,ativo,2023-01-15,2500.00,SN123456,Preto,Dell,Inspiron 15,8GB RAM,Bivolt,compra,Novo,não,João Silva,Notebook para desenvolvimento
-Monitor Samsung,MON001,Sala 102,ativo,2023-02-10,800.00,MON789,Branco,Samsung,24 polegadas,1920x1080,110V,compra,Usado,não,Maria Santos,Monitor secundário`;
+export const CSV_TEMPLATE = `nome,codigo,unidade,localizacao,status,data_aquisicao,valor,numero_serie,cor,fabricante,modelo,capacidade,voltagem,origem,condicoes,inalienavel,detentor,observacoes
+Notebook Dell,NB001,Unidade 1,Sala 101,ativo,2023-01-15,2500.00,SN123456,Preto,Dell,Inspiron 15,8GB RAM,Bivolt,compra,Novo,não,João Silva,Notebook para desenvolvimento
+Monitor Samsung,MON001,Unidade 2,Sala 102,ativo,2023-02-10,800.00,MON789,Branco,Samsung,24 polegadas,1920x1080,110V,compra,Usado,não,Maria Santos,Monitor secundário`;
 
 // Utility functions
 export const normalizeHeader = (header: string): string => {
