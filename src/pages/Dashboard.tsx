@@ -52,22 +52,20 @@ export default function Dashboard() {
         .eq('company_id', profile.company_id)
         .eq('status', 'baixado');
 
-      // Para calcular valores totais, buscar apenas os campos necessários
-      // Usar range para evitar buscar todos os registros de uma vez
       const { data: assetsForValue } = await supabase
         .from('assets')
         .select('value')
         .eq('company_id', profile.company_id)
-        .range(0, 999); // Buscar até 1000 registros para o cálculo
+        .not('value', 'is', null);
 
       const totalValue = (assetsForValue || []).reduce((sum, asset) => sum + (asset.value || 0), 0);
-      
+
       const { data: activeAssetsForValue } = await supabase
         .from('assets')
         .select('value')
         .eq('company_id', profile.company_id)
         .eq('status', 'ativo')
-        .range(0, 999); // Buscar até 1000 registros para o cálculo
+        .not('value', 'is', null);
 
       const activeValue = (activeAssetsForValue || []).reduce((sum, asset) => sum + (asset.value || 0), 0);
 
