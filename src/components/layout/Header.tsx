@@ -46,8 +46,8 @@ export function Header() {
                 <span className="text-sm font-medium break-words">
                   {company.name}
                 </span>
-                {profile?.role === 'admin' && company.plan !== 'enterprise' && (
-                  <PlanBadge plan={company.plan as 'free' | 'basic' | 'premium'} />
+                {profile?.role === 'admin' && (
+                  <PlanBadge plan={company.plan as 'free' | 'basic' | 'premium' | 'enterprise'} />
                 )}
               </div>
             )}

@@ -123,7 +123,8 @@ export default function MyPlan() {
                     ? 'border-yellow-500 bg-yellow-50'
                     : ''}
                 ${planLimits.currentPlan === 'basic' ? ' bg-blue-50 border-blue-300' : ''}
-                ${planLimits.currentPlan === 'premium' ? ' bg-purple-50 border-purple-300' : ''}`
+                ${planLimits.currentPlan === 'premium' ? ' bg-purple-50 border-purple-300' : ''}
+                ${planLimits.currentPlan === 'enterprise' ? ' bg-amber-50 border-amber-300' : ''}`
           }
         >
           <CardHeader>
@@ -139,7 +140,7 @@ export default function MyPlan() {
             <div className="flex items-center gap-2">
               <HeadphonesIcon className="h-4 w-4 text-gray-500" />
               <span className="text-sm text-gray-600">
-                {planLimits.currentPlan === 'premium'
+                {planLimits.currentPlan === 'premium' || planLimits.currentPlan === 'enterprise'
                   ? 'Suporte: WhatsApp (até 24h) ou E-mail (até 24h)'
                   : `Suporte: ${planLimits.planInfo.support}`}
               </span>
@@ -252,7 +253,7 @@ export default function MyPlan() {
                 suporte.microfocuspro@gmail.com
               </a>
             </div>
-            {planLimits.currentPlan === 'premium' && (
+            {(planLimits.currentPlan === 'premium' || planLimits.currentPlan === 'enterprise') && (
               <div className="flex flex-col items-center gap-2 w-full mt-2">
                 <div className="flex items-center gap-2 justify-center">
                   <MessageCircle className="h-4 w-4 text-green-600" />
@@ -283,14 +284,14 @@ export default function MyPlan() {
       <Card>
           <CardHeader>
             <CardTitle>Próximos Planos</CardTitle>
-            {planLimits.currentPlan !== 'premium' && (
+            {planLimits.currentPlan !== 'premium' && planLimits.currentPlan !== 'enterprise' && (
               <CardDescription>
                 Conheça os benefícios dos outros planos
               </CardDescription>
             )}
           </CardHeader>
           <CardContent>
-            <div className={`grid gap-4 ${String(planLimits.currentPlan) === 'premium' ? 'md:grid-cols-1' : 'md:grid-cols-3'}`}>
+            <div className={`grid gap-4 ${String(planLimits.currentPlan) === 'premium' || String(planLimits.currentPlan) === 'enterprise' ? 'md:grid-cols-1' : 'md:grid-cols-3'}`}>
               {/* Mostrar Basic só se plano atual for free */}
               {planLimits.currentPlan === 'free' && (
                 <div className="border rounded-lg p-4 space-y-3 bg-blue-50 border-blue-300">

@@ -59,9 +59,9 @@ export function MobileNav() {
                     <span className="break-words leading-tight">{company.name}</span>
                   </div>
                 )}
-                {profile?.role === 'admin' && company && company.plan !== 'enterprise' && (
+                {profile?.role === 'admin' && company && (
                   <div className="mt-2">
-                    <PlanBadge plan={company.plan as 'free' | 'basic' | 'premium'} />
+                    <PlanBadge plan={company.plan as 'free' | 'basic' | 'premium' | 'enterprise'} />
                   </div>
                 )}
               </div>

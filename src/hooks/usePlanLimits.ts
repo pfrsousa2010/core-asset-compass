@@ -33,6 +33,16 @@ export const planRules = {
     price: 79.90,
     oldPrice: 99.90,
   },
+  enterprise: {
+    maxAssets: 5000,
+    maxUsers: 25,
+    support: "WhatsApp (até 24h)",
+    icon: "🟡",
+    color: "gold",
+    name: "Enterprise",
+    price: 119.90,
+    oldPrice: 129.90,
+  },
 };
 
 type PlanRule = {
