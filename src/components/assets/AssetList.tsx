@@ -122,19 +122,19 @@ export function AssetList({
                       <th className="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Patrimônio
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Status
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         ID
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Localização
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Unidade
                       </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Valor
                       </th>
                     </tr>
@@ -165,7 +165,7 @@ export function AssetList({
                             </div>
                           </div>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
+                        <td className="px-3 py-4 whitespace-nowrap">
                           <Badge 
                             className={
                               asset.status === 'ativo' ? 'bg-green-100 text-green-800' :
@@ -176,22 +176,30 @@ export function AssetList({
                             {asset.status?.toUpperCase()}
                           </Badge>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        <td className="px-3 py-4 whitespace-nowrap text-sm text-gray-500">
                           #{asset.code}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="flex items-center text-sm text-gray-500">
-                            <MapPin className="h-4 w-4 mr-1" />
-                            {asset.location || '-'}
+                        <td className="px-3 py-4">
+                          <div className="flex items-start text-sm text-gray-500">
+                            <MapPin className="h-4 w-4 mr-1 mt-0.5 flex-shrink-0" />
+                            <div className="min-w-0 max-w-xs">
+                              <div className="break-words leading-tight">
+                                {asset.location || '-'}
+                              </div>
+                            </div>
                           </div>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          <div className="flex items-center">
-                            <Building2 className="h-4 w-4 mr-1" />
-                            {asset.unity || '-'}
+                        <td className="px-3 py-4">
+                          <div className="flex items-start text-sm text-gray-500">
+                            <Building2 className="h-4 w-4 mr-1 mt-0.5 flex-shrink-0" />
+                            <div className="min-w-0 max-w-xs">
+                              <div className="break-words leading-tight">
+                                {asset.unity || '-'}
+                              </div>
+                            </div>
                           </div>
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        <td className="px-3 py-4 whitespace-nowrap text-sm text-gray-500">
                           <div className="flex items-center">
                             <DollarSign className="h-4 w-4 mr-1" />
                             {asset.value ? formatCurrency(asset.value) : '-'}
