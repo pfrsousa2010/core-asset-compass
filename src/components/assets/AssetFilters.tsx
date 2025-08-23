@@ -2,7 +2,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { Search } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Search, Grid3X3, List, X } from 'lucide-react';
 
 interface AssetFiltersProps {
   search: string;
@@ -11,10 +12,13 @@ interface AssetFiltersProps {
   unityFilter: string;
   locations?: string[];
   unities?: string[];
+  viewMode: 'cards' | 'list';
   onSearchChange: (value: string) => void;
   onStatusFilterChange: (value: string) => void;
   onLocationFilterChange: (value: string) => void;
   onUnityFilterChange: (value: string) => void;
+  onViewModeChange: (mode: 'cards' | 'list') => void;
+  onClearFilters: () => void;
 }
 
 export function AssetFilters({
@@ -24,15 +28,57 @@ export function AssetFilters({
   unityFilter,
   locations,
   unities,
+  viewMode,
   onSearchChange,
   onStatusFilterChange,
   onLocationFilterChange,
   onUnityFilterChange,
+  onViewModeChange,
+  onClearFilters,
 }: AssetFiltersProps) {
   return (
     <Card className="border-0 shadow-md">
-      <CardHeader>
+      <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle className="text-lg">Filtros</CardTitle>
+        
+        {/* View Mode Toggle Buttons */}
+        <div className="flex items-center space-x-2">
+          <Button
+            variant={viewMode === 'cards' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => onViewModeChange('cards')}
+            className="flex items-center space-x-2"
+            title="Visualizar em cards"
+          >
+            <Grid3X3 className="h-4 w-4" />
+            <span className="hidden sm:inline">Cards</span>
+          </Button>
+          
+          <Button
+            variant={viewMode === 'list' ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => onViewModeChange('list')}
+            className="flex items-center space-x-2"
+            title="Visualizar em lista"
+          >
+            <List className="h-4 w-4" />
+            <span className="hidden sm:inline">Lista</span>
+          </Button>
+
+          {/* Clear Filters Button */}
+          {(search || statusFilter !== 'all' || locationFilter !== 'all' || unityFilter !== 'all') && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={onClearFilters}
+              className="flex items-center space-x-2 ml-2 border-red-200 text-red-700 hover:bg-red-50 hover:border-red-300"
+              title="Limpar todos os filtros"
+            >
+              <X className="h-4 w-4" />
+              <span className="hidden sm:inline">Limpar</span>
+            </Button>
+          )}
+        </div>
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
