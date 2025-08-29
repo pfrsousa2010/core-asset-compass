@@ -26,10 +26,25 @@ export function BarcodeScanner({ isOpen, onClose, onScan }: Props) {
     if (scannerRef.current) return;        // já iniciado
     try {
       scannerRef.current = new Html5Qrcode(containerId);
+      
+      // Configurações otimizadas da câmera para melhor foco
+      const constraints = {
+        facingMode: 'environment',
+        width: { ideal: 1280 },
+        height: { ideal: 720 },
+        focusMode: 'continuous', // Sempre auto-foco
+        exposureMode: 'continuous',
+        whiteBalanceMode: 'continuous'
+      };
+
       await scannerRef.current.start(
-        /* camera config */ { facingMode: 'environment' },
+        constraints,
         /* options    */  {
           fps: 10,
+          // Melhorar qualidade de detecção
+          qrbox: { width: 250, height: 250 }, // Área de foco menor
+          aspectRatio: 1.0,
+          disableFlip: false
         },
         (decodedText) => {
           onScan(decodedText);
@@ -85,13 +100,72 @@ export function BarcodeScanner({ isOpen, onClose, onScan }: Props) {
           </DialogTitle>
           <DialogDescription>
             Suporta QR code e códigos de barras comuns.
+            <br />
+            <span className="text-xs text-gray-500">
+              💡 Dica: Mantenha a câmera a 15 ou 20 cm do código para melhor foco
+            </span>
+            <br />
+            <span className="text-xs text-gray-500">
+              👆 Toque na tela para focar em um ponto específico
+            </span>
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4">
           <div
             id={containerId}
-            className="relative aspect-square bg-black rounded-lg overflow-hidden"
+            className="relative aspect-square bg-black rounded-lg overflow-hidden cursor-pointer"
+            onClick={async (e) => {
+              // Implementar foco por toque usando API moderna
+              const rect = e.currentTarget.getBoundingClientRect();
+              const x = e.clientX - rect.left;
+              const y = e.clientY - rect.top;
+              
+              // Normalizar coordenadas para 0-1
+              const normalizedX = x / rect.width;
+              const normalizedY = y / rect.height;
+              
+              try {
+                // Tentar usar a API de foco por coordenadas se disponível
+                const videoElement = document.querySelector(`#${containerId} video`) as HTMLVideoElement;
+                if (videoElement && videoElement.srcObject) {
+                  const stream = videoElement.srcObject as MediaStream;
+                  const track = stream.getVideoTracks()[0];
+                  
+                  if (track && track.getCapabilities) {
+                    const capabilities = track.getCapabilities();
+                    
+                    // Verificar se suporta foco por coordenadas (usando any para compatibilidade)
+                    const trackCapabilities = capabilities as any;
+                    if (trackCapabilities.focusMode && trackCapabilities.focusMode.includes('manual')) {
+                      // Tentar focar no ponto tocado
+                      await track.applyConstraints({
+                        advanced: [{
+                          focusMode: 'manual',
+                          focusDistance: 0.1, // Foco próximo
+                          pointsOfInterest: [{ x: normalizedX, y: normalizedY }]
+                        } as any]
+                      });
+                      
+                      console.log(`Focando em: ${normalizedX.toFixed(2)}, ${normalizedY.toFixed(2)}`);
+                      
+                      // Voltar para auto-foco após um tempo
+                      setTimeout(async () => {
+                        try {
+                          await track.applyConstraints({
+                            advanced: [{ focusMode: 'continuous' } as any]
+                          });
+                        } catch (err) {
+                          console.log('Erro ao voltar para auto-foco');
+                        }
+                      }, 2000);
+                    }
+                  }
+                }
+              } catch (err) {
+                console.log('Foco por toque não suportado nesta câmera:', err);
+              }
+            }}
           />
           {error && (
             <p className="text-sm text-red-600 bg-red-50 p-3 rounded">
