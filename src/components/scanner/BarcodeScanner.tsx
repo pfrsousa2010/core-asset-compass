@@ -35,15 +35,41 @@ export function BarcodeScanner({ isOpen, onClose, onScan }: Props) {
     try {
       scannerRef.current = new Html5Qrcode(containerId);
       
-      // Primeiro, tentar com configurações básicas
-      let constraints = { facingMode: 'environment' };
+      // Obter todas as câmeras disponíveis para encontrar a de maior resolução
+      const devices = await Html5Qrcode.getCameras();
+      let selectedDeviceId: string | undefined;
+      
+      if (devices && devices.length > 0) {
+        // Tentar encontrar a câmera traseira (environment) primeiro
+        const backCamera = devices.find(device => 
+          device.label.toLowerCase().includes('back') || 
+          device.label.toLowerCase().includes('traseira') ||
+          device.label.toLowerCase().includes('environment')
+        );
+        
+        if (backCamera) {
+          selectedDeviceId = backCamera.id;
+        } else {
+          // Se não encontrar câmera traseira, usar a primeira disponível
+          selectedDeviceId = devices[0].id;
+        }
+      }
+
+      // Configurações para máxima resolução e auto-foco
+      const constraints = selectedDeviceId ? {
+        deviceId: { exact: selectedDeviceId }
+      } : {
+        facingMode: 'environment',
+        width: { ideal: 1920 },
+        height: { ideal: 1080 }
+      };
 
       try {
         await scannerRef.current.start(
           constraints,
           /* options    */  {
-            fps: 10,
-            qrbox: { width: 250, height: 250 },
+            fps: 30, // Aumentar FPS para melhor performance
+            qrbox: { width: 300, height: 300 }, // Área de leitura maior
             aspectRatio: 1.0,
             disableFlip: false
           },
@@ -58,14 +84,19 @@ export function BarcodeScanner({ isOpen, onClose, onScan }: Props) {
         );
         
         setError(null); // Limpar erro se existir
+        
+        // Configurar auto-foco contínuo após iniciar
+        setTimeout(() => {
+          configureAutoFocus();
+        }, 1000);
         
       } catch (startError) {
-        // Se falhar, tentar sem constraints específicos
+        // Se falhar com deviceId específico, tentar com configurações básicas
         await scannerRef.current.start(
-          undefined, // Sem constraints específicos
+          { facingMode: 'environment' },
           /* options    */  {
-            fps: 10,
-            qrbox: { width: 250, height: 250 },
+            fps: 30,
+            qrbox: { width: 300, height: 300 },
             aspectRatio: 1.0,
             disableFlip: false
           },
@@ -80,6 +111,11 @@ export function BarcodeScanner({ isOpen, onClose, onScan }: Props) {
         );
         
         setError(null); // Limpar erro se existir
+        
+        // Configurar auto-foco contínuo após iniciar
+        setTimeout(() => {
+          configureAutoFocus();
+        }, 1000);
       }
       
     } catch (e) {
@@ -99,6 +135,72 @@ export function BarcodeScanner({ isOpen, onClose, onScan }: Props) {
       } else {
         setError('Não foi possível acessar a câmera. Verifique as permissões.');
       }
+    }
+  };
+
+  // Função para configurar auto-foco contínuo
+  const configureAutoFocus = async () => {
+    try {
+      const videoElement = document.querySelector(`#${containerId} video`) as HTMLVideoElement;
+      if (videoElement && videoElement.srcObject) {
+        const stream = videoElement.srcObject as MediaStream;
+        const track = stream.getVideoTracks()[0];
+        
+        if (track && track.getCapabilities) {
+          const capabilities = track.getCapabilities();
+          const trackCapabilities = capabilities as any;
+          
+          // Verificar se suporta foco automático
+          if (trackCapabilities.focusMode && trackCapabilities.focusMode.includes('continuous')) {
+            await track.applyConstraints({
+              advanced: [{ focusMode: 'continuous' } as any]
+            });
+          }
+        }
+      }
+    } catch (err) {
+      // console.log('Auto-foco não suportado nesta câmera');
+    }
+  };
+
+  // Função para focar em um ponto específico
+  const focusAtPoint = async (normalizedX: number, normalizedY: number) => {
+    try {
+      const videoElement = document.querySelector(`#${containerId} video`) as HTMLVideoElement;
+      if (videoElement && videoElement.srcObject) {
+        const stream = videoElement.srcObject as MediaStream;
+        const track = stream.getVideoTracks()[0];
+        
+        if (track && track.getCapabilities) {
+          const capabilities = track.getCapabilities();
+          const trackCapabilities = capabilities as any;
+          
+          // Verificar se suporta foco manual
+          if (trackCapabilities.focusMode && trackCapabilities.focusMode.includes('manual')) {
+            // Aplicar foco manual no ponto tocado
+            await track.applyConstraints({
+              advanced: [{
+                focusMode: 'manual',
+                focusDistance: 0.1,
+                pointsOfInterest: [{ x: normalizedX, y: normalizedY }]
+              } as any]
+            });
+            
+            // Voltar para auto-foco após 3 segundos
+            setTimeout(async () => {
+              try {
+                await track.applyConstraints({
+                  advanced: [{ focusMode: 'continuous' } as any]
+                });
+              } catch (err) {
+                // console.log('Erro ao voltar para auto-foco');
+              }
+            }, 3000);
+          }
+        }
+      }
+    } catch (err) {
+      // console.log('Foco manual não suportado nesta câmera');
     }
   };
 
@@ -141,14 +243,6 @@ export function BarcodeScanner({ isOpen, onClose, onScan }: Props) {
           </DialogTitle>
           <DialogDescription>
             Suporta QR code e códigos de barras comuns.
-            <br />
-            <span className="text-xs text-gray-500">
-              💡 Dica: Mantenha a câmera a 15 ou 20 cm do código para melhor foco
-            </span>
-            <br />
-            <span className="text-xs text-gray-500">
-              👆 Toque na tela para focar em um ponto específico
-            </span>
           </DialogDescription>
         </DialogHeader>
 
@@ -166,44 +260,8 @@ export function BarcodeScanner({ isOpen, onClose, onScan }: Props) {
               const normalizedX = x / rect.width;
               const normalizedY = y / rect.height;
               
-              try {
-                // Tentar usar a API de foco por coordenadas se disponível
-                const videoElement = document.querySelector(`#${containerId} video`) as HTMLVideoElement;
-                if (videoElement && videoElement.srcObject) {
-                  const stream = videoElement.srcObject as MediaStream;
-                  const track = stream.getVideoTracks()[0];
-                  
-                  if (track && track.getCapabilities) {
-                    const capabilities = track.getCapabilities();
-                    
-                    // Verificar se suporta foco por coordenadas (usando any para compatibilidade)
-                    const trackCapabilities = capabilities as any;
-                    if (trackCapabilities.focusMode && trackCapabilities.focusMode.includes('manual')) {
-                      // Tentar focar no ponto tocado
-                      await track.applyConstraints({
-                        advanced: [{
-                          focusMode: 'manual',
-                          focusDistance: 0.1, // Foco próximo
-                          pointsOfInterest: [{ x: normalizedX, y: normalizedY }]
-                        } as any]
-                      });
-                      
-                      // Voltar para auto-foco após um tempo
-                      setTimeout(async () => {
-                        try {
-                          await track.applyConstraints({
-                            advanced: [{ focusMode: 'continuous' } as any]
-                          });
-                        } catch (err) {
-                          // console.log('Erro ao voltar para auto-foco');
-                        }
-                      }, 2000);
-                    }
-                  }
-                }
-              } catch (err) {
-                // console.log('Foco por toque não suportado nesta câmera:', err);
-              }
+              // Focar no ponto tocado
+              await focusAtPoint(normalizedX, normalizedY);
             }}
           />
           {error && (

@@ -8,8 +8,6 @@ export default function AuthRedirectHandler() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    console.log('AuthRedirectHandler - Localização atual:', { pathname, search, hash });
-
     // Verificar se é uma confirmação via query params (link de e-mail)
     const searchParams = new URLSearchParams(search);
     const token = searchParams.get('token');
