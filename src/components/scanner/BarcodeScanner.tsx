@@ -68,10 +68,10 @@ export function BarcodeScanner({ isOpen, onClose, onScan }: Props) {
         await scannerRef.current.start(
           constraints,
           /* options    */  {
-            fps: 30, // Aumentar FPS para melhor performance
-            qrbox: { width: 300, height: 300 }, // Área de leitura maior
+            fps: 15, // Reduzido para estabilidade em câmeras com foco lento
+            qrbox: { width: 400, height: 400 }, // Área de captura maior para QR codes menores
             aspectRatio: 1.0,
-            disableFlip: false
+            disableFlip: false // Habilita ajuste dinâmico de brilho
           },
           (decodedText) => {
             onScan(decodedText);
@@ -95,8 +95,8 @@ export function BarcodeScanner({ isOpen, onClose, onScan }: Props) {
         await scannerRef.current.start(
           { facingMode: 'environment' },
           /* options    */  {
-            fps: 30,
-            qrbox: { width: 300, height: 300 },
+            fps: 15,
+            qrbox: { width: 400, height: 400 },
             aspectRatio: 1.0,
             disableFlip: false
           },
