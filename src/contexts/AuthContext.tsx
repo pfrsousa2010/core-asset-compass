@@ -36,8 +36,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const loadUserData = async (currentUser: User) => {
     try {
-      console.log('Carregando dados do usuário:', currentUser.id);
-      
       // Buscar perfil do usuário
       const { data: profileData, error: profileError } = await supabase
         .from('profiles')

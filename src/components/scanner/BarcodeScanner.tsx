@@ -24,40 +24,81 @@ export function BarcodeScanner({ isOpen, onClose, onScan }: Props) {
   /* ---------- iniciar / parar ---------- */
   const start = async () => {
     if (scannerRef.current) return;        // já iniciado
+    
+    // Verificar se o container existe
+    const container = document.getElementById(containerId);
+    if (!container) {
+      setError('Container da câmera não encontrado.');
+      return;
+    }
+
     try {
       scannerRef.current = new Html5Qrcode(containerId);
       
-      // Configurações otimizadas da câmera para melhor foco
-      const constraints = {
-        facingMode: 'environment',
-        width: { ideal: 1280 },
-        height: { ideal: 720 },
-        focusMode: 'continuous', // Sempre auto-foco
-        exposureMode: 'continuous',
-        whiteBalanceMode: 'continuous'
-      };
+      // Primeiro, tentar com configurações básicas
+      let constraints = { facingMode: 'environment' };
 
-      await scannerRef.current.start(
-        constraints,
-        /* options    */  {
-          fps: 10,
-          // Melhorar qualidade de detecção
-          qrbox: { width: 250, height: 250 }, // Área de foco menor
-          aspectRatio: 1.0,
-          disableFlip: false
-        },
-        (decodedText) => {
-          onScan(decodedText);
-          stop();   // encerra após 1ª leitura
-          onClose();
-        },
-        (err) => {
-          // erros de leitura acontecem a todo frame – ignore
-        },
-      );
+      try {
+        await scannerRef.current.start(
+          constraints,
+          /* options    */  {
+            fps: 10,
+            qrbox: { width: 250, height: 250 },
+            aspectRatio: 1.0,
+            disableFlip: false
+          },
+          (decodedText) => {
+            onScan(decodedText);
+            stop();   // encerra após 1ª leitura
+            onClose();
+          },
+          (err) => {
+            // erros de leitura acontecem a todo frame – ignore
+          },
+        );
+        
+        setError(null); // Limpar erro se existir
+        
+      } catch (startError) {
+        // Se falhar, tentar sem constraints específicos
+        await scannerRef.current.start(
+          undefined, // Sem constraints específicos
+          /* options    */  {
+            fps: 10,
+            qrbox: { width: 250, height: 250 },
+            aspectRatio: 1.0,
+            disableFlip: false
+          },
+          (decodedText) => {
+            onScan(decodedText);
+            stop();   // encerra após 1ª leitura
+            onClose();
+          },
+          (err) => {
+            // erros de leitura acontecem a todo frame – ignore
+          },
+        );
+        
+        setError(null); // Limpar erro se existir
+      }
+      
     } catch (e) {
-      console.error(e);
-      setError('Não foi possível acessar a câmera.');
+      // Mensagens de erro mais específicas
+      if (e instanceof Error) {
+        if (e.name === 'NotAllowedError') {
+          setError('Permissão de câmera negada. Permita o acesso à câmera.');
+        } else if (e.name === 'NotFoundError') {
+          setError('Câmera não encontrada no dispositivo.');
+        } else if (e.name === 'NotSupportedError') {
+          setError('Câmera não suportada neste dispositivo.');
+        } else if (e.message.includes('getUserMedia')) {
+          setError('Erro ao acessar câmera. Verifique as permissões do navegador.');
+        } else {
+          setError(`Erro ao acessar câmera: ${e.message}`);
+        }
+      } else {
+        setError('Não foi possível acessar a câmera. Verifique as permissões.');
+      }
     }
   };
 
@@ -147,8 +188,6 @@ export function BarcodeScanner({ isOpen, onClose, onScan }: Props) {
                         } as any]
                       });
                       
-                      console.log(`Focando em: ${normalizedX.toFixed(2)}, ${normalizedY.toFixed(2)}`);
-                      
                       // Voltar para auto-foco após um tempo
                       setTimeout(async () => {
                         try {
@@ -156,14 +195,14 @@ export function BarcodeScanner({ isOpen, onClose, onScan }: Props) {
                             advanced: [{ focusMode: 'continuous' } as any]
                           });
                         } catch (err) {
-                          console.log('Erro ao voltar para auto-foco');
+                          // console.log('Erro ao voltar para auto-foco');
                         }
                       }, 2000);
                     }
                   }
                 }
               } catch (err) {
-                console.log('Foco por toque não suportado nesta câmera:', err);
+                // console.log('Foco por toque não suportado nesta câmera:', err);
               }
             }}
           />
