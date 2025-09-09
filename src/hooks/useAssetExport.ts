@@ -91,6 +91,38 @@ export function useAssetExport(): UseAssetExportReturn {
     return query;
   };
 
+  const fetchAllAssets = async (filters: ExportFilters) => {
+    const allAssets: any[] = [];
+    let from = 0;
+    const limit = 1000; // Limite máximo do Supabase por página
+    let hasMore = true;
+
+    while (hasMore) {
+      const query = buildQuery(filters)
+        .range(from, from + limit - 1);
+      
+      const { data: assets, error } = await query;
+      
+      if (error) {
+        throw error;
+      }
+      
+      if (!assets || assets.length === 0) {
+        hasMore = false;
+      } else {
+        allAssets.push(...assets);
+        from += limit;
+        
+        // Se retornou menos que o limite, chegamos ao fim
+        if (assets.length < limit) {
+          hasMore = false;
+        }
+      }
+    }
+
+    return allAssets;
+  };
+
   const formatCSVField = (field: any): string => {
     if (field === null || field === undefined) return '';
     const stringField = String(field);
@@ -216,10 +248,9 @@ export function useAssetExport(): UseAssetExportReturn {
     setExportLoading(true);
     
     try {
-      const query = buildQuery(filters);
-      const { data: assets, error } = await query;
+      const assets = await fetchAllAssets(filters);
       
-      if (error || !assets || assets.length === 0) {
+      if (!assets || assets.length === 0) {
         throw new Error('Nenhum patrimônio encontrado para exportar');
       }
 
@@ -236,10 +267,9 @@ export function useAssetExport(): UseAssetExportReturn {
     setExportLoading(true);
     
     try {
-      const query = buildQuery(filters);
-      const { data: assets, error } = await query;
+      const assets = await fetchAllAssets(filters);
       
-      if (error || !assets || assets.length === 0) {
+      if (!assets || assets.length === 0) {
         throw new Error('Nenhum patrimônio encontrado para exportar');
       }
 
@@ -264,10 +294,9 @@ export function useAssetExport(): UseAssetExportReturn {
     setExportLoading(true);
     
     try {
-      const query = buildQuery(filters);
-      const { data: assets, error } = await query;
+      const assets = await fetchAllAssets(filters);
       
-      if (error || !assets || assets.length === 0) {
+      if (!assets || assets.length === 0) {
         throw new Error('Nenhum patrimônio encontrado para exportar');
       }
 
