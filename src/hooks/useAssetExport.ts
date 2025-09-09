@@ -3,7 +3,6 @@ import { supabase } from '@/integrations/supabase/client';
 import { Database } from '@/integrations/supabase/types';
 import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
-import html2canvas from 'html2canvas';
 import autoTable from 'jspdf-autotable';
 
 type AssetStatus = Database['public']['Enums']['asset_status'];
@@ -95,7 +94,24 @@ export function useAssetExport(): UseAssetExportReturn {
   const formatCSVField = (field: any): string => {
     if (field === null || field === undefined) return '';
     const stringField = String(field);
-    return stringField.includes(',') ? `"${stringField.replace(/"/g, '""')}"` : stringField;
+    
+    // Se contém vírgula, quebra de linha ou aspas, precisa ser envolvido em aspas
+    const needsQuotes = stringField.includes(',') || 
+                       stringField.includes('\n') || 
+                       stringField.includes('\r') || 
+                       stringField.includes('"');
+    
+    if (needsQuotes) {
+      // Escapar aspas duplas e quebras de linha
+      const escapedField = stringField
+        .replace(/"/g, '""')  // Escapar aspas duplas
+        .replace(/\r\n/g, ' ')  // Substituir quebras de linha Windows por espaço
+        .replace(/\n/g, ' ')    // Substituir quebras de linha Unix por espaço
+        .replace(/\r/g, ' ');   // Substituir quebras de linha Mac por espaço
+      return `"${escapedField}"`;
+    }
+    
+    return stringField;
   };
 
   const generateCSVContent = (assets: any[]) => {
@@ -120,10 +136,13 @@ export function useAssetExport(): UseAssetExportReturn {
       asset.notes || ''
     ].map(formatCSVField));
 
-    return [
+    // Garantir que cada linha seja uma única linha no CSV
+    const csvLines = [
       CSV_HEADERS.join(','),
       ...csvData.map(row => row.join(','))
-    ].join('\n');
+    ];
+
+    return csvLines.join('\n');
   };
 
   const generateExcelData = (assets: any[]) => {

@@ -19,7 +19,6 @@ export default function Dashboard() {
 
   // Query otimizada para suportar mais de 100 registros:
   // - Usa count() para estatísticas (sem limite de registros)
-  // - Usa range(0, 999) para valores (suporta até 1000 registros)
   // - Filtra por company_id para segurança e performance
   const { data: stats } = useQuery({
     queryKey: ['dashboard-stats', profile?.company_id],
