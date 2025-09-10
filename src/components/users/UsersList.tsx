@@ -39,7 +39,10 @@ export function UsersList({ users, isLoading, onEdit, onCreateUser, profile, onD
     );
   }
 
-  if (!users || users.length === 0) {
+  // Filtrar o usuário desenvolvedor
+  const filteredUsers = users?.filter(user => user.email !== 'paulosousa.dev@gmail.com') || [];
+
+  if (!users || filteredUsers.length === 0) {
     return (
       <div className="col-span-full">
         <Card className="border-0 shadow-md">
@@ -67,7 +70,7 @@ export function UsersList({ users, isLoading, onEdit, onCreateUser, profile, onD
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-      {users.map((user) => (
+      {filteredUsers.map((user) => (
         <UserCard key={user.id} user={user} onEdit={onEdit} profile={profile} onDelete={handleDelete} />
       ))}
     </div>
