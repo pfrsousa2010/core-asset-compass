@@ -41,21 +41,41 @@ export function useAssets(filters: UseAssetsFilters): UseAssetsReturn {
       .order('created_at', { ascending: false });
 
     if (filters.search) {
-      // Para busca por código, remove zeros à esquerda e busca tanto o código original quanto sem zeros
       const searchTerm = filters.search.trim();
-      const numericSearch = searchTerm.replace(/^0+/, '') || '0'; // Remove zeros à esquerda, mas mantém '0' se só zeros
       
-      // Busca por nome (case-insensitive) e por código (considerando zeros à esquerda)
-      const nameSearch = `name.ilike.%${searchTerm}%`;
-      const codeSearch = `code.ilike.%${searchTerm}%`;
-      const codeSearchNoZeros = `code.ilike.%${numericSearch}%`;
-      
-      // Se a busca contém apenas números, busca também códigos que terminam com o número (ignorando zeros à esquerda)
-      const isNumericSearch = /^\d+$/.test(searchTerm);
-      if (isNumericSearch) {
-        query = query.or(`${nameSearch},${codeSearch},${codeSearchNoZeros},code.ilike.%${searchTerm.padStart(4, '0')}%`);
+      // Verificar se é uma busca específica por código (vinda do scanner)
+      if (searchTerm.startsWith('code:')) {
+        const codeValue = searchTerm.substring(5); // Remove "code:" do início
+        const normalizedCode = codeValue.replace(/^0+/, '') || '0'; // Remove zeros à esquerda, mas mantém '0' se só zeros
+        
+        // Busca exata no campo code com o código normalizado
+        const exactCodeSearch = `code.eq.${normalizedCode}`;
+        
+        // Se a busca contém apenas números, busca também códigos com zeros à esquerda
+        const isNumericSearch = /^\d+$/.test(normalizedCode);
+        if (isNumericSearch) {
+          // Busca o código normalizado e com zeros à esquerda (até 4 dígitos)
+          const paddedCode = normalizedCode.padStart(4, '0');
+          query = query.or(`${exactCodeSearch},code.eq.${paddedCode}`);
+        } else {
+          query = query.or(`${exactCodeSearch}`);
+        }
       } else {
-        query = query.or(`${nameSearch},${codeSearch}`);
+        // Busca normal por nome e código
+        const numericSearch = searchTerm.replace(/^0+/, '') || '0'; // Remove zeros à esquerda, mas mantém '0' se só zeros
+        
+        // Busca por nome (case-insensitive) e por código (considerando zeros à esquerda)
+        const nameSearch = `name.ilike.%${searchTerm}%`;
+        const codeSearch = `code.ilike.%${searchTerm}%`;
+        const codeSearchNoZeros = `code.ilike.%${numericSearch}%`;
+        
+        // Se a busca contém apenas números, busca também códigos que terminam com o número (ignorando zeros à esquerda)
+        const isNumericSearch = /^\d+$/.test(searchTerm);
+        if (isNumericSearch) {
+          query = query.or(`${nameSearch},${codeSearch},${codeSearchNoZeros},code.ilike.%${searchTerm.padStart(4, '0')}%`);
+        } else {
+          query = query.or(`${nameSearch},${codeSearch}`);
+        }
       }
     }
     if (filters.statusFilter !== 'all') {

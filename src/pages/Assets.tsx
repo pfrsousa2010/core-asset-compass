@@ -89,7 +89,10 @@ export default function Assets() {
 
   // Event handlers
   const handleScanResult = (code: string) => {
-    setSearch(code);
+    // Quando o scanner é usado, busca apenas no campo code do asset
+    // Remove zeros à esquerda do código escaneado
+    const normalizedCode = code.replace(/^0+/, '') || '0';
+    setSearch(`code:${normalizedCode}`);
   };
 
   const handleClearFilters = () => {
